@@ -18,14 +18,13 @@
 
 *Obtain source code and clone into code directory*
 
-* `git clone https://github.com/concentricsky/badgr-server.git work`
+* `git clone https://github.com/lestrato/badgepack.git work`
 * `cd work`
 
 *Your Directory structure will look like this:*
 ```
 badgepack
 ├── work
-│   ├── build
 │   ├── community
 │   ├── login
 │   ├── work
@@ -34,25 +33,33 @@ badgepack
 
 ### Install requirements
 *from within badgepack/work directory*
-
+* `pip install Django==1.10.2`
 * `pip install mysql-python`
 * `pip install django-widget-tweaks`
 
-### Customize local settings to your environment and install database
+### Customize local settings to your environment
 * Edit the work/settings.py file and insert local credentials for DATABASES
-* `mysql -u username -p database_name < badges.sql`
 
 ### Migrate databases, build front-end components
 * `./manage.py migrate`
-* `./manage.py createsuperuser` or `winpty ./manage.py createsuperuser` *follow prompts to create your first admin user account*
+* `./manage.py createsuperuser` or `winpty python manage.py createsuperuser` *follow prompts to create your first admin user account*
 
 ### Run a server locally for development
 * `./manage.py runserver`
 * Navigate to http://localhost:8000/
 * Login with superuser or create new account
 
-### Creating admins
+### Creating admin group
 * Navigate to http://localhost:8000/admin
 * Login with superuser
+* Navigate to http://localhost:8000/admin/auth/group/add/
+* Set 'Name' as Admin
+* Add priviledges to Admin (recommended are add, change, delete for community and membership)
+* Save
+
+### Setting users to admins
+* Nnavigate to http://localhost:3000/admin/auth/user/
 * Select user to promote to admin
-* Add to group: Admins
+* Tick checkbox "Staff status" under 'Permissions'
+* Add to group 'Admin'
+* Save
