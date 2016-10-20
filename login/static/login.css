@@ -1,0 +1,8 @@
+@font-face {
+    font-family: Fins;
+    src: url(./Fins-Regular.otf);
+}
+
+body {
+  font-family: Fins;
+}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block title %}Registration{% endblock %}
+{% block content %}
+
+<div class="container-fluid" style="padding-top: 50px;">
+    <h1 style="font-size: 50px; text-align: center; margin-bottom: 20px;">Register</h1>
+    <div class="panel panel-default center-block" style="max-width: 300px;">
+        <div class="panel-body">
+            <form method="post" action=".">{% csrf_token %}
+                {% if form.errors %}
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-danger">
+                                {{ error|escape }}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ error|escape }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <h4>Username</h4>
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                    {{ form.username|add_class:"form-control input-sm"|attr:"placeholder:Username"|attr:"type:text" }}
+                </div>
+                <h4>Email</h4>
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
+                    {{ form.email|add_class:"form-control input-sm"|attr:"placeholder:Email"|attr:"type:email" }}
+                </div>
+                <h4>Password</h4>
+                <div class="input-group" style="margin-bottom: 10px;">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                    {{ form.password1|add_class:"form-control input-sm"|attr:"placeholder:Password"|attr:"type:password" }}
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                    {{ form.password2|add_class:"form-control input-sm"|attr:"placeholder:Password again"|attr:"type:password" }}
+                </div>
+                <br>
+                <div class="row-fluid">
+                    <button class="btn btn-default btn-md center-block" type="submit" value="Register">Register</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="panel-footer clearfix">
+            <small><a href="/">Back to login</a></small>
+        </div>
+
+    </div>
+
+</div>
+<!-- <form method="post" action=".">{% csrf_token %}
+    <table border="0">
+        {{ form.as_table }}
+    </table>
+    <input type="submit" value="Register" />
+</form>
+<hr> -->
+<!-- <a href="/">Login</a> -->
+{% endblock %}
