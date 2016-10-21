@@ -49,7 +49,7 @@ badgepack
 * Navigate to http://localhost:8000/
 * Login with superuser or create new account
 
-### Creating admin group
+### Creating the admin group
 * Navigate to http://localhost:8000/admin
 * Login with superuser
 * Navigate to http://localhost:8000/admin/auth/group/add/
@@ -57,8 +57,8 @@ badgepack
 * Add priviledges to Admin (recommended are add, change, delete for community and membership)
 * Save
 
-### Setting users to admins
-* Nnavigate to http://localhost:3000/admin/auth/user/
+### Setting users as admins
+* Navigate to http://localhost:3000/admin/auth/user/
 * Select user to promote to admin
 * Tick checkbox "Staff status" under 'Permissions'
 * Add to group 'Admin'
