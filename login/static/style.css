@@ -1,8 +1,35 @@
-@font-face {
-    font-family: Fins;
-    src: url(./Fins-Regular.otf);
+/*
+    I heard you like CSS, so we put some CSS to override Bootstrap CSS.
+    Bootstrap CSS can be found here: /static/bootstrap/css/bootstrap.css
+*/
+
+a {
+
 }
 
-body {
-  font-family: Fins;
+a.hover, a.focus {
+    text-decoration: none;
+}
+
+.navbar-default {
+    background-color: #001C2E;
+    font-size: 16px;
+    font-family: 'Lato', sans-serif;
+    font-weight: lighter;
+    color: #eaedef;
+}
+
+.navbar-default .navbar-nav > li > a {
+    -webkit-transition: background 0.5s ease;   /* bg-color fade */
+    -moz-transition: background 0.5s ease;
+    -ms-transition: background 0.5s ease;
+    -o-transition: background 0.5s ease;
+    transition: background 0.5s ease;
+    color: #eaedef;
+}
+
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+    background-color: #70828A;      /* bg-color change upon hover */
+    color: #eaedef;
 }

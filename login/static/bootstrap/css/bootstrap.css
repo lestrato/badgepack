@@ -1109,7 +1109,6 @@ a {
 a:hover,
 a:focus {
   color: #23527c;
-  text-decoration: underline;
 }
 a:focus {
   outline: 5px auto -webkit-focus-ring-color;
@@ -1190,7 +1189,7 @@ h6,
 .h5,
 .h6 {
   font-family: inherit;
-  font-weight: 500;
+  font-weight: 200;
   line-height: 1.1;
   color: inherit;
 }

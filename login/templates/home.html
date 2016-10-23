@@ -7,12 +7,12 @@
 
 <div class="container" style="padding-top: 70px;">
 
-    <h1>My badges <small style="margin-left: 10px; font-size: 45%;">0 earned, 0 in progress</small></h1>
+    <h1>My Badges<small style="margin-left: 10px; font-size: 45%;">0 earned, 0 in progress</small></h1>
     <form>
         <div class="row">
             <div class="col-xs-6 col-md-4">
                 <div class="input-group">
-                    <input type="text" class="form-control input-sm" placeholder="Search badges&hellip;">
+                    <input type="text" class="form-control input-sm" placeholder="Search badges">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-search"></span></button>
                     </span>
@@ -40,15 +40,15 @@
 
     {% if earner_communities %}
         {% for community in earner_communities %}
-            <h2><a href="{% url 'community' community.tag %}">{{ community.tag }} </a><small style="margin-left: 10px; font-size: 45%;">0 earned, 0 in progress</small></h2>
+            <h2><a href="{% url 'community' community.tag %}">{{ community.tag }}</a> <small style="margin-left: 10px; font-size: 45%;">0 earned, 0 in progress</small></h2>
                 <div class="container">
-                    <h4>This community does not have any badges yet...</h4>
+                    <h4>This community does not have any badges yet.</h4>
                 </div>
             <hr>
         {% endfor %}
     {% else %}
         <div class="container">
-            <h2><small>You're not in any communities yet...</small></h2>
+            <h2><small>You are not in any communities yet.</small></h2>
         </div>
     {% endif %}
 
