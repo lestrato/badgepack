@@ -1,5 +1,18 @@
 site_name: Badges
+repo_url: https://github.com/lestrato/badgepack
 pages:
     - Home: index.md
     - About: about.md
+    - Project Status: 
+        - To-do: status/todo.md
+        - Backlog: status/backlog.md
+        - Sprints and Future Work: status/sprints.md
+        - Bugs: status/bugs.md
+    - Project Documentation:
+        - Login: project/login.md
+        - Community: project/community.md
+    - Guides:
+        - Installation and Setup: guides/setup.md
+        - Editing the Docs: guides/editing-docs.md
+
 theme: readthedocs
