@@ -1,0 +1,66 @@
+<div class="container" style="padding-top: 70px;">
+    <div class="row">
+        <div class="col-xs-6 col-sm-8">
+            <h1 style="margin-bottom: 0px;">{{ community.name }}
+                <small style="margin-left: 10px; font-size: 45%;">
+                    0/0 earned
+                </small>
+            </h1>
+
+            <form>
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <input type="text" class="form-control input-sm" placeholder="Search badges&hellip;">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-search"></span></button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+
+                            <label class="checkbox-inline"><input type="checkbox" value="">Earned</label>
+                            <label class="checkbox-inline"><input type="checkbox" value="">In Progress</label>
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
+        <div class="col-xs-6 col-sm-4">
+                <ul class="nav nav-pills pull-right nav-stacked" style="text-align: right;">
+                        <li class="active" style="text-align: right;">
+                          <a data-toggle="tab" href="#viewBadges" style= "padding: 5px 7.5px;">View Badges</a>
+                        </li>
+                        <li class="">
+                          <a data-toggle="tab" href="#aboutCommunity" style= "padding: 5px 7.5px;">About Community</a>
+                        </li>
+                </ul>
+        </div>
+    </div>
+
+    <hr>
+    <div class="container">
+        <div class="tab-content">
+            <div id="viewBadges" class="tab-pane fade in active">
+                <h3 style="margin-top: 0px;">There are no badges yet...</h3>
+            </div>
+            <div id="aboutCommunity" class="tab-pane fade in">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h3 style="margin-top: 0px;">Description</h3>
+                        {{ community.description }}
+                    </div>
+                    <hr class="visible-xs">
+                    <div class="col-sm-4">
+                        <h3 style="margin-top: 0px;">Is private</h3>
+                        {{ community.is_private }}
+                        <h3>Created on</h3>
+                        {{ community.created_on }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

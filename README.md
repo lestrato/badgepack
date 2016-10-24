@@ -38,6 +38,7 @@ badgepack
 * `pip install django-widget-tweaks`
 
 ### Customize local settings to your environment
+* cp work/settings.py.example work/settings.py
 * Edit the work/settings.py file and insert local credentials for DATABASES
 
 ### Migrate databases, build front-end components

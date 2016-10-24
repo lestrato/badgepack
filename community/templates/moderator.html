@@ -1,0 +1,235 @@
+{% load widget_tweaks %}
+<div class="container" style="padding-top: 70px;">
+    <div class="row">
+        <div class="col-xs-6 col-sm-8">
+            <h1 style="margin-bottom: 0px;">{{ community.name }}
+                <small style="margin-left: 10px; font-size: 45%;">
+                    0 available
+                </small>
+            </h1>
+
+            <form>
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <input type="text" class="form-control input-sm" placeholder="Search badges&hellip;">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-search"></span></button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="checkbox-inline"><input type="checkbox" value="">Available</label>
+                        <label class="checkbox-inline"><input type="checkbox" value="">Unavailable</label>
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
+        <div class="col-xs-6 col-sm-4">
+            <ul class="nav nav-pills pull-right nav-stacked" style="text-align: right;">
+                <li class="active" style="text-align: right;">
+                  <a data-toggle="tab" href="#viewBadges" style="padding: 5px 7.5px;">Mangage Badges</a>
+                </li>
+                <li class="">
+                  <a data-toggle="tab" href="#manageUsers" style="padding: 5px 7.5px;">Mangage Users</a>
+                </li>
+                <li class="">
+                  <a data-toggle="tab" href="#aboutCommunity" style="padding: 5px 7.5px;">Community Settings</a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+    <hr>
+    <div class="container">
+        <div class="tab-content">
+            <div id="viewBadges" class="tab-pane fade in active">
+                <h3 style="margin-top: 0px;">There are no badges yet...</h3>
+            </div>
+            <div id="aboutCommunity" class="tab-pane fade in">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h3 style="margin-top: 0px;">Description</h3>
+                        {{ community.description }}
+                    </div>
+                    <hr class="visible-xs">
+                    <div class="col-sm-4">
+                        <h3 style="margin-top: 0px;">Is private</h3>
+                        {{ community.is_private }}
+                        <h3>Created on</h3>
+                        {{ community.created_on }}
+                    </div>
+                </div>
+            </div>
+
+            <div id="manageUsers" class="tab-pane fade in">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#manageMembers">Members</a></li>
+                    <li><a data-toggle="tab" href="#manageInvites">Invites</a></li>
+                    <li><a data-toggle="tab" href="#manageApplications">Applications</a></li>
+                </ul>
+                <div class="tab-content">
+
+                    <div id="manageMembers" class="tab-pane fade in active">
+                        <div class="table-responsive">
+                            <table class="table table-condensed table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>User Type</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for member in all_members %}
+                                        <tr>
+                                            <td>{{ member.user }}</td>
+                                            <td>{{ member.user.email }}</td>
+                                            <td>
+                                                {% if member.is_moderator %}
+                                                    moderator
+                                                {% else %}
+                                                    earner
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-xs btn-default" href="#assignBadge{{ member.id }}" data-toggle="modal">
+                                                    <span class="glyphicon glyphicon-briefcase"></span>
+                                                </button>
+
+                                                <div id="assignBadge{{ member.id }}" class="modal fade">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                                <h3 class="modal-title">Change {{ member.user }}'s badges</h3>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <h4>There are no available badges to assign or revoke...</h4>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                                                <button type="button" class="btn btn-primary">Confirm</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <button class="btn btn-xs btn-default" href="#changeSettings{{ member.id }}" data-toggle="modal">
+                                                    <span class="glyphicon glyphicon-cog"></span>
+                                                </button>
+                                                <form action="" method="post">{% csrf_token %}
+                                                    <div id="changeSettings{{ member.id }}" class="modal fade">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                                        <h3 class="modal-title">Change {{ member.user }}'s settings</h3>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <h4>Permissions</h4>
+
+                                                                        {{ UPForm.permissions|add_class:"form-control" }}
+
+                                                                        {% if member.user.username == username %}
+                                                                        <br>
+                                                                            <div class="alert alert-warning">
+                                                                                <strong>Warning!</strong> Setting your own permissions to 'earner' will revoke
+                                                                                your moderator priviledges.
+                                                                            </div>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                                                        <input type="hidden" value="{{ member.user.id }}" name="member">
+                                                                        <input type="submit" class="btn btn-primary" name="permissionSubmit" value="Save"></input>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                    </div>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="manageInvites" class="tab-pane fade in">
+                        <div class="table-responsive">
+                          <table class="table table-condensed table-striped table-hover">
+                              <thead>
+                                  <tr>
+                                      <th>Recipient</th>
+                                      <th>Email</th>
+                                      <th>Created On</th>
+                                      <th>Sender</th>
+                                      <th>Actions</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                      <tr>
+                                          <td>a</td>
+                                          <td>b</td>
+                                          <td>
+                                              c
+                                          </td>
+                                          <td>
+                                              d
+                                          </td>
+                                          <td>e</td>
+                                      </tr>
+                              </tbody>
+                          </table>
+                      </div>
+
+                        <button class="btn btn-default center-block"> Invite a user </button>
+
+                    </div>
+
+                    <div id="manageApplications" class="tab-pane fade in">
+                        <div class="table-responsive">
+                            <table class="table table-condensed table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Applicant</th>
+                                        <th>Email</th>
+                                        <th>Created On</th>
+                                        <th>Accepted By</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for application in applications %}
+                                        <tr>
+                                            <td>{{ application.applicant }}</td>
+                                            <td>{{ application.applicant.email }}</td>
+                                            <td>{{ application.created_on }}</td>
+                                            <td>{{ application.accepted_by }}</td>
+                                            <td>
+                                                {% if not application.accepted_by %}
+                                                    <form action="" method="post">{% csrf_token %}
+                                                        <button type="submit" class="btn btn-xs btn-default" value="{{ application.applicant.id }}" name="acceptApplication">
+                                                            <span class="glyphicon glyphicon-ok"></span>
+                                                        </button>
+                                                    </form>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

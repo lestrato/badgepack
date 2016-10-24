@@ -1,0 +1,53 @@
+<div class="container" style="padding-top: 70px;">
+    <div class="row">
+        <div class="col-xs-6 col-sm-8">
+            <h1 style="margin-bottom: 0px;">{{ community.name }}
+            </h1>
+        </div>
+        <div class="col-xs-6 col-sm-4">
+            {% if applied %}
+            <form method="post" action="">{% csrf_token %}
+                <button name="cancelApplication" type="submit" class="btn btn-default pull-right" style="margin-top: 25px;">Cancel application</button>
+            </form>
+            <!-- <div class="btn-group pull-right">
+                <button name="communityJoin" data-toggle="dropdown" class="btn btn-success dropdown-toggle" style="margin-top: 25px;">Application pending <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li><a href="">Email moderators</a></li>
+
+                    <li class="divider"></li>
+
+                    <form method="post" action="">{% csrf_token %}
+                        <li><a href="">Cancel application</a></li>
+                    </form>
+                </ul>
+            </div> -->
+                <!-- <button name="communityJoin" class="btn btn-success pull-right" style="margin-top: 25px;">Application pending</button> -->
+            {% else %}
+            <form method="post" action="">{% csrf_token %}
+                <button name="communityJoin" type="submit" class="btn btn-success pull-right" style="margin-top: 25px;">Join community</button>
+            </form>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <hr>
+    <div class="container">
+        <div class="tab-content">
+            <div class="row-fluid">
+                <div class="col-sm-8">
+                    <h3 style="margin-top: 0px;">Description</h3>
+                    {{ community.description }}
+                </div>
+                <hr class="visible-xs">
+                <div class="col-sm-4">
+                    <h3 style="margin-top: 0px;">Is private</h3>
+                    {{ community.is_private }}
+                    <h3>Created on</h3>
+                    {{ community.created_on }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
