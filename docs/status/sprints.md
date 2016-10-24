@@ -24,7 +24,7 @@ User Story | Tasks | 1 - 5 | 6 - 10 | 11 - 15 | 16 - 20
 * User search by UTORID/email (inside community and system-wide)
 * Student-student badge issuing
 * Anonymous leaderboard
- * Number of badges professor awarded
- * How many people have been awarded a badge
+    * Number of badges professor awarded
+    * How many people have been awarded a badge
 * LMS app integration 
 * Updating the project’s framework

@@ -4,7 +4,7 @@ pages:
     - Home: index.md
     - About: about.md
     - Project Status: 
-        - To-do: status/todo.md
+        - To-do Lists: status/todo.md
         - Backlog: status/backlog.md
         - Sprints and Future Work: status/sprints.md
         - Bugs: status/bugs.md
