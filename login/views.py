@@ -1,4 +1,3 @@
-from login.forms import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_protect
@@ -6,8 +5,10 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.shortcuts import render
-from community.models import Community
 from django.contrib.auth.views import login
+
+from login.sharedviews import get_navbar_information
+from login.forms import *
 
 def login_page(request):
     if request.user.is_authenticated():
@@ -48,8 +49,7 @@ def logout_page(request):
 
 @login_required
 def home(request):
-    mod_communities = Community.objects.filter(members__id=request.user.id, membership__is_moderator='True')
-    earner_communities = Community.objects.filter(members__id=request.user.id, membership__is_moderator='False')
+    mod_communities, earner_communities = get_navbar_information(request)
     return render_to_response('home.html', {
     'mod_communities': mod_communities,
     'earner_communities': earner_communities,
