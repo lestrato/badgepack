@@ -3,12 +3,12 @@
     Bootstrap CSS can be found here: /static/bootstrap/css/bootstrap.css
 */
 
-a {
-
-}
-
 a.hover, a.focus {
     text-decoration: none;
+}
+
+body {
+    background-color: #F4F6F8;
 }
 
 .navbar-default {
@@ -32,4 +32,68 @@ a.hover, a.focus {
 .navbar-default .navbar-nav > li > a:focus {
     background-color: #70828A;      /* bg-color change upon hover */
     color: #eaedef;
+}
+
+/* Badge List */
+.badge-list {
+    display: table;
+    width: 95%;
+    margin: auto;
+    background-color: transparent;
+    border-collapse: separate;
+    border-spacing: 2px;
+
+    color: #001C2E;
+}
+
+
+.badge-container {
+    -webkit-box-shadow: 0px 0px 10px 2px rgba(0,0,0,0.2);
+    -moz-box-shadow: 0px 0px 10px 2px rgba(0,0,0,0.2);
+    box-shadow: 0px 0px 10px 2px rgba(0,0,0,0.2);
+    background-color: #ffffff;
+    width: 33%;
+    max-width: 350px;
+
+    border-spacing: 10px;
+    border-collapse: separate;
+    
+    overflow: auto;
+}
+
+.badge-image-container {
+    vertical-align: top;
+}
+
+.badge-image {
+    width: 100px;
+    height: 100px;
+    background-color: #eeeeee;
+}
+
+.badge-name {
+    font-size: 20px;
+    font-weight: 500;
+    border-bottom: 1px solid black;
+}
+
+.badge-description {
+
+}
+
+.badge-footer {
+    border-top: 1px solid black;
+    position: relative;
+    bottom: 0px;
+}
+
+.badge-list {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.badge-list > .row > .badge-container {
+    background-color: #fff;
+    color: #000;
 }
