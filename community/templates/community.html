@@ -27,7 +27,7 @@
                     <div class="row" style="margin-top: 10px;">
                         <div class="col-sm-6">
                             <div class="input-group">
-                                <input type="text" class="form-control input-sm" placeholder="Search badges&hellip;">
+                                <input type="text" class="form-control input-sm" placeholder="Search badges">
                                 <span class="input-group-btn">
                                     <button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-search"></span></button>
                                 </span>
@@ -50,6 +50,7 @@
             {% if is_member %}
                 <ul class="nav nav-pills pull-right nav-stacked" style="text-align: right;">
                     {% if is_moderator %}
+                        <!-- Moderator Tools -->
                         <li class="active" style="text-align: right;">
                           <a data-toggle="tab" href="#viewBadges" style="padding: 5px 7.5px;">Manage Badges</a>
                         </li>
@@ -78,6 +79,11 @@
     <div class="tab-content">
         {% if is_member %}
             <div id="viewBadges" class="tab-pane fade in active">
+                <!-- Badge List (WIP) -->
+                 {% comment %}
+                 {% include "badge_list.html" %} 
+                 {% endcomment %}
+
                 <h3>This community does not have any badges yet.</h3>
             </div>
             <div id="aboutCommunity" class="tab-pane fade in">
