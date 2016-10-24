@@ -8,9 +8,9 @@
 * <del>As a moderator, see all users</del>
 * <del>If community is public, join button only to people who don’t have membership.</del>
 * Update sprints
- * Include account page (probably not since what is there to change)
- * Password recovery (probably not since Shibboleth webhooks)
- * <del>LOTS of code duplication purging, project reorganization, refactoring</del>
+    * Include account page (probably not since what is there to change)
+    * Password recovery (probably not since Shibboleth webhooks)
+    * <del>LOTS of code duplication purging, project reorganization, refactoring</del>
 * Update documentation
 * Sprint 2
 * <del>Add is_moderator to manage_users</del>
