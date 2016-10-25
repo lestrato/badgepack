@@ -1,3 +1,1 @@
-# Bugs
-
-Nothing for now! :)
+None for now! :)

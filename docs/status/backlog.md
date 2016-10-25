@@ -1,5 +1,3 @@
-# Backlog
-
 ID | As a/an | I want to | Estimation | Priority
 --- | --- | --- | --- | ---
 1 | User | Log into the system | 3 | 1

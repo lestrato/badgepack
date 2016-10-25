@@ -1,5 +1,7 @@
 # Editing the Docs
 
+Documentation for Badgepack is hosted by [Read the Docs](https://readthedocs.org/), and is updated every time changes are pushed to the repository. This page goes over how to update the documentation pages so that we can keep things nice and organized.
+
 ## Markdown
 
 All of the documentation for this project is written in Markdown. If you're unfamiliar with it, [here is a good resource for Markdown syntax](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet).
@@ -46,3 +48,4 @@ pages:
 
 * To increase indent level in a list, precede the asterisk with a tab.
 * Using tildes for strikethroughs doesn't appear to work properly. Instead, wrap the text in `<del>...</del>` tags.
+* You can totally use some HTML tags (e.g. `<ul>`, `<br>`) in Markdown!
