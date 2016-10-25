@@ -1,4 +1,4 @@
-site_name: Badges
+site_name: Badgepack Documentation
 repo_url: https://github.com/lestrato/badgepack
 pages:
     - Home: index.md
