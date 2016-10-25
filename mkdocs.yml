@@ -1,15 +1,13 @@
-site_name: Badgepack Documentation
+site_name: Badgepack
 repo_url: https://github.com/lestrato/badgepack
 pages:
     - Home: index.md
+    - Project Documentation: project.md
     - Project Status: 
         - To-do Lists: status/todo.md
         - Backlog: status/backlog.md
         - Sprints and Future Work: status/sprints.md
         - Bugs: status/bugs.md
-    - Project Documentation:
-        - Login: project/login.md
-        - Community: project/community.md
     - Guides:
         - Installation and Setup: guides/setup.md
         - Editing the Docs: guides/editing-docs.md
