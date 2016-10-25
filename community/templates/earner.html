@@ -43,6 +43,25 @@
         <div class="tab-content">
             <div id="viewBadges" class="tab-pane fade in active">
                 <h3 style="margin-top: 0px;">There are no badges yet...</h3>
+                {% comment "Badge List" %}
+                    <!-- Display badge list -->
+                    <ul class="badge-list">
+                        <!-- 
+                            For each badge in the community, create a new badge.html instance (wrapped in <li>).
+                            Variable names used here are rudimentary; change them as needed. 
+                            Refer to login/badge_list_sample.html for an example. :)
+
+                            Variables
+                            =========
+                            image:    link to the badge image
+                            name:     name of the badge
+                            desc:     badge description
+                            f_left:   left side of the footer (e.g. date created)
+                            f_right:  right side of the footer (e.g. progress %) 
+                         -->
+                        <li>{% include "badge.html" with image=badge.img name=badge.name desc=badge.desc f_left=badge.date_created f_right=badge.progress %}</li>
+                    </ul>
+                {% endcomment %}
             </div>
             <div id="aboutCommunity" class="tab-pane fade in">
                 <div class="row">

@@ -20,9 +20,9 @@
 
 ### Code
 
-* Create badge and badge list templates.
-    * Badge: CSS mostly done, HTML mostly done.
-    * Badge List
+* <del>Create badge and badge list templates.</del>
+    * Badge: done
+    * Badge List: done
 
 ### Documentation
 
