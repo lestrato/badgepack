@@ -31,7 +31,7 @@ admin.site.register(Membership, MembershipAdmin)
 
 class InvitationAdmin(admin.ModelAdmin):
     readonly_fields = () #'created', 'name',
-    list_display = ('sender', 'community', 'created_on', 'recipient')
+    list_display = ('recipient', 'community', 'created_on', 'sender')
     list_filter = ()
     search_fields = ('sender', 'community', 'recipient')
     fieldsets = (

@@ -51,9 +51,9 @@
                 {% comment "Badge List" %}
                     <!-- Display badge list -->
                     <ul class="badge-list">
-                        <!-- 
+                        <!--
                             For each badge in the community, create a new badge.html instance (wrapped in <li>).
-                            Variable names used here are rudimentary; change them as needed. 
+                            Variable names used here are rudimentary; change them as needed.
                             Refer to login/badge_list_sample.html for an example. :)
 
                             Variables
@@ -62,7 +62,7 @@
                             name:     name of the badge
                             desc:     badge description
                             f_left:   left side of the footer (e.g. date created)
-                            f_right:  right side of the footer (e.g. progress %) 
+                            f_right:  right side of the footer (e.g. progress %)
                          -->
                         <li>{% include "badge.html" with image=badge.img name=badge.name desc=badge.desc f_left=badge.date_created f_right=badge.progress %}</li>
                     </ul>
@@ -100,6 +100,7 @@
                                         <th>Username</th>
                                         <th>Email</th>
                                         <th>User Type</th>
+                                        <th>Joined On</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -115,6 +116,7 @@
                                                     earner
                                                 {% endif %}
                                             </td>
+                                            <td>{{ member.joined_on }}</td>
                                             <td>
                                                 <button class="btn btn-xs btn-default" href="#assignBadge{{ member.id }}" data-toggle="modal">
                                                     <span class="glyphicon glyphicon-briefcase"></span>
@@ -186,28 +188,90 @@
                                   <tr>
                                       <th>Recipient</th>
                                       <th>Email</th>
+                                      <th>Permissions</th>
                                       <th>Created On</th>
                                       <th>Sender</th>
+                                      <th>Status</th>
                                       <th>Actions</th>
                                   </tr>
                               </thead>
                               <tbody>
+                                  {% for invite in all_invitations %}
                                       <tr>
-                                          <td>a</td>
-                                          <td>b</td>
+                                          <td>{{ invite.recipient }}</td>
+                                          <td>{{ invite.recipient.email }}</td>
+                                          <td></td>
+                                          <td>{{ invite.created_on }}</td>
+                                          <td>{{ invite.sender }}</td>
                                           <td>
-                                              c
+                                              {% if invite.recipient in invite.community.members %}
+                                                  accepted
+                                              {% else %}
+                                                  pending
+                                              {% endif %}
                                           </td>
                                           <td>
-                                              d
+                                              <form action='' method='POST'>{% csrf_token %}
+                                                  <button type="submit" class="btn btn-xs btn-default" value="{{ invite.recipient.id }}" name="revokeInvite">
+                                                      <span class="glyphicon glyphicon-trash"></span>
+                                                  </button>
+                                              </form>
                                           </td>
-                                          <td>e</td>
                                       </tr>
+                                  {% endfor %}
                               </tbody>
                           </table>
                       </div>
 
-                        <button class="btn btn-default center-block"> Invite a user </button>
+                        <button href="#userInvite" class="btn btn-default center-block" data-toggle="modal"> Invite a user </button>
+                        <div id="userInvite" class="modal fade">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        <h3 class="modal-title">Invite users</h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <div id="error_div"></div>
+                                                <form method="POST" id="addUser">{% csrf_token %}
+                                                    <div class="input-group">
+                                                        {{ USForm.username|add_class:"form-control" }}
+                                                        <!-- <input id="user-name" type="text" class="form-control" placeholder="Add user&hellip;"> -->
+                                                        <span class="input-group-btn">
+                                                            <button type="submit" class="btn btn-default">
+                                                                <span class="glyphicon glyphicon-plus"></span>
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <form action="" method="POST">{% csrf_token %}
+                                        <div class="container-fluid">
+                                            <table id="userInvites" class="table table-condensed table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>User</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                            <button type="submit" name="inviteSubmit" class="btn btn-primary">Invite users</button>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
 
@@ -252,3 +316,61 @@
     </div>
 
 </div>
+
+<script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
+
+<script language="JavaScript">
+$( document ).ready(function() {
+    var usersAdded = [];
+
+    // This wont work in a form with two submit buttons !!!
+    $('#addUser').submit(function() { // catch the form's submit event
+        $.ajax({ // create an AJAX call...
+            data: $(this).serialize(), // get the form data
+            type: $(this).attr('method'), // GET or POST
+            url: $(this).attr('action'), // the file to call
+
+            success: function(response) { // on success..
+                if (response.constructor == {}.constructor) {
+                   // some error message TODO: maybe there's a more delicate way to do this
+                    $.each( response, function( key, value ) {
+                      $('#error_div').html('<div class="alert alert-danger">'+value+'</div>');
+                    });
+                } else {
+                    // valid input
+                    if (usersAdded.indexOf(response) > -1) { // if user already added this user
+                      $('#error_div').html('<div class="alert alert-danger">You already added this user.</div>');
+                    } else { // if didn't add user yet
+                      // clear error message
+                      $('#error_div').html('');
+                      // add to table
+                      $('#userInvites tbody').append("<tr><td id='user'>" +
+                      "<input type='hidden' value='"+ response +"' name='addedUser'>" + response +
+                      "</td><td>" +
+                      "<button id='removeUser' class='btn btn-default btn-xs pull-right'>" +
+                      "<span class='glyphicon glyphicon-remove'></span>" +
+                      "</button>" +
+                      "</td></tr>");
+                      usersAdded.push(response);
+                    }
+                }
+            }
+        });
+        return false;
+    });
+
+    // Remove user from list of invited users
+    $("tbody").on("click","#removeUser", function() {
+        userIndex = usersAdded.indexOf($(this).closest('td').siblings('#user').text())
+        if (userIndex > -1) {
+          usersAdded.splice(userIndex, 1);
+        }
+        $(this).closest('tr').remove();
+    });
+});
+// AJAX for posting
+// function create_post() {
+//     console.log("create post is working!") // sanity check
+//     console.log($('#user-name').val())
+// };
+</script>

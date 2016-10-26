@@ -9,6 +9,7 @@ from django.contrib.auth.views import login
 
 from login.sharedviews import get_navbar_information
 from login.forms import *
+from community.models import Invitation
 
 def login_page(request):
     if request.user.is_authenticated():
@@ -49,8 +50,12 @@ def logout_page(request):
 
 @login_required
 def home(request):
+    invitations = Invitation.objects.filter(
+         recipient_id=request.user.id,
+    )
     mod_communities, earner_communities = get_navbar_information(request)
     return render_to_response('home.html', {
+    'invitations': invitations,
     'mod_communities': mod_communities,
     'earner_communities': earner_communities,
     'username': request.user.username,
