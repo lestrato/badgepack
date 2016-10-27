@@ -66,7 +66,7 @@ class Application(AbstractRequest):
     accepted_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
         related_name='application_accepted_by', blank=True, null=True)
     applicant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-        related_name='applciation_applicant')
+        related_name='application_applicant')
 
     class Meta:
         verbose_name = 'application'
