@@ -45,54 +45,8 @@ Selector | Description/Notes
 
 Path: `/badgepack/login/`
 
-## Templates
-
-Name | Description
---- | ---
-`home.html` | Homepage of the project; displayed when user is logged in
-`nav.html` | Navigation bar of the project
-`badge.html` | A single badge (recommended to exist within a badge list; refer to `badge_list_sample.html` for sample usage)
-`badge_list_sample.html` | Sample implementation of a badge list
-`registration/` | Directory containing templates related to login and registration
-`registration/login.html` | Login page; leads to the homepage upon successful login
-`registration/register.html` | Registration page
-`registration/success.html` | Page served when a user has successfully registered
-
-## Apps
-
-## Forms
-
-## Shared Views
-
-## Views
+The `login` directory contains 
 
 # Community
 
 Path: `/badgepack/community/`
-
-## Templates
-
-Name | Description
---- | ---
-`community.html` | Base template for all community pages
-`earner.html` | Community page as-seen by regular (non-moderator) members
-`moderator.html` | Community page as-seen by community moderators
-`visitor.html` | Community page as-seen by non-members of the community
-
-## Admin
-
-## Forms
-
-## Models
-### Community
-
-Name | Field | Settings | Description
---- | --- | --- | ---
-`name` | `CharField` | `max_length=20, unique=True` | Name of the community
-`description` | `TextField` | | Description of the community
-`tag` | `CharField` | `max_length=10` | Community tag (what the community is listed as in the navigation bar)
-`is_private` | `BooleanField` | `default=False` | Whether or not users can join the community freely (if false, users must be invited / approved)
-`created_on` | `DateField` | `default=datetime.now` | Date and time this community was created
-
-## Views
-
