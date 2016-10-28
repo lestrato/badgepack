@@ -2,7 +2,11 @@ site_name: Badgepack
 repo_url: https://github.com/lestrato/badgepack
 pages:
     - Home: index.md
-    - Project Documentation: project.md
+    - Project Documentation: 
+        - URLs: project/urls.md
+        - Static Files and CSS: project/static.md
+        - Login: project/login.md
+        - Community: project/community.md
     - Project Status: 
         - To-do Lists: status/todo.md
         - Backlog: status/backlog.md
