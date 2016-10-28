@@ -97,6 +97,8 @@ def community(request, community_tag):
 
     UPForm = UserPermissionForm(request.POST or None)
     USForm = UserSearchForm(request.POST or None)
+    CDForm = CommunityDescriptionForm(request.POST or None)
+    CPForm = CommunityPrivacyForm(request.POST or None)
 
     if request.method == 'POST':
 
@@ -178,6 +180,11 @@ def community(request, community_tag):
             accept_application(request.POST['acceptApplication'], request.user)
 
         if 'communityJoin' in request.POST:
+            # refetch community
+            community = get_object_or_404(
+                Community,
+                tag=community_tag
+            )
             # check if community is private or not
             if community.is_private:
 
@@ -218,13 +225,60 @@ def community(request, community_tag):
             )
             revoked_invite.delete()
 
+        if 'submitDescription' in request.POST:
+            CDForm = CommunityDescriptionForm(request.POST)
+            if CDForm.is_valid():
+                # refetch community
+                community = get_object_or_404(
+                    Community,
+                    tag=community_tag
+                )
+                # change the community description on backend
+                community.description = request.POST['description']
+                community.save()
+
+        if 'privacy' in request.POST:
+            CPForm = CommunityPrivacyForm(request.POST)
+            if CPForm.is_valid():
+                # refetch community
+                community = get_object_or_404(
+                    Community,
+                    tag=community_tag
+                )
+                if request.POST['privacy'] == 'True':
+                    # set privacy as true
+                    community.is_private = True
+                    community.save()
+
+                elif request.POST['privacy'] == 'False':
+                    # set applications to accepted
+                    all_applications = Application.objects.filter(
+                        community=community.id,
+                    )
+                    for application in all_applications.all():
+                        # check if the application hasn't been accepted yet
+                        if not application.accepted_by:
+                            application.accepted_by = request.user
+                            application.save()
+                            create_membership(application.applicant)
+
+                    # set privacy as false
+                    community.is_private = False
+                    community.save()
+                    print 'done'
+
+
+                # user_membership.is_moderator=UPForm.cleaned_data['permissions']
+                # user_membership.save()
+
         # in all the above cases, return to same page
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/home/'))
 
     else:
         UPForm = UserPermissionForm()
         USForm = UserSearchForm()
-
+        CDForm = CommunityDescriptionForm()
+        CPForm = CommunityPrivacyForm()
 
     return render(request, 'community.html', {
         'mod_communities': mod_communities,
@@ -247,6 +301,8 @@ def community(request, community_tag):
 
         'UPForm' : UPForm,
         'USForm' : USForm,
+        'CDForm' : CDForm,
+        'CPForm' : CPForm,
 
         'extendTemplate': extendTemplate
     })

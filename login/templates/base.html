@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
 <meta charset="utf-8">
 
 {% load static %}
 
-<link rel="stylesheet" href="{% static "/bootstrap/css/bootstrap.css" %}">
-<link rel="stylesheet" href="{% static 'style.css' %}">
+
     <head>
         <title>{% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="{% static "/bootstrap/css/bootstrap.css" %}">
+        <link rel="stylesheet" href="{% static 'style.css' %}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="{% static "/bootstrap/js/bootstrap.min.js" %}"></script>
     </head>
 
     <body>
@@ -16,7 +18,6 @@
     </body>
 
     <footer>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <script src="{% static "/bootstrap/js/bootstrap.min.js" %}"></script>
+
     </footer>
 </html>

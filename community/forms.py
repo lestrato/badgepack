@@ -28,3 +28,36 @@ class UserSearchForm(forms.Form):
             return self.cleaned_data['username']
         except User.DoesNotExist:
             raise forms.ValidationError(_("The username does not exist. Please try another one."))
+
+class CommunityPrivacyForm(forms.Form):
+    CHOICES= (
+    (True, 'True'),
+    (False, 'False'),
+    )
+    privacy = forms.CharField(
+        widget=forms.Select(
+            choices=CHOICES,
+            attrs={
+                "id":"privacyEditor",
+                "style":"display: none;",
+                "class":"form-control input-sm",
+                }
+        )
+    )
+
+
+class CommunityDescriptionForm(forms.Form):
+    description = forms.CharField(
+        widget=forms.Textarea(
+            # for some reason, adding classes in the state attrs=dict() runs back a syntax error
+            attrs={
+                "id":"descriptionEditor",
+                "style":"display: none; resize: vertical; ",
+                "class":"form-control",
+                }
+        )
+    )
+
+    def clean_description(self):
+        description = self.cleaned_data.get("description")
+        return description

@@ -46,9 +46,9 @@
                 {% comment "Badge List" %}
                     <!-- Display badge list -->
                     <ul class="badge-list">
-                        <!-- 
+                        <!--
                             For each badge in the community, create a new badge.html instance (wrapped in <li>).
-                            Variable names used here are rudimentary; change them as needed. 
+                            Variable names used here are rudimentary; change them as needed.
                             Refer to login/badge_list_sample.html for an example. :)
 
                             Variables
@@ -57,7 +57,7 @@
                             name:     name of the badge
                             desc:     badge description
                             f_left:   left side of the footer (e.g. date created)
-                            f_right:  right side of the footer (e.g. progress %) 
+                            f_right:  right side of the footer (e.g. progress %)
                          -->
                         <li>{% include "badge.html" with image=badge.img name=badge.name desc=badge.desc f_left=badge.date_created f_right=badge.progress %}</li>
                     </ul>
@@ -67,7 +67,7 @@
                 <div class="row">
                     <div class="col-sm-8">
                         <h3 style="margin-top: 0px;">Description</h3>
-                        {{ community.description }}
+                        {{ community.description|linebreaksbr }}
                     </div>
                     <hr class="visible-xs">
                     <div class="col-sm-4">

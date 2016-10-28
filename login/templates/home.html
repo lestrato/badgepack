@@ -95,18 +95,6 @@
     </div>
     <hr>
 
-    <!-- {% if mod_communities %}
-        <u>Moderator communities:</u>
-        <ul>
-            {% for community in mod_communities %}
-                <li><a href="{% url 'community' community.tag %}">{{ community.tag }}</a></li>
-            {% endfor %}
-        </ul>
-    {% endif %} -->
-
-    <!--
-    <u>Earner communities:</u> -->
-
     {% if earner_communities %}
         {% for community in earner_communities %}
             <h2><a href="{% url 'community' community.tag %}">{{ community.tag }}</a> <small style="margin-left: 10px; font-size: 45%;">0 earned, 0 in progress</small></h2>
