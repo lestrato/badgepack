@@ -1,0 +1,37 @@
+<ul class="badge-list">
+    <!-- 
+        Badge template: badge.html
+        Each badge is wrapped in <li> tags.
+
+        Variables
+        =========
+        image:    link to the badge image
+        name:     name of the badge
+        desc:     badge description
+        f_left:   left side of the footer (e.g. date created/received)
+        f_right:  right side of the footer (e.g. progress %) 
+
+        Call with empty variable fields:
+        include "badge.html" with image= name= desc= f_left= f_right=
+
+        Example (with made-up variable names, hehe):
+        include "badge.html" with image=badge.img name=badge.name desc=badge.desc f_left=badge.date_created f_right=badge.progress
+    -->
+
+    <!-- Sample usage (with strings instead of variables): -->
+    <li>{% include "badge.html" with image="http://cdn.bulbagarden.net/upload/d/dd/Boulder_Badge.png" name="Boulder Badge" desc="..." f_left="Created January 1, 2015" f_right="" %}</li>
+
+    <li>{% include "badge.html" with image="http://cdn.bulbagarden.net/upload/9/9c/Cascade_Badge.png" name="Cascade Badge" desc="..." f_left="Created January 15, 2015" f_right="" %}</li>
+
+    <li>{% include "badge.html" with image="http://cdn.bulbagarden.net/upload/a/a6/Thunder_Badge.png" name="Thunder Badge" desc="..." f_left="Created January 30, 2015" f_right="" %}</li>
+
+    <li>{% include "badge.html" with image="http://vignette2.wikia.nocookie.net/pokemon/images/b/b5/Rainbow_Badge.png/revision/latest?cb=20141009005938" name="Rainbow Badge" desc="Best department store." f_left="Created February 1, 2015" f_right="" %}</li>
+
+    <li>{% include "badge.html" with image="http://cdn.bulbagarden.net/upload/7/7d/Soul_Badge.png" name="Soul Badge" desc="..." f_left="Created February 14, 2015" f_right="" %}</li>
+
+    <li>{% include "badge.html" with image="http://cdn.bulbagarden.net/upload/6/6b/Marsh_Badge.png" name="Marsh Badge" desc="..." f_left="Created October 31, 2015" f_right="" %}</li>
+
+    <li>{% include "badge.html" with image="http://cdn.bulbagarden.net/upload/1/12/Volcano_Badge.png" name="Volcano Badge" desc="..." f_left="Created August 2, 2016" f_right="" %}</li>
+
+    <li>{% include "badge.html" with image="http://cdn.bulbagarden.net/upload/7/78/Earth_Badge.png" name="Earth Badge" desc="..." f_left="Created October 25, 2016" f_right="" %}</li>
+</ul>
