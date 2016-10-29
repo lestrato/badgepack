@@ -53,6 +53,7 @@ class Invitation(AbstractRequest):
         related_name='invitation_recipient')
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
         related_name='invitation_sender')
+    to_be_moderator = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'invitation'

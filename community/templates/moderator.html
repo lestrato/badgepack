@@ -1,4 +1,3 @@
-{% load widget_tweaks %}
 <div class="container" style="padding-top: 70px;">
     <div class="row">
         <div class="col-xs-6 col-sm-8">
@@ -47,7 +46,39 @@
     <div class="container">
         <div class="tab-content">
             <div id="viewBadges" class="tab-pane fade in active">
-                <h3 style="margin-top: 0px;">There are no badges yet...</h3>
+
+                <!-- Button HTML (to Trigger Modal) -->
+                <a href="#addBadge" role="button" class="btn btn-large btn-primary" data-toggle="modal">Create a New Badge</a>
+
+                <!-- Modal HTML -->
+                <div id="addBadge" class="modal fade">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h3 class="modal-title">New Badge</h3>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-xs-8">
+                                        <h4>Badge Name</h4>
+                                        <input class="form-control input-sm"></input>
+                                        <h4>Badge Description</h4>
+                                        <textarea class="form-control"></textarea>
+                                    </div>
+                                    <div class="col-xs-4">
+                                      <input class="hidden" type="file" style="margin-left:20%;" placeholder="Picture" id="badgeImageUpload"></input>
+                                      <img class="img-thumbnail" id="badgeImage" style="width:150px;height:150px"></img>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Add Badge</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {% comment "Badge List" %}
                     <!-- Display badge list -->
                     <ul class="badge-list">
@@ -103,7 +134,7 @@
                         <form method='POST'>{% csrf_token %}
                             {{ CPForm.privacy }}
                             <div class="row-fluid">
-                                <button type="submit" id="savePrivacy" class="btn btn-sm btn-success" style="display: none; margin-top: 10px;">
+                                <button type="submit" name='changePrivacySubmit' id="savePrivacy" class="btn btn-sm btn-success" style="display: none; margin-top: 10px;">
                                     Save
                                 </button>
                             </div>
@@ -187,10 +218,10 @@
                                                                     <div class="modal-body">
                                                                         <h4>Permissions</h4>
 
-                                                                        {{ UPForm.permissions|add_class:"form-control" }}
+                                                                        {{ UPForm.permissions }}
 
                                                                         {% if member.user.username == username %}
-                                                                        <br>
+                                                                            <hr>
                                                                             <div class="alert alert-warning">
                                                                                 <strong>Warning!</strong><br/>Setting your own permissions to 'earner' will revoke
                                                                                 your moderator privileges.
@@ -221,7 +252,7 @@
                                   <tr>
                                       <th>Recipient</th>
                                       <th>Email</th>
-                                      <th>Permissions</th>
+                                      <th>On-Join Permissions</th>
                                       <th>Created On</th>
                                       <th>Sender</th>
                                       <th>Status</th>
@@ -233,20 +264,57 @@
                                       <tr>
                                           <td>{{ invite.recipient }}</td>
                                           <td>{{ invite.recipient.email }}</td>
-                                          <td></td>
+                                          <td>
+                                              {% if invite.to_be_moderator %}
+                                                  moderator
+                                              {% else %}
+                                                  earner
+                                              {% endif %}
+                                          </td>
                                           <td>{{ invite.created_on }}</td>
                                           <td>{{ invite.sender }}</td>
                                           {% if invite.recipient in invite.community.members.all %}
-                                              <td>accepted</td>
+                                              <td>joined</td>
                                               <td></td>
                                           {% else %}
                                               <td>pending</td>
                                               <td>
-                                                  <form action='' method='POST'>{% csrf_token %}
-                                                      <button type="submit" class="btn btn-xs btn-default" value="{{ invite.recipient.id }}" name="revokeInvite">
-                                                          <span class="glyphicon glyphicon-trash"></span>
-                                                      </button>
-                                                  </form>
+                                                  <div class="row-fluid">
+                                                      <div class="col-xs-1" style="padding-left: 0px;">
+                                                          <button class="btn btn-xs btn-default" href="#changeSettings{{ invite.recipient.id }}" data-toggle="modal">
+                                                              <span class="glyphicon glyphicon-cog"></span>
+                                                          </button>
+                                                          <form action="" method="post">{% csrf_token %}
+                                                              <div id="changeSettings{{ invite.recipient.id }}" class="modal fade">
+                                                                      <div class="modal-dialog">
+                                                                          <div class="modal-content">
+                                                                              <div class="modal-header">
+                                                                                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                                                  <h3 class="modal-title">Set {{ invite.recipient }}'s settings for join-time</h3>
+                                                                              </div>
+                                                                              <div class="modal-body">
+                                                                                  <h4>Permissions</h4>
+
+                                                                                  {{ UPForm.permissions }}
+
+                                                                              </div>
+                                                                              <div class="modal-footer">
+                                                                                  <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                                                                  <input type="hidden" value="{{ invite.recipient.id }}" name="invited">
+                                                                                  <input type="submit" class="btn btn-primary" name="invitedPermissionSubmit" value="Save"></input>
+                                                                              </div>
+                                                                          </div>
+                                                                      </div>
+                                                                  </div>
+
+                                                              </form>
+                                                          </div>
+                                                      <div class="col-xs-1" style="padding-right: 0px;">
+                                                          <button type="submit" class="btn btn-xs btn-default" value="{{ invite.recipient.id }}" name="revokeInvite">
+                                                              <span class="glyphicon glyphicon-trash"></span>
+                                                          </button>
+                                                      </div>
+                                                  </div>
                                               </td>
                                           {% endif %}
                                       </tr>
@@ -269,10 +337,10 @@
                                                 <div id="error_div"></div>
                                                 <form method="POST" id="addUser">{% csrf_token %}
                                                     <div class="input-group">
-                                                        {{ USForm.username|add_class:"form-control" }}
+                                                        {{ USForm.username }}
                                                         <!-- <input id="user-name" type="text" class="form-control" placeholder="Add user&hellip;"> -->
                                                         <span class="input-group-btn">
-                                                            <button type="submit" class="btn btn-default">
+                                                            <button type="submit" name='inviteUsersSubmit' class="btn btn-default">
                                                                 <span class="glyphicon glyphicon-plus"></span>
                                                             </button>
                                                         </span>
@@ -446,4 +514,22 @@ $(document).ready(function() {
     $('#invitesTable').DataTable();
     $('#applicationsTable').DataTable();
 } );
+</script>
+
+<script>
+    $('#badgeImage').click(function(){
+        $('#badgeImageUpload').trigger('click');
+    });
+
+    document.getElementById("badgeImageUpload").onchange = function () {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            // get loaded data and render thumbnail.
+            document.getElementById("badgeImage").src = e.target.result;
+        };
+
+        // read the image file as a data URL.
+        reader.readAsDataURL(this.files[0]);
+    };
 </script>

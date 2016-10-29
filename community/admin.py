@@ -31,12 +31,13 @@ admin.site.register(Membership, MembershipAdmin)
 
 class InvitationAdmin(admin.ModelAdmin):
     readonly_fields = () #'created', 'name',
-    list_display = ('recipient', 'community', 'created_on', 'sender')
-    list_filter = ()
+    list_display = ('recipient', 'community', 'created_on', 'sender', 'to_be_moderator')
+    list_filter = ('to_be_moderator',)
     search_fields = ('sender', 'community', 'recipient')
     fieldsets = (
         ('Metadata', {'fields': ('created_on',)}),#', classes': ('collapse',)
-        ('Properties', {'fields': ('sender', 'community', 'recipient')}),
+        ('Properties', {'fields': ('sender', 'community', 'recipient',)}),
+        ('Permissions', {'fields': ('to_be_moderator',)}),
     )
     pass
 

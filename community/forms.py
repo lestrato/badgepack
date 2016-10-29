@@ -7,19 +7,27 @@ class UserPermissionForm(forms.Form):
     (False, 'earner'),
     (True, 'moderator'),
     )
-    permissions = forms.CharField(widget=forms.Select(choices=CHOICES))
+    permissions = forms.CharField(
+        widget=forms.Select(
+            choices=CHOICES,
+            attrs={
+                "class":"form-control",
+            }
+        )
+    )
 
 class UserSearchForm(forms.Form):
 
     username = forms.CharField(
         widget=forms.TextInput(
-            attrs=dict(
-                required=True,
-                id="user-name",
-                placeholder="Add user...",
-                autocomplete="off",
-            ),
-        ),
+            attrs={
+                'required':'True',
+                'id':"user-name",
+                'placeholder':"Add user...",
+                'autocomplete':"off",
+                "class":"form-control",
+            }
+        )
     )
 
     def clean_username(self):

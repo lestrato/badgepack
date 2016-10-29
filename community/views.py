@@ -27,16 +27,16 @@ def community(request, community_tag):
         accepted_application.accepted_by=accepted_by
         accepted_application.save()
 
-        create_membership(accepted_application.applicant)
+        create_membership(accepted_application.applicant, False)
 
     # create membership based on whether the user created it for someone
     # else or for him/herself
-    def create_membership(user_type):
+    def create_membership(user_type, permissions):
         new_membership = Membership(
             user=user_type,
             community=community,
             joined_on=timezone.now(),
-            is_moderator=False
+            is_moderator=permissions
         )
         new_membership.save()
 
@@ -81,11 +81,11 @@ def community(request, community_tag):
         community=community.id
     )
 
-    # all community invitations
+    # my community invitation
     invitation = Invitation.objects.filter(
         community=community.id,
         recipient=request.user.id,
-    )
+    ).first()
 
     # fetch proper template extension based on current permissions
     if moderator:
@@ -147,7 +147,7 @@ def community(request, community_tag):
                 user_membership.is_moderator=UPForm.cleaned_data['permissions']
                 user_membership.save()
 
-        if 'username' in request.POST:
+        if 'inviteUsersSubmit' in request.POST:
             USForm = UserSearchForm(request.POST)
             if USForm.is_valid():
                 # check if user is already in community
@@ -188,9 +188,15 @@ def community(request, community_tag):
             # check if community is private or not
             if community.is_private:
 
+                # refetch (potential) invitation
+                invitation = Invitation.objects.filter(
+                    community=community.id,
+                    recipient=request.user.id,
+                ).first()
+
                 # check if user has been invited to this community
-                if invitation.count() == 1:
-                    create_membership(request.user)
+                if invitation:
+                    create_membership(request.user, invitation.to_be_moderator)
 
                 # check if user already submitted an application to this community
                 if application:
@@ -215,7 +221,7 @@ def community(request, community_tag):
                     new_application.save()
             else:
                 # if not private community, create membership
-                create_membership(request.user)
+                create_membership(request.user, False)
 
         if 'revokeInvite' in request.POST:
             # get user's invite
@@ -237,7 +243,7 @@ def community(request, community_tag):
                 community.description = request.POST['description']
                 community.save()
 
-        if 'privacy' in request.POST:
+        if 'changePrivacySubmit' in request.POST:
             CPForm = CommunityPrivacyForm(request.POST)
             if CPForm.is_valid():
                 # refetch community
@@ -260,7 +266,7 @@ def community(request, community_tag):
                         if not application.accepted_by:
                             application.accepted_by = request.user
                             application.save()
-                            create_membership(application.applicant)
+                            create_membership(application.applicant, False)
 
                     # set privacy as false
                     community.is_private = False
@@ -270,6 +276,17 @@ def community(request, community_tag):
 
                 # user_membership.is_moderator=UPForm.cleaned_data['permissions']
                 # user_membership.save()
+
+        if 'invitedPermissionSubmit' in request.POST:
+            UPForm = UserPermissionForm(request.POST)
+            if UPForm.is_valid():
+                # refetch invitation
+                user_invite = get_object_or_404(
+                    Invitation,
+                    recipient=request.POST['invited']
+                )
+                user_invite.to_be_moderator=UPForm.cleaned_data['permissions']
+                user_invite.save()
 
         # in all the above cases, return to same page
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/home/'))
@@ -287,7 +304,7 @@ def community(request, community_tag):
         'username': request.user.username,
 
         'all_invitations': all_invitations,
-        'is_invited': invitation.count()==1,
+        'is_invited': invitation != None,
 
         'all_members' : all_memberships,
         'is_member' : membership.count()==1,

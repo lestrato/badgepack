@@ -15,8 +15,18 @@ def login_page(request):
     if request.user.is_authenticated():
         return  HttpResponseRedirect('/home/')
     else:
-        return login(request)
-
+        # return login(request, 'registration/login.html', MyAuthenticationForm)
+        if request.method == 'POST':
+            form = MyAuthenticationForm(request.POST)
+            if form.is_valid():
+                user = form.login(request)
+                if user:
+                    login(request, user)
+                    return HttpResponseRedirect('/home/')
+        else:
+            form = MyAuthenticationForm()
+        return render(request, 'registration/login.html', {'form': form })
+        
 @csrf_protect
 def register(request):
     if request.user.is_authenticated():

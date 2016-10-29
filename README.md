@@ -35,7 +35,7 @@ badgepack
 *from within badgepack/work directory*
 * `pip install Django==1.10.2`
 * `pip install mysql-python`
-* `pip install django-widget-tweaks`
+* `pip install Pillow`
 
 ### Customize local settings to your environment
 * cp work/settings.py.example work/settings.py
