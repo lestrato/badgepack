@@ -1,6 +1,6 @@
 # Badgepack Server
 
-*Version: 0.1*
+*Version: 0.3*
 
 ## How to get started on your local development environment.
 #### Prerequisites:
