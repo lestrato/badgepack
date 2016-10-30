@@ -25,8 +25,8 @@ def login_page(request):
                     return HttpResponseRedirect('/home/')
         else:
             form = MyAuthenticationForm()
-        return render(request, 'registration/login.html', {'form': form })
-        
+        return render(request, 'login/login.html', {'form': form })
+
 @csrf_protect
 def register(request):
     if request.user.is_authenticated():
@@ -44,14 +44,14 @@ def register(request):
         else:
             form = RegistrationForm()
 
-    return render(request, 'registration/register.html', {'form': form})
+    return render(request, 'login/register.html', {'form': form})
 
 def register_success(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/home/')
     else:
         return render_to_response(
-        'registration/success.html',
+        'login/success.html',
         )
 
 def logout_page(request):

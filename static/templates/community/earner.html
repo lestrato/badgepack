@@ -1,0 +1,60 @@
+{% extends "community/community_content.html" %}
+
+                <!-- <small style="margin-left: 10px; font-size: 45%;">
+                    0/0 earned
+                </small> -->
+<!--
+            <form>
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <input type="text" class="form-control input-sm" placeholder="Search badges&hellip;">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-search"></span></button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="checkbox-inline"><input type="checkbox" value="">Earned</label>
+                        <label class="checkbox-inline"><input type="checkbox" value="">In Progress</label>
+                    </div>
+                </div>
+            </form> -->
+
+
+
+{% block navpills %}
+    <ul class="nav nav-pills pull-right nav-stacked" style="text-align: right;">
+            <li class="active" style="text-align: right;">
+              <a data-toggle="tab" href="#viewBadges" style= "padding: 5px 7.5px;">View Badges</a>
+            </li>
+            <li class="">
+              <a data-toggle="tab" href="#aboutCommunity" style= "padding: 5px 7.5px;">About Community</a>
+            </li>
+    </ul>
+{% endblock %}
+
+{% block badges %}
+    <div id="viewBadges" class="tab-pane fade in active">
+        <h3 style="margin-top: 0px;">There are no badges yet...</h3>
+        {% comment "Badge List" %}
+            <!-- Display badge list -->
+            <ul class="badge-list">
+                <!--
+                    For each badge in the community, create a new badge.html instance (wrapped in <li>).
+                    Variable names used here are rudimentary; change them as needed.
+                    Refer to login/badge_list_sample.html for an example. :)
+
+                    Variables
+                    =========
+                    image:    link to the badge image
+                    name:     name of the badge
+                    desc:     badge description
+                    f_left:   left side of the footer (e.g. date created)
+                    f_right:  right side of the footer (e.g. progress %)
+                 -->
+                <li>{% include "badge.html" with image=badge.img name=badge.name desc=badge.desc f_left=badge.date_created f_right=badge.progress %}</li>
+            </ul>
+        {% endcomment %}
+    </div>
+{% endblock %}

@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 import os
 import sys
+from os.path import join
+from work.settings import BASE_DIR
+
+# TODO: There needs to be a better way than to edit sys.path for this...
+sys.path.insert(0, join(BASE_DIR, "apps"))
 
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "work.settings")

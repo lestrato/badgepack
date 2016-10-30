@@ -18,6 +18,8 @@ from django.contrib.auth import views as auth_views
 from django.contrib import admin
 from login.views import *
 from community.views import *
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     url(r'^$', login_page),
@@ -29,3 +31,5 @@ urlpatterns = [
     url(r'^home/$', home),
     url(r'^community/(?P<community_tag>[a-z||A-Z||0-9]+)$', community, name='community'),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -89,11 +89,11 @@ def community(request, community_tag):
 
     # fetch proper template extension based on current permissions
     if moderator:
-        extendTemplate = 'moderator.html'
+        extendTemplate = 'community/moderator.html'
     elif membership:
-        extendTemplate = 'earner.html'
+        extendTemplate = 'community/earner.html'
     else:
-        extendTemplate = 'visitor.html'
+        extendTemplate = 'community/visitor.html'
 
     UPForm = UserPermissionForm(request.POST or None)
     USForm = UserSearchForm(request.POST or None)
@@ -147,7 +147,7 @@ def community(request, community_tag):
                 user_membership.is_moderator=UPForm.cleaned_data['permissions']
                 user_membership.save()
 
-        if 'inviteUsersSubmit' in request.POST:
+        if 'inviteUserSubmit' in request.POST:
             USForm = UserSearchForm(request.POST)
             if USForm.is_valid():
                 # check if user is already in community
@@ -297,7 +297,7 @@ def community(request, community_tag):
         CDForm = CommunityDescriptionForm()
         CPForm = CommunityPrivacyForm()
 
-    return render(request, 'community.html', {
+    return render(request, 'community/community.html', {
         'mod_communities': mod_communities,
         'earner_communities': earner_communities,
 
