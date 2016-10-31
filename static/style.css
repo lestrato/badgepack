@@ -173,18 +173,26 @@ hr {
     -ms-transform: scale(1, 1); /* IE 9 */
     -webkit-transform: scale(1, 1); /* Safari */
     transform: scale(1, 1);
-    -webkit-transition: transform .25s ease;
-    -moz-transition: transform .25s ease;
-    transition: transform .25s ease;
+    -webkit-transition: transform .25s ease,
+                        filter .25s ease;
+    -moz-transition: transform .25s ease,
+                        filter .25s ease;
+    transition: transform .25s ease,
+                        filter .25s ease;
+    filter: grayscale(1);
 }
 
 .badge-overlay-content > ul > li:hover {
     -ms-transform: scale(1.25, 1.25); /* IE 9 */
     -webkit-transform: scale(1.25, 1.25); /* Safari */
     transform: scale(1.25, 1.25);
-    -webkit-transition: transform .25s ease;
-    -moz-transition: transform .25s ease;
-    transition: transform .25s ease;
+    -webkit-transition: transform .25s ease,
+                        filter .25s ease;
+    -moz-transition: transform .25s ease,
+                        filter .25s ease;
+    transition: transform .25s ease,
+                        filter .25s ease;
+    filter: none;
 }
 
 .badge-overlay-icon {
