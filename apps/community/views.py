@@ -14,6 +14,8 @@ from community.models import Community, Membership, Application, Invitation
 from community.forms import *
 from login.sharedviews import get_navbar_information
 from community.validators import validateUsername
+from badge.forms import *
+from badge.models import BadgeClass
 
 @login_required
 def community(request, community_tag):
@@ -76,6 +78,11 @@ def community(request, community_tag):
         is_moderator='True'
     )
 
+    # all community badgeclasses
+    all_badges = BadgeClass.objects.filter(
+        community=community.id
+    )
+
     # all community invitations
     all_invitations = Invitation.objects.filter(
         community=community.id
@@ -95,6 +102,7 @@ def community(request, community_tag):
     else:
         extendTemplate = 'community/visitor.html'
 
+    BCForm = BadgeCreationForm(request.POST or None)
     UPForm = UserPermissionForm(request.POST or None)
     USForm = UserSearchForm(request.POST or None)
     CDForm = CommunityDescriptionForm(request.POST or None)
@@ -273,9 +281,26 @@ def community(request, community_tag):
                     community.save()
                     print 'done'
 
-
-                # user_membership.is_moderator=UPForm.cleaned_data['permissions']
-                # user_membership.save()
+        if 'addBadgeSubmit' in request.POST:
+            print 'submit'
+            BCForm = BadgeCreationForm(request.POST, request.FILES)
+            if BCForm.is_valid():
+                print 'create badge'
+                # refetch community
+                community = get_object_or_404(
+                    Community,
+                    tag=community_tag
+                )
+                # create new invitation
+                new_badgeclass = BadgeClass(
+                    name=request.POST['name'],
+                    description=request.POST['description'],
+                    image=request.FILES['image'],
+                    community=community,
+                    creator=request.user,
+                    created_on=timezone.now(),
+                )
+                new_badgeclass.save()
 
         if 'invitedPermissionSubmit' in request.POST:
             UPForm = UserPermissionForm(request.POST)
@@ -292,6 +317,7 @@ def community(request, community_tag):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/home/'))
 
     else:
+        BCForm = BadgeCreationForm()
         UPForm = UserPermissionForm()
         USForm = UserSearchForm()
         CDForm = CommunityDescriptionForm()
@@ -309,6 +335,8 @@ def community(request, community_tag):
         'all_members' : all_memberships,
         'is_member' : membership.count()==1,
 
+        'all_badge_classes' : all_badges,
+
         'is_moderator' : moderator.count()==1,
 
         'community': community,
@@ -316,6 +344,7 @@ def community(request, community_tag):
         'has_applied': application,
         'applications': all_applications,
 
+        'BCForm' : BCForm,
         'UPForm' : UPForm,
         'USForm' : USForm,
         'CDForm' : CDForm,

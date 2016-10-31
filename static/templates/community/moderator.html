@@ -1,4 +1,5 @@
 {% extends "community/community_content.html" %}
+{% load staticfiles %}
 
                 <!-- <small style="margin-left: 10px; font-size: 45%;">
                     0 available
@@ -40,48 +41,6 @@
 {% block badges %}
     <div id="viewBadges" class="tab-pane fade in active">
 
-        <!-- Button HTML (to Trigger Modal) -->
-        <!-- <a href="#addBadge" role="button" class="btn btn-large btn-primary" data-toggle="modal">Create a New Badge</a> -->
-
-        <!-- Display badge list -->
-            <ul class="badge-list">
-              <li>
-                <div href="#addBadge" role="button" data-toggle="modal" class="new-badge-container">
-                  <div class="new-badge-outer">
-                    <div class="new-badge-title">
-                      Create a New Badge
-                    </div>
-                    <div class="new-badge-plus">
-                      +
-                    </div>
-                  </div>
-                </div>
-              </li>
-              <!-- Add additional badges as new <li> elements to this list! Example:
-              <li>
-                <table class="badge-container">
-                  <tr>
-                      <td rowspan="2" class="badge-image-container">
-                          <div class="badge-image">
-                              <img src="{{ image }}">
-                          </div>
-                      </td>
-                      <td class="badge-name">{{ name }}</td>
-                  </tr>
-                  <tr>
-                      <td class="badge-description">{{ desc }}</td>
-                  </tr>
-                  <tr>
-                      <td colspan="2" class="badge-footer">
-                          <div class="badge-footer-left">{{ f_left }}</div>
-                          <div class="badge-footer-right">{{ f_right }}</div>
-                      </td>
-                  </tr>
-                </table>
-              </li>
-               -->
-            </ul>
-
         <!-- Modal HTML -->
         <div id="addBadge" class="modal fade">
             <div class="modal-dialog">
@@ -90,30 +49,65 @@
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                         <h3 class="modal-title">New Badge</h3>
                     </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-xs-8">
-                                <h4>Badge Name</h4>
-                                <input class="form-control input-sm"></input>
-                                <h4>Badge Description</h4>
-                                <textarea class="form-control"></textarea>
-                            </div>
-                            <div class="col-xs-4">
-                              <input class="hidden" type="file" style="margin-left:20%;" placeholder="Picture" id="badgeImageUpload"></input>
-                              <img class="img-thumbnail" id="badgeImage" style="width:150px;height:150px"></img>
+                    <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-xs-8">
+                                    <h4>Badge Name</h4>
+                                    {{ BCForm.name }}
+                                    <h4>Badge Description</h4>
+                                    {{ BCForm.description }}
+                                </div>
+                                <div class="col-xs-4">
+                                  {{ BCForm.image }}
+                                  <img src="{% static "images/uploadimage.png" %}" class="img-thumbnail" id="badgeImage" style="width:150px;height:150px;cursor:pointer;"></img>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Add Badge</button>
-                    </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" name="addBadgeSubmit">Add Badge</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
+
+        <!-- Display badge list -->
+        <ul class="badge-list">
+            <li>
+              <!-- Button to bring up modal window -->
+                <div href="#addBadge" role="button" data-toggle="modal" class="new-badge-container">
+                    <div class="new-badge-outer">
+                        <div class="new-badge-title">
+                            Create a New Badge
+                        </div>
+                        <div class="new-badge-plus">
+                            +
+                        </div>
+                    </div>
+                </div>
+            </li>
+            {% for badge in all_badge_classes %}
+            <!--
+                For each badge in the community, create a new badge.html instance (wrapped in <li>).
+                Variable names used here are rudimentary; change them as needed.
+                Refer to login/badge_list_sample.html for an example. :)
+
+                Variables
+                =========
+                image:    link to the badge image
+                name:     name of the badge
+                desc:     badge description
+                f_left:   left side of the footer (e.g. date created)
+                f_right:  right side of the footer (e.g. progress %)
+             -->
+              <li>{% include "badge/badge.html" with image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None' %}</li>
+            {% endfor %}
+        </ul>
     </div>
 {% endblock %}
-
+{% include "badge.html" %}
 {% block members %}
     <div id="manageUsers" class="tab-pane fade in">
         <ul class="nav nav-tabs">
