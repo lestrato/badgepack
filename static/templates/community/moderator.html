@@ -1,4 +1,5 @@
 {% extends "community/community_content.html" %}
+{% load staticfiles %}
 
                 <!-- <small style="margin-left: 10px; font-size: 45%;">
                     0 available
@@ -51,49 +52,52 @@
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                         <h3 class="modal-title">New Badge</h3>
                     </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-xs-8">
-                                <h4>Badge Name</h4>
-                                <input class="form-control input-sm"></input>
-                                <h4>Badge Description</h4>
-                                <textarea class="form-control"></textarea>
-                            </div>
-                            <div class="col-xs-4">
-                              <input class="hidden" type="file" style="margin-left:20%;" placeholder="Picture" id="badgeImageUpload"></input>
-                              <img class="img-thumbnail" id="badgeImage" style="width:150px;height:150px"></img>
+                    <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-xs-8">
+                                    <h4>Badge Name</h4>
+                                    {{ BCForm.name }}
+                                    <h4>Badge Description</h4>
+                                    {{ BCForm.description }}
+                                </div>
+                                <div class="col-xs-4">
+                                  {{ BCForm.image }}
+                                  <img src="{% static "images/uploadimage.png" %}" class="img-thumbnail" id="badgeImage" style="width:150px;height:150px;cursor:pointer;"></img>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Add Badge</button>
-                    </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" name="addBadgeSubmit">Add Badge</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-        {% comment "Badge List" %}
-            <!-- Display badge list -->
-            <ul class="badge-list">
-                <!--
-                    For each badge in the community, create a new badge.html instance (wrapped in <li>).
-                    Variable names used here are rudimentary; change them as needed.
-                    Refer to login/badge_list_sample.html for an example. :)
 
-                    Variables
-                    =========
-                    image:    link to the badge image
-                    name:     name of the badge
-                    desc:     badge description
-                    f_left:   left side of the footer (e.g. date created)
-                    f_right:  right side of the footer (e.g. progress %)
-                 -->
-                <li>{% include "badge.html" with image=badge.img name=badge.name desc=badge.desc f_left=badge.date_created f_right=badge.progress %}</li>
-            </ul>
-        {% endcomment %}
+        <!-- Display badge list -->
+        <ul class="badge-list">
+            {% for badge in all_badge_classes %}
+            <!--
+                For each badge in the community, create a new badge.html instance (wrapped in <li>).
+                Variable names used here are rudimentary; change them as needed.
+                Refer to login/badge_list_sample.html for an example. :)
+
+                Variables
+                =========
+                image:    link to the badge image
+                name:     name of the badge
+                desc:     badge description
+                f_left:   left side of the footer (e.g. date created)
+                f_right:  right side of the footer (e.g. progress %)
+             -->
+              <li>{% include "badge/badge.html" with image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None' %}</li>
+            {% endfor %}
+        </ul>
     </div>
 {% endblock %}
-
+{% include "badge.html" %}
 {% block members %}
     <div id="manageUsers" class="tab-pane fade in">
         <ul class="nav nav-tabs">
