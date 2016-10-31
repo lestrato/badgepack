@@ -57,6 +57,7 @@ hr {
 .badge-list > li {
     display: inline-table;
     margin: 5px 2px 5px 2px;
+    vertical-align: top;
 }
 
 .badge-container {
@@ -120,4 +121,57 @@ hr {
 .badge-footer-right {
     text-align: right;
     float: right;
+}
+
+/* "Create a New Badge" button */
+.new-badge-container {
+    -webkit-box-shadow: inset 0px 0px 10px 2px rgba(0,0,0,0.2);
+    -moz-box-shadow: inset 0px 0px 10px 2px rgba(0,0,0,0.2);
+    box-shadow: inset 0px 0px 10px 2px rgba(0,0,0,0.2);
+    background-color: #fff;
+    width: 350px;
+    height: 200px;
+    border-spacing: 0px;
+    border-collapse: separate;
+    overflow: hidden;
+
+    -webkit-transition: background-color .5s ease,
+                        color .5s ease;
+    -moz-transition: background-color .5s ease,
+                        color .5s ease;
+    transition: background-color .5s ease,
+                        color .5s ease;
+}
+
+.new-badge-container:hover {
+    background-color: #1d2738;
+    color:#fff;
+
+    -webkit-transition: background-color .5s ease,
+                        color .5s ease;
+    -moz-transition: background-color .5s ease,
+                        color .5s ease;
+    transition: background-color .5s ease,
+                        color .5s ease;
+}
+
+.new-badge-outer {
+    position: relative;
+}
+
+.new-badge-title {
+    width: 100%;
+    position: absolute;
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+    top: 43px;
+}
+
+.new-badge-plus {
+    width: 100%;
+    position: absolute;
+    font-size: 100px;
+    text-align: center;
+    top: 25px;
 }

@@ -41,7 +41,46 @@
     <div id="viewBadges" class="tab-pane fade in active">
 
         <!-- Button HTML (to Trigger Modal) -->
-        <a href="#addBadge" role="button" class="btn btn-large btn-primary" data-toggle="modal">Create a New Badge</a>
+        <!-- <a href="#addBadge" role="button" class="btn btn-large btn-primary" data-toggle="modal">Create a New Badge</a> -->
+
+        <!-- Display badge list -->
+            <ul class="badge-list">
+              <li>
+                <div href="#addBadge" role="button" data-toggle="modal" class="new-badge-container">
+                  <div class="new-badge-outer">
+                    <div class="new-badge-title">
+                      Create a New Badge
+                    </div>
+                    <div class="new-badge-plus">
+                      +
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <!-- Add additional badges as new <li> elements to this list! Example:
+              <li>
+                <table class="badge-container">
+                  <tr>
+                      <td rowspan="2" class="badge-image-container">
+                          <div class="badge-image">
+                              <img src="{{ image }}">
+                          </div>
+                      </td>
+                      <td class="badge-name">{{ name }}</td>
+                  </tr>
+                  <tr>
+                      <td class="badge-description">{{ desc }}</td>
+                  </tr>
+                  <tr>
+                      <td colspan="2" class="badge-footer">
+                          <div class="badge-footer-left">{{ f_left }}</div>
+                          <div class="badge-footer-right">{{ f_right }}</div>
+                      </td>
+                  </tr>
+                </table>
+              </li>
+               -->
+            </ul>
 
         <!-- Modal HTML -->
         <div id="addBadge" class="modal fade">
@@ -72,25 +111,6 @@
                 </div>
             </div>
         </div>
-        {% comment "Badge List" %}
-            <!-- Display badge list -->
-            <ul class="badge-list">
-                <!--
-                    For each badge in the community, create a new badge.html instance (wrapped in <li>).
-                    Variable names used here are rudimentary; change them as needed.
-                    Refer to login/badge_list_sample.html for an example. :)
-
-                    Variables
-                    =========
-                    image:    link to the badge image
-                    name:     name of the badge
-                    desc:     badge description
-                    f_left:   left side of the footer (e.g. date created)
-                    f_right:  right side of the footer (e.g. progress %)
-                 -->
-                <li>{% include "badge.html" with image=badge.img name=badge.name desc=badge.desc f_left=badge.date_created f_right=badge.progress %}</li>
-            </ul>
-        {% endcomment %}
     </div>
 {% endblock %}
 
