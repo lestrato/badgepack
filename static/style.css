@@ -123,6 +123,72 @@ hr {
     float: right;
 }
 
+/* Badge hover */
+.badge-overlay {
+    opacity: 0;
+    z-index: 1;
+    position: absolute;
+    width: 350px;
+    height: 200px;
+    background-color: rgba(6, 9, 15, 0.8);
+    overflow: hidden;
+
+    -webkit-transition: opacity .3s ease;
+    -moz-transition: opacity .3s ease;
+    transition: opacity .3s ease;
+}
+
+.badge-overlay:hover {
+    opacity: 1;
+
+    -webkit-transition: opacity .3s ease;
+    -moz-transition: opacity .3s ease;
+    transition: opacity .3s ease;
+}
+
+.badge-overlay-content {
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    position: relative;
+    margin: auto;
+    padding-top: 63px;
+}
+
+.badge-overlay-content > ul {
+    list-style-type: none;
+    position: relative;
+    margin: auto;
+    width: 100%;
+}
+
+.badge-overlay-content > ul > li {
+    display: inline-table;
+    margin: 0 5px 0 5px;
+    width: 50px;
+
+    text-align: center;
+    overflow: hidden;
+}
+
+.badge-overlay-icon {
+    border-radius: 10px;
+    width: 50px;
+    height: 50px;
+    margin: auto;
+    background-color: #fff;
+}
+
+.badge-overlay-icon > img {
+    width: 100%;
+    height: 100%;
+}
+
+.badge-overlay-title {
+    margin-top: 2px;
+    font-size: 12px;
+}
+
 /* "Create a New Badge" button */
 .new-badge-container {
     -webkit-box-shadow: inset 0px 0px 10px 2px rgba(0,0,0,0.2);
