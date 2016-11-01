@@ -152,7 +152,7 @@ hr {
     color: #fff;
     position: relative;
     margin: auto;
-    padding-top: 63px;
+    padding-top: 66px;
 }
 
 .badge-overlay-content > ul {
@@ -174,12 +174,17 @@ hr {
     -webkit-transform: scale(1, 1); /* Safari */
     transform: scale(1, 1);
     -webkit-transition: transform .25s ease,
-                        filter .25s ease;
+                        fill .25s ease,
+                        color .25s ease;
     -moz-transition: transform .25s ease,
-                        filter .25s ease;
+                        fill .25s ease,
+                        color .25s ease;
     transition: transform .25s ease,
-                        filter .25s ease;
-    filter: grayscale(1);
+                        fill .25s ease,
+                        color .25s ease;
+
+    fill: #bbb;
+    color: #bbb;
 }
 
 .badge-overlay-content > ul > li:hover {
@@ -187,12 +192,38 @@ hr {
     -webkit-transform: scale(1.25, 1.25); /* Safari */
     transform: scale(1.25, 1.25);
     -webkit-transition: transform .25s ease,
-                        filter .25s ease;
+                        fill .25s ease,
+                        color .25s ease;
     -moz-transition: transform .25s ease,
-                        filter .25s ease;
+                        fill .25s ease,
+                        color .25s ease;
     transition: transform .25s ease,
-                        filter .25s ease;
-    filter: none;
+                        fill .25s ease,
+                        color .25s ease;
+}
+
+/* Edit */
+.badge-overlay-content > ul > li:hover:nth-child(1) {
+    fill: #51FF3D;
+    color: #51FF3D;
+}
+
+/* Set */
+.badge-overlay-content > ul > li:hover:nth-child(2) {
+    fill: #F6FF00;
+    color: #F6FF00;
+}
+
+/* Assign */
+.badge-overlay-content > ul > li:hover:nth-child(3) {
+    fill: #40F5FF;
+    color: #40F5FF;
+}
+
+/* Delete */
+.badge-overlay-content > ul > li:hover:nth-child(4) {
+    fill: #FF3D3D;
+    color: #FF3D3D;
 }
 
 .badge-overlay-icon {
@@ -200,12 +231,7 @@ hr {
     width: 50px;
     height: 50px;
     margin: auto;
-    background-color: #fff;
-}
-
-.badge-overlay-icon > img {
-    width: 100%;
-    height: 100%;
+    background-color: #000;
 }
 
 .badge-overlay-title {
