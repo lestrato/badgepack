@@ -3,11 +3,11 @@
 {% block navpills %}
     <form method="post" action="">{% csrf_token %}
         {% if has_applied %}
-            <button name="communityJoin" type="submit" class="btn btn-default pull-right" style="margin-top: 25px;">Cancel application</button>
+            <button name="communityJoin" type="submit" class="btn btn-default pull-right" style="margin-top: 25px;">Cancel Application</button>
         {% elif not community.is_private or is_invited %}
-            <button name="communityJoin" type="submit" class="btn btn-success pull-right" style="margin-top: 25px;">Join community</button>
+            <button name="communityJoin" type="submit" class="btn btn-success pull-right" style="margin-top: 25px;">Join Community</button>
         {% else %}
-            <button name="communityJoin" type="submit" class="btn btn-default pull-right" style="margin-top: 25px;">Apply to join</button>
+            <button name="communityJoin" type="submit" class="btn btn-default pull-right" style="margin-top: 25px;">Apply to Join</button>
         {% endif %}
     </form>
 {% endblock %}
