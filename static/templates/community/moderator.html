@@ -1,6 +1,6 @@
 {% extends "community/community_content.html" %}
 {% load staticfiles %}
-
+{% load index %}
                 <!-- <small style="margin-left: 10px; font-size: 45%;">
                     0 available
                 </small> -->
@@ -154,13 +154,54 @@
                                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                                         <h3 class="modal-title">Change {{ member.user }}'s badges</h3>
                                                     </div>
-                                                    <div class="modal-body">
-                                                        <h4>There are no available badges to assign or revoke...</h4>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary">Confirm</button>
-                                                    </div>
+                                                    <form method="post">{% csrf_token %}
+                                                        <div class="modal-body">
+                                                          {% if all_badge_classes.count > 0 %}
+                                                          <div class="table-responsive">
+                                                              <table class="table table-condensed table-striped table-hover">
+                                                                  <thead>
+                                                                      <tr>
+                                                                      <th>Badge image</th>
+                                                                      <th>Badge name</th>
+                                                                      <th>Status</th>
+                                                                      <th>Actions</th>
+                                                                      </tr>
+                                                                  </thead>
+                                                                  <tbody>
+                                                                      {{ UBAFormset.management_form }}
+                                                                      {% for badge in all_badge_classes %}
+                                                                          <tr>
+                                                                          <td style="vertical-align:middle;"><img class="img-thumbnail" src="{{ badge.image.url }}" style="width:40px; height:40px;"> </img></td>
+                                                                          <td style="vertical-align:middle;">{{ badge.name }}</td>
+                                                                          {% if member.user in badge.instances.all %}
+                                                                              <td style="vertical-align:middle;">
+                                                                                  Earned
+                                                                              </td>
+                                                                              <td></td>
+                                                                          {% else %}
+                                                                              <td style="vertical-align:middle;">Not earned</td>
+                                                                              <td style="vertical-align:middle;">
+                                                                                  {% with forloop.counter0 as currentIndex%}
+                                                                                      {% with UBAFormset|index:currentIndex as currentForm %}
+                                                                                          {{ currentForm.badge_assign }}
+                                                                                      {% endwith %}
+                                                                                  {% endwith %}
+                                                                              </td>
+                                                                          {% endif %}
+                                                                          </tr>
+                                                                      {% endfor %}
+                                                                  </tbody>
+                                                              </table>
+                                                          </div>
+                                                          {% else %}
+                                                          <h4>There are no available badges in this community...</h4>
+                                                          {% endif %}
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                                            <button name="assignBadgesSubmit" value="{{ member.id }}" type="submit" class="btn btn-primary">Confirm</button>
+                                                        </div>
+                                                    </form>
                                                 </div>
                                             </div>
                                         </div>

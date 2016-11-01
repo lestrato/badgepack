@@ -1,21 +1,23 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_protect
-from django.shortcuts import render_to_response
-from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response, get_object_or_404, render
 from django.template import RequestContext
-from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
-from django.http import HttpResponse
-from django.http import JsonResponse
 from django.utils.html import escape
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from django.forms.formsets import formset_factory
 
-from community.models import Community, Membership, Application, Invitation
 from community.forms import *
-from login.sharedviews import get_navbar_information
+from community.models import Community, Membership, Application, Invitation
 from community.validators import validateUsername
+
+from login.sharedviews import get_navbar_information
+
 from badge.forms import *
-from badge.models import BadgeClass
+from badge.models import BadgeClass, BadgeInstance
+
+
 
 @login_required
 def community(request, community_tag):
@@ -102,11 +104,13 @@ def community(request, community_tag):
     else:
         extendTemplate = 'community/visitor.html'
 
-    BCForm = BadgeCreationForm(request.POST or None)
-    UPForm = UserPermissionForm(request.POST or None)
-    USForm = UserSearchForm(request.POST or None)
-    CDForm = CommunityDescriptionForm(request.POST or None)
-    CPForm = CommunityPrivacyForm(request.POST or None)
+    # BCForm = BadgeCreationForm(request.POST or None)
+    # UPForm = UserPermissionForm(request.POST or None)
+    # USForm = UserSearchForm(request.POST or None)
+    # CDForm = CommunityDescriptionForm(request.POST or None)
+    # CPForm = CommunityPrivacyForm(request.POST or None)
+    # UBAForm = UserBadgeAssignForm(request.POST or None)
+    UBAFormset = formset_factory(UserBadgeAssignForm, extra=all_badges.count())
 
     if request.method == 'POST':
 
@@ -313,6 +317,64 @@ def community(request, community_tag):
                 user_invite.to_be_moderator=UPForm.cleaned_data['permissions']
                 user_invite.save()
 
+        if 'assignBadgesSubmit' in request.POST:
+            # print 'done'
+            uba_formset = UBAFormset(request.POST)
+            if uba_formset.is_valid():
+                # fetch community membership
+                user_membership = get_object_or_404(
+                    Membership,
+                    id=request.POST['assignBadgesSubmit']
+                )
+                # refetch community badge classes
+                all_badges = BadgeClass.objects.filter(
+                    community=community.id
+                )
+
+                # TODO: there should be a better way to couple the form number and the
+                #       badge class it represents
+                form_counter = 0
+                for badgeclass in all_badges:
+                    if uba_formset[form_counter].cleaned_data.get('badge_assign') == 'gift':
+                        badgeinstance = BadgeInstance.objects.filter(
+                            badge_class=badgeclass,
+                            earner=user_membership.id,
+                        )
+                        if badgeinstance.count() == 0:
+                            # create new badge instance
+                            new_badgeinstance = BadgeInstance(
+                                badge_class=badgeclass,
+                                earner=user_membership.user,
+                                recieved_on=timezone.now(),
+                                assigned_by=request.user,
+                            )
+                            new_badgeinstance.save()
+                    form_counter += 1
+
+                # for uba_form in uba_formset:
+                #     # check if the user has the badge instance already
+                #     badgeinstance = BadgeInstance.objects.filter(
+                #         badge_class=all_badges.filter(id=form_counter),
+                #         earner=request.POST['username'],
+                #     )
+                #
+                #     if badgeinstance.count() == 0:
+                #         # create new badge instance
+                #         new_badgeinstance = BadgeInstance(
+                #             badge_class=all_badges.get(id=form_counter),
+                #             earner=request.POST['username'],
+                #             recieved_on=timezone.now(),
+                #             assigned_by=request.user,
+                #         )
+                #         new_badgeinstance.save()
+
+                    # form_counter += 1
+                    # fetch badge class
+            # uba_formset = UBAFormset(request.POST)
+            #
+            # if uba_formset.is_valid():
+            #     print 'okay'
+
         # in all the above cases, return to same page
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/home/'))
 
@@ -349,6 +411,7 @@ def community(request, community_tag):
         'USForm' : USForm,
         'CDForm' : CDForm,
         'CPForm' : CPForm,
+        'UBAFormset' : UBAFormset,
 
         'extendTemplate': extendTemplate
     })

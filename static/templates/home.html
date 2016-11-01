@@ -5,6 +5,7 @@
 
 {% include "nav.html" %}
 
+{% load instances %}
 <style>
 @media (min-width: 768px ) {
     .row {
@@ -27,26 +28,26 @@
 
     <div class="row">
         <div class="col-sm-8">
-            <h1>My Badges<small style="margin-left: 10px; font-size: 45%;">0 earned, 0 in progress</small></h1>
+            <h1>My Badges<small style="margin-left: 10px; font-size: 45%;">0 earned</small></h1>
         </div>
         <div class="col-sm-4 bottom-align-text">
-            <button class="btn btn-primary" style="margin-bottom: 10px;" data-toggle="modal" href="#communityInvites">Community Invites</button>
+            <button class="btn btn-primary" style="margin-bottom: 10px;" data-toggle="modal" href="#communityInvites">Community invites</button>
 
             <div id="communityInvites" class="modal fade">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h3 class="modal-title">My Community Invitations</h3>
+                            <h3 class="modal-title">My community invitations</h3>
                         </div>
                         <div class="modal-body">
                             {% if invitations %}
                             <table class="table table-striped table-compressed table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Community Name</th>
-                                        <th>Invited By</th>
-                                        <th>Date Invited</th>
+                                        <th>Community name</th>
+                                        <th>Invited by</th>
+                                        <th>Date invited</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -95,18 +96,50 @@
     </div>
     <hr>
 
+    <!-- {% for community in earner_communities %}
+      {% for badge in community.badgeclass_set.all %}
+        {{ badge }}
+
+      {% endfor %}
+    {% endfor %} -->
+
     {% if earner_communities %}
+
         {% for community in earner_communities %}
-            <h2><a href="{% url 'community' community.tag %}">{{ community.tag }}</a> <small style="margin-left: 10px; font-size: 45%;">0 earned, 0 in progress</small></h2>
-                <div class="container">
-                    <h4>This community does not have any badges yet.</h4>
-                </div>
+        {% with community|instances:user as my_instances %}
+
+            <h2><a href="{% url 'community' community.tag %}">{{ community.tag }}</a>
+                <small style="margin-left: 10px; font-size: 45%;">
+                  {{ my_instances.count }}/{{ community.get_badge_classes.count }} earned
+
+                </small>
+            </h2>
+            <div class="container">
+                <!-- Display badge list -->
+                {% if community.get_badge_classes.count > 0 %}
+                <ul class="badge-list">
+                    {% for badge_instance in my_instances.all %}
+                        {% with badge_instance.badge_class as badge %}
+                        <!--  check if class has an isntance for this user -->
+                        <li>
+                          {% include "badge/badge.html" with image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None' %}
+                        </li>
+                        {% endwith %}
+                    {% endfor %}
+                </ul>
+                {% else %}
+                    <h4>This community has no available badges...</h4>
+                {% endif %}
+            </div>
             <hr>
+        {% endwith %}
         {% endfor %}
+
     {% else %}
         <div class="container">
             <h2><small>You are not in any communities yet.</small></h2>
         </div>
+
     {% endif %}
 
 </div>

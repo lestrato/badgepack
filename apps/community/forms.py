@@ -2,6 +2,24 @@ from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
+class UserBadgeAssignForm(forms.Form):
+    CHOICES= (
+    ('nothing', 'Nothing'),
+    ('gift', 'Gift'),
+    )
+    badge_assign = forms.CharField(
+        widget=forms.Select(
+            choices=CHOICES,
+            attrs={
+                "class":"form-control",
+            }
+        )
+    )
+
+    def clean_badge_assign(self):
+        badge_assign = self.cleaned_data.get("badge_assign")
+        return badge_assign
+
 class UserPermissionForm(forms.Form):
     CHOICES= (
     (False, 'earner'),
@@ -15,6 +33,10 @@ class UserPermissionForm(forms.Form):
             }
         )
     )
+
+    def clean_permissions(self):
+        permissions = self.cleaned_data.get("permissions")
+        return permissions
 
 class UserSearchForm(forms.Form):
 
@@ -53,6 +75,9 @@ class CommunityPrivacyForm(forms.Form):
         )
     )
 
+    def clean_privacy(self):
+        privacy = self.cleaned_data.get("privacy")
+        return privacy
 
 class CommunityDescriptionForm(forms.Form):
     description = forms.CharField(

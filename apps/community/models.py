@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from datetime import datetime
 from django.conf import settings
+from django.apps import apps
 
 class Community(models.Model):
     name = models.CharField(max_length=20, unique=True)
@@ -16,6 +17,22 @@ class Community(models.Model):
         related_name='community_invitations', through_fields=('community', 'recipient'))
     applications = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Application',
         related_name='community_applications', through_fields=('community', 'applicant'))
+
+    def get_badge_classes(self):
+        bc = apps.get_model('badge', 'BadgeClass')
+        badge_classes = bc.objects.filter(
+            community=self,
+        )
+        return badge_classes
+    # 
+    # def get_badge_instances(self, user):
+    #     bi = apps.get_model('badge', 'BadgeInstance')
+    #     badge_instances = bi.objects.filter(
+    #         badge_class__community=self,
+    #
+    #     )
+
+
 
     class Meta:
         verbose_name = 'community'
