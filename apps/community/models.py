@@ -4,6 +4,12 @@ from django.db import models
 from datetime import datetime
 from django.conf import settings
 from django.apps import apps
+from django.utils import timezone
+
+# class CommunityManager(models.Manager):
+#     def edit_description(self, description):
+#         self.description=description
+#         return self
 
 class Community(models.Model):
     name = models.CharField(max_length=20, unique=True)
@@ -17,6 +23,7 @@ class Community(models.Model):
         related_name='community_invitations', through_fields=('community', 'recipient'))
     applications = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Application',
         related_name='community_applications', through_fields=('community', 'applicant'))
+    # objects = CommunityManager()
 
     def get_badge_classes(self):
         bc = apps.get_model('badge', 'BadgeClass')
@@ -24,15 +31,14 @@ class Community(models.Model):
             community=self,
         )
         return badge_classes
-    # 
-    # def get_badge_instances(self, user):
-    #     bi = apps.get_model('badge', 'BadgeInstance')
-    #     badge_instances = bi.objects.filter(
-    #         badge_class__community=self,
-    #
-    #     )
 
+    def edit_description(self, description):
+        self.description=description
+        return self
 
+    def change_privacy(self, is_private):
+        self.is_private=is_private
+        return self
 
     class Meta:
         verbose_name = 'community'
@@ -48,6 +54,10 @@ class Membership(models.Model):
     joined_on = models.DateField(default=datetime.now)
     is_moderator = models.BooleanField(default=False)
 
+    def edit_permissions(self, permissions):
+        self.is_moderator=permissions
+        return self
+
     class Meta:
         verbose_name = 'membership'
         verbose_name_plural = 'memberships'
@@ -56,7 +66,7 @@ class Membership(models.Model):
     def __str__(self):
         return self.user.username
 
-## COMMUNITY REQUESTS (INVITES AND APPLICATIONS) ##
+''' COMMUNITY REQUESTS (INVITES AND APPLICATIONS) '''
 class AbstractRequest(models.Model):
     community = models.ForeignKey(Community, on_delete=models.CASCADE)
     created_on = models.DateField(default=datetime.now)
@@ -72,6 +82,10 @@ class Invitation(AbstractRequest):
         related_name='invitation_sender')
     to_be_moderator = models.BooleanField(default=False)
 
+    def edit_permissions(self, permissions):
+        self.to_be_moderator=permissions
+        return self
+
     class Meta:
         verbose_name = 'invitation'
         verbose_name_plural = 'invitations'
@@ -85,6 +99,10 @@ class Application(AbstractRequest):
         related_name='application_accepted_by', blank=True, null=True)
     applicant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
         related_name='application_applicant')
+
+    def accept(self, accepted_by):
+        self.accepted_by=accepted_by
+        return self
 
     class Meta:
         verbose_name = 'application'

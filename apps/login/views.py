@@ -7,7 +7,7 @@ from django.template import RequestContext
 from django.shortcuts import render
 from django.contrib.auth.views import login
 
-from login.sharedviews import get_navbar_information
+from login.fetches import get_navbar_information
 from login.forms import *
 from community.models import Invitation
 from badge.models import BadgeClass, BadgeInstance

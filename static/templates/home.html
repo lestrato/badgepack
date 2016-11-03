@@ -117,16 +117,16 @@
             <div class="container">
                 <!-- Display badge list -->
                 {% if community.get_badge_classes.count > 0 %}
-                <ul class="badge-list">
-                    {% for badge_instance in my_instances.all %}
-                        {% with badge_instance.badge_class as badge %}
-                        <!--  check if class has an isntance for this user -->
-                        <li>
-                          {% include "badge/badge.html" with image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None' %}
-                        </li>
-                        {% endwith %}
-                    {% endfor %}
-                </ul>
+                    <ul class="badge-list">
+                        {% for badge_instance in my_instances.all %}
+                            {% with badge_instance.badge_class as badge %}
+                            <!--  check if class has an isntance for this user -->
+                            <li>
+                              {% include "badge/badge.html" with image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None' %}
+                            </li>
+                            {% endwith %}
+                        {% endfor %}
+                    </ul>
                 {% else %}
                     <h4>This community has no available badges...</h4>
                 {% endif %}

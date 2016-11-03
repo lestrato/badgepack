@@ -20,6 +20,14 @@ class UserBadgeAssignForm(forms.Form):
         badge_assign = self.cleaned_data.get("badge_assign")
         return badge_assign
 
+class OneBadgeAssignForm(forms.Form):
+    badge_assign = forms.BooleanField(
+        widget=forms.CheckboxInput(
+            attrs={
+            }
+        )
+    )
+
 class UserPermissionForm(forms.Form):
     CHOICES= (
     (False, 'earner'),

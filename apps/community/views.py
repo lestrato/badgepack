@@ -1,187 +1,171 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_protect
-from django.shortcuts import render_to_response, get_object_or_404, render
-from django.template import RequestContext
+from django.shortcuts import render
 from django.utils import timezone
 from django.utils.html import escape
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.forms.formsets import formset_factory
 
 from community.forms import *
-from community.models import Community, Membership, Application, Invitation
+from community.models import *
 from community.validators import validateUsername
+from community.fetches import *
 
-from login.sharedviews import get_navbar_information
-
+from badge.fetches import *
 from badge.forms import *
-from badge.models import BadgeClass, BadgeInstance
 
+from login.fetches import *
 
 
 @login_required
 def community(request, community_tag):
-
-    def accept_application(applicant, accepted_by):
-        accepted_application = get_object_or_404(
-            all_applications,
-            applicant=applicant
-        )
-
-        accepted_application.accepted_by=accepted_by
-        accepted_application.save()
-
-        create_membership(accepted_application.applicant, False)
-
-    # create membership based on whether the user created it for someone
-    # else or for him/herself
-    def create_membership(user_type, permissions):
-        new_membership = Membership(
-            user=user_type,
-            community=community,
-            joined_on=timezone.now(),
-            is_moderator=permissions
-        )
-        new_membership.save()
-
+    ''' FETCH INFORMATION '''
     # get information for navbar
-    mod_communities, earner_communities = get_navbar_information(request)
-
+    mod_communities, earner_communities = get_navbar_information(
+        request=request,
+    )
     # this commounity, based on tag
-    community = get_object_or_404(
-        Community,
-        tag=community_tag
+    community = community_object(
+        community_tag=community_tag,
     )
-
-    # all community applications
-    all_applications = Application.objects.filter(
-        community=community.id,
-    )
-
-    # user's application
-    application = Application.objects.filter(
-        community=community.id,
-        applicant=request.user.id
-    )
-
-    # all community memberships
-    all_memberships = Membership.objects.filter(
-        community=community.id
-    )
-
     # user's membership
-    membership = Membership.objects.filter(
-        community_id=community.id,
-        user_id=request.user.id,
+    membership = u_membership(
+        community=community,
+        user=request.user,
     )
-
-    # user's moderator status
-    moderator = membership.filter(
-        is_moderator='True'
+    # all community memberships
+    all_memberships = all_community_memberships(
+        community=community,
     )
-
-    # all community badgeclasses
-    all_badges = BadgeClass.objects.filter(
-        community=community.id
+    # user's applications
+    application = u_application(
+        community=community,
+        user=request.user,
     )
-
+    # all community applications
+    all_applications = all_community_applications(
+        community=community,
+    )
+    # user's invitation
+    invitation = u_invitation(
+        community=community,
+        user=request.user,
+    )
     # all community invitations
-    all_invitations = Invitation.objects.filter(
-        community=community.id
+    all_invitations = all_community_invitations(
+        community=community,
+    )
+    # all community badge classes
+    all_badges = all_community_badge_classes(
+        community=community
     )
 
-    # my community invitation
-    invitation = Invitation.objects.filter(
-        community=community.id,
-        recipient=request.user.id,
-    ).first()
-
-    # fetch proper template extension based on current permissions
-    if moderator:
-        extendTemplate = 'community/moderator.html'
-    elif membership:
-        extendTemplate = 'community/earner.html'
-    else:
+    # use proper template extension based on current permissions
+    if not membership:
+        is_moderator = False
         extendTemplate = 'community/visitor.html'
+    elif membership.is_moderator:
+        is_moderator = True
+        extendTemplate = 'community/moderator.html'
+    else:
+        is_moderator = False
+        extendTemplate = 'community/earner.html'
 
-    # BCForm = BadgeCreationForm(request.POST or None)
-    # UPForm = UserPermissionForm(request.POST or None)
-    # USForm = UserSearchForm(request.POST or None)
-    # CDForm = CommunityDescriptionForm(request.POST or None)
-    # CPForm = CommunityPrivacyForm(request.POST or None)
-    # UBAForm = UserBadgeAssignForm(request.POST or None)
-    UBAFormset = formset_factory(UserBadgeAssignForm, extra=all_badges.count())
+
+    ''' FORMSET CREATION '''
+    UBAFormset = formset_factory(
+        UserBadgeAssignForm,
+        extra=all_badges.count(),
+    )
+    OBAFormset = formset_factory(
+        OneBadgeAssignForm,
+        extra=all_memberships.count(),
+    )
 
     if request.method == 'POST':
-
         print request.POST # TODO:for debugging
+        # we ALWAYS refetch community
+        community = community_object(community_tag)
 
         if 'inviteSubmit' in request.POST:
             allInvites = request.POST.getlist('addedUser')
-
             # Sanitize and validate hidden invite input
             for invite in allInvites:
                 username = escape(invite)
-
                 if validateUsername(username):
                     # fetch user instance
-                    invited_user = get_object_or_404(
-                        User,
-                        username=username
+                    invited_user = u_instance(
+                        username=username,
                     )
-
-                    user_invite = all_applications.filter(
-                        applicant=invited_user.id,
-                    )
-
-                    # check if user has a pending application
-                    if user_invite.count() == 1:
-                        # accept application and create membership
-                        accept_application(invited_user, request.user)
-
-                    else:
-                        # create new invitation
-                        new_invitation = Invitation(
+                    if invited_user:
+                        # check if user has a pending application
+                        application = u_application(
                             community=community,
-                            created_on=timezone.now(),
-                            recipient=invited_user,
-                            sender=request.user,
+                            user=invited_user,
                         )
-                        new_invitation.save()
+                        if application:
+                            # accept application and create membership
+                            application = application.accept(
+                                accepted_by=request.user,
+                            )
+                            application.save()
+                            # create new membership
+                            new_membership = Membership(
+                                user=invited_user,
+                                community=community,
+                                is_moderator=False,
+                            )
+                            new_membership.save()
+
+                        else:
+                            # create new invitation
+                            new_invitation = Invitation(
+                                community=community,
+                                recipient=invited_user,
+                                sender=request.user,
+                            )
+                            new_invitation.save()
 
         if 'permissionSubmit' in request.POST:
             UPForm = UserPermissionForm(request.POST)
             if UPForm.is_valid():
-                user_membership = get_object_or_404(
-                    all_memberships,
+                # get user membership and check if it exists
+                membership = u_membership(
+                    community=community,
                     user=request.POST['member']
                 )
-                user_membership.is_moderator=UPForm.cleaned_data['permissions']
-                user_membership.save()
+
+                if membership:
+                    # change permission
+                    membership = membership.edit_permissions(
+                        permissions=UPForm.cleaned_data['permissions'],
+                    )
+                    membership.save()
 
         if 'inviteUserSubmit' in request.POST:
             USForm = UserSearchForm(request.POST)
             if USForm.is_valid():
+                # get user instance
+                user = u_instance(request.POST['username'])
+                # form already checks if user exists, so no need to check again
                 # check if user is already in community
-                is_member = Membership.objects.filter(
-                    community_id=community.id,
-                    user__username=request.POST['username'],
+                membership = u_membership(
+                    community=community,
+                    user=user,
                 )
-                if is_member.count()==1:
+                if membership:
                     error_message = 'You cannot add a user already in the community.'
                     SameUsernameError = {'username': error_message}
                     return JsonResponse(SameUsernameError)
-
                 # check if invite already exists for user
-                has_invitation = Invitation.objects.filter(
-                    community_id=community.id,
-                    recipient__username=request.POST['username'],
+                invitation = u_invitation(
+                    community=community,
+                    user=user,
                 )
-                if has_invitation.count()==1:
+                if invitation:
                     error_message = 'An invite already exists for this user.'
                     InviteExistsError = {'username': error_message}
                     return JsonResponse(InviteExistsError)
-
                 else:
                     return HttpResponse(request.POST['username'])
             else:
@@ -189,120 +173,126 @@ def community(request, community_tag):
                 return JsonResponse(USForm.errors)
 
         if 'acceptApplication' in request.POST:
-            accept_application(request.POST['acceptApplication'], request.user)
+            # check if user has a pending application
+            application = u_application(
+                community=community,
+                user=request.POST['acceptApplication'],
+            )
+            if application:
+                # accept application and create membership
+                application = application.accept(
+                    accepted_by=request.user,
+                )
+                application.save()
 
         if 'communityJoin' in request.POST:
-            # refetch community
-            community = get_object_or_404(
-                Community,
-                tag=community_tag
-            )
             # check if community is private or not
-            if community.is_private:
-
+            if community and community.is_private:
                 # refetch (potential) invitation
-                invitation = Invitation.objects.filter(
-                    community=community.id,
-                    recipient=request.user.id,
-                ).first()
-
+                invitation = u_invitation(
+                    community=community,
+                    user=request.user,
+                )
                 # check if user has been invited to this community
                 if invitation:
-                    create_membership(request.user, invitation.to_be_moderator)
-
-                # check if user already submitted an application to this community
-                if application:
-                    # fetch application again
-                    application = get_object_or_404(
-                        Application,
-                        community=community.id,
-                        applicant=request.user.id
+                    # create new membership
+                    new_membership = Membership(
+                        user=request.user,
+                        community=community,
+                        is_moderator=invitation.to_be_moderator,
                     )
+                    new_membership.save()
+                # check if user already submitted an application to this community
+                application = u_application(
+                    community=community,
+                    user=request.user,
+                )
+                if application:
                     # and check if the application hasn't been accepted yet
                     if not application.accepted_by:
                         # cancel application
                         application.delete()
-
                 # if neither, create new application
                 else:
                     new_application = Application(
-                        community=community,
-                        created_on=timezone.now(),
                         applicant=request.user,
+                        community=community,
                     )
                     new_application.save()
             else:
                 # if not private community, create membership
-                create_membership(request.user, False)
+                new_membership = Membership(
+                    user=request.user,
+                    community=community,
+                    is_moderator=False,
+                )
+                new_membership.save()
 
         if 'revokeInvite' in request.POST:
-            # get user's invite
-            revoked_invite = get_object_or_404(
-                all_invitations,
-                recipient=request.POST['revokeInvite'],
-            )
-            revoked_invite.delete()
+            # fetch user's instance
+            user = u_instance(request.POST['revokeInvite'])
+            if user:
+                # get user's invite
+                invite = u_invitation(
+                    community=community,
+                    user=user,
+                )
+                if invite:
+                    invite.delete()
 
         if 'submitDescription' in request.POST:
             CDForm = CommunityDescriptionForm(request.POST)
             if CDForm.is_valid():
-                # refetch community
-                community = get_object_or_404(
-                    Community,
-                    tag=community_tag
-                )
                 # change the community description on backend
-                community.description = request.POST['description']
+                community = community.edit_description(
+                    description=request.POST['description'],
+                )
                 community.save()
 
         if 'changePrivacySubmit' in request.POST:
             CPForm = CommunityPrivacyForm(request.POST)
             if CPForm.is_valid():
-                # refetch community
-                community = get_object_or_404(
-                    Community,
-                    tag=community_tag
-                )
                 if request.POST['privacy'] == 'True':
                     # set privacy as true
-                    community.is_private = True
+                    community = community.change_privacy(
+                        change_privacy=True,
+                    )
                     community.save()
-
                 elif request.POST['privacy'] == 'False':
                     # set applications to accepted
-                    all_applications = Application.objects.filter(
-                        community=community.id,
+                    all_applications = all_community_applications(
+                        community=community,
                     )
                     for application in all_applications.all():
                         # check if the application hasn't been accepted yet
                         if not application.accepted_by:
-                            application.accepted_by = request.user
+                            application = application.accept(
+                                accepted_by=request.user,
+                            )
                             application.save()
-                            create_membership(application.applicant, False)
-
+                            # create new membership
+                            new_membership = Membership(
+                                user=request.user,
+                                community=community,
+                                is_moderator=False,
+                            )
+                            new_membership.save()
                     # set privacy as false
-                    community.is_private = False
+                    community = community.change_privacy(
+                        is_private=False
+                    )
                     community.save()
-                    print 'done'
 
         if 'addBadgeSubmit' in request.POST:
-            print 'submit'
             BCForm = BadgeCreationForm(request.POST, request.FILES)
             if BCForm.is_valid():
-                print 'create badge'
-                # refetch community
-                community = get_object_or_404(
-                    Community,
-                    tag=community_tag
-                )
-                # create new invitation
+                # create new badgeclass
                 new_badgeclass = BadgeClass(
                     name=request.POST['name'],
                     description=request.POST['description'],
                     image=request.FILES['image'],
                     community=community,
                     creator=request.user,
-                    created_on=timezone.now(),
                 )
                 new_badgeclass.save()
 
@@ -310,75 +300,86 @@ def community(request, community_tag):
             UPForm = UserPermissionForm(request.POST)
             if UPForm.is_valid():
                 # refetch invitation
-                user_invite = get_object_or_404(
-                    Invitation,
-                    recipient=request.POST['invited']
+                invite = u_invitation(
+                    community=community,
+                    user=request.POST['invited'],
                 )
-                user_invite.to_be_moderator=UPForm.cleaned_data['permissions']
-                user_invite.save()
+                if invite:
+                    invite = invite.edit_permissions(
+                        permissions=UPForm.cleaned_data['permissions'],
+                    )
+                    invite.save()
 
         if 'assignBadgesSubmit' in request.POST:
-            # print 'done'
             uba_formset = UBAFormset(request.POST)
             if uba_formset.is_valid():
                 # fetch community membership
-                user_membership = get_object_or_404(
-                    Membership,
-                    id=request.POST['assignBadgesSubmit']
+                membership = u_membership(
+                    user=request.POST['assignBadgesSubmit'],
                 )
-                # refetch community badge classes
-                all_badges = BadgeClass.objects.filter(
-                    community=community.id
-                )
-
-                # TODO: there should be a better way to couple the form number and the
-                #       badge class it represents
-                form_counter = 0
-                for badgeclass in all_badges:
-                    if uba_formset[form_counter].cleaned_data.get('badge_assign') == 'gift':
-                        badgeinstance = BadgeInstance.objects.filter(
-                            badge_class=badgeclass,
-                            earner=user_membership.id,
-                        )
-                        if badgeinstance.count() == 0:
-                            # create new badge instance
-                            new_badgeinstance = BadgeInstance(
-                                badge_class=badgeclass,
-                                earner=user_membership.user,
-                                recieved_on=timezone.now(),
-                                assigned_by=request.user,
+                if membership:
+                    # refetch community badge classes
+                    all_badges = all_badges_classes(
+                        community=community,
+                    )
+                    # TODO: there should be a better way to couple the form number and the
+                    #       badge class it represents
+                    form_counter = 0
+                    for badgeclass in all_badges:
+                        if uba_formset[form_counter].cleaned_data.get('badge_assign') == 'gift':
+                            # check if badgeinstance exists for the user
+                            badgeinstance = u_badge_instance(
+                                badgeclass=badgeclass,
+                                earner=membership,
                             )
-                            new_badgeinstance.save()
-                    form_counter += 1
+                            if not badgeinstance:
+                                # create new badge instance
+                                new_badgeinstance = BadgeInstance(
+                                    badge_class=badgeclass,
+                                    earner=membership.user,
+                                    assigned_by=request.user,
+                                )
+                                new_badgeinstance.save()
+                        form_counter += 1
 
-                # for uba_form in uba_formset:
-                #     # check if the user has the badge instance already
-                #     badgeinstance = BadgeInstance.objects.filter(
-                #         badge_class=all_badges.filter(id=form_counter),
-                #         earner=request.POST['username'],
-                #     )
-                #
-                #     if badgeinstance.count() == 0:
-                #         # create new badge instance
-                #         new_badgeinstance = BadgeInstance(
-                #             badge_class=all_badges.get(id=form_counter),
-                #             earner=request.POST['username'],
-                #             recieved_on=timezone.now(),
-                #             assigned_by=request.user,
-                #         )
-                #         new_badgeinstance.save()
+        if 'oneBadgeSubmit' in request.POST:
+            oba_formset = OBAFormset(request.POST)
+            if oba_formset.is_valid():
+                # refetch all memberships
+                all_memberships = all_community_memberships(
+                    community=community,
+                )
+                # fetch badge class
+                badge_class = a_badge_class(
+                    class_id=request.POST['oneBadgeSubmit'],
+                )
+                # check if badge class exists
+                if badge_class:
+                    # TODO: there should be a better way to couple the form number and the
+                    #       badge class it represents
+                    form_counter = 0
+                    for member in all_memberships:
+                        if oba_formset[form_counter].cleaned_data.get('badge_assign'):
+                            # check if badgeinstance exists for the user
+                            badgeinstance = u_badge_instance(
+                                badgeclass=badge_class,
+                                earner=member.user,
+                            )
+                            if not badgeinstance:
+                                # create new badge instance
+                                new_badgeinstance = BadgeInstance(
+                                    badge_class=badge_class,
+                                    earner=member.user,
+                                    assigned_by=request.user,
+                                )
+                                new_badgeinstance.save()
+                        form_counter += 1
 
-                    # form_counter += 1
-                    # fetch badge class
-            # uba_formset = UBAFormset(request.POST)
-            #
-            # if uba_formset.is_valid():
-            #     print 'okay'
-
-        # in all the above cases, return to same page
+        # in ALL the above cases, return to same page
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/home/'))
 
     else:
+        ''' FORM CREATION '''
         BCForm = BadgeCreationForm()
         UPForm = UserPermissionForm()
         USForm = UserSearchForm()
@@ -389,22 +390,20 @@ def community(request, community_tag):
         'mod_communities': mod_communities,
         'earner_communities': earner_communities,
 
-        'username': request.user.username,
-
-        'all_invitations': all_invitations,
-        'is_invited': invitation != None,
-
-        'all_members' : all_memberships,
-        'is_member' : membership.count()==1,
-
-        'all_badge_classes' : all_badges,
-
-        'is_moderator' : moderator.count()==1,
-
+        'user': request.user,
         'community': community,
 
-        'has_applied': application,
+        'all_members' : all_memberships,
+        'is_member' : membership,
+        'is_moderator' : is_moderator,
+
         'applications': all_applications,
+        'has_applied': application,
+
+        'all_invitations': all_invitations,
+        'is_invited': invitation,
+
+        'all_badge_classes' : all_badges,
 
         'BCForm' : BCForm,
         'UPForm' : UPForm,
@@ -412,6 +411,7 @@ def community(request, community_tag):
         'CDForm' : CDForm,
         'CPForm' : CPForm,
         'UBAFormset' : UBAFormset,
+        'OBAFormset' : OBAFormset,
 
-        'extendTemplate': extendTemplate
+        'extendTemplate': extendTemplate,
     })

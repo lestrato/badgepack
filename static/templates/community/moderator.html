@@ -80,7 +80,7 @@
                 <div href="#addBadge" role="button" data-toggle="modal" class="new-badge-container">
                     <div class="new-badge-outer">
                         <div class="new-badge-title">
-                            Create a New Badge
+                            Create a new badge
                         </div>
                         <div class="new-badge-plus">
                             +
@@ -89,20 +89,58 @@
                 </div>
             </li>
             {% for badge in all_badge_classes %}
-            <!--
-                For each badge in the community, create a new badge.html instance (wrapped in <li>).
-                Variable names used here are rudimentary; change them as needed.
-                Refer to login/badge_list_sample.html for an example. :)
+                <!-- Modal HTML -->
+                <div id="assignBadge{{ badge.id }}" class="modal fade">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h3 class="modal-title">Gift the "{{ badge.name }}" badge</h3>
+                            </div>
+                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                <div class="modal-body">
+                                    {% if all_members.count > 0 %}
+                                    <div class="table-responsive">
+                                        <table class="table table-condensed table-striped table-hover">
+                                            <thead>
+                                                <tr>
+                                                <th>Username</th>
+                                                <th>Gift</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {{ OBAFormset.management_form }}
+                                                {% for member in all_members %}
+                                                    {% if member.user not in badge.instances.all %}
+                                                        <tr>
+                                                        <td>{{member.user}}</td>
+                                                        <td>
+                                                          {% with forloop.counter0 as currentIndex%}
+                                                              {% with OBAFormset|index:currentIndex as currentForm %}
+                                                                  {{ currentForm.badge_assign }}
+                                                              {% endwith %}
+                                                          {% endwith %}
+                                                        </tr>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {% else %}
+                                    <h4>There are no available badges in this community...</h4>
+                                    {% endif %}
+                                </div>
 
-                Variables
-                =========
-                image:    link to the badge image
-                name:     name of the badge
-                desc:     badge description
-                f_left:   left side of the footer (e.g. date created)
-                f_right:  right side of the footer (e.g. progress %)
-             -->
-              <li>{% include "badge/badge.html" with image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None' %}</li>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                    <button type="submit" value="{{ badge.id }}" class="btn btn-primary" name="oneBadgeSubmit">Gift Badge</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <li>{% include "badge/badge.html" with id=badge.id image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None' %}</li>
             {% endfor %}
         </ul>
     </div>
@@ -222,7 +260,7 @@
 
                                                                 {{ UPForm.permissions }}
 
-                                                                {% if member.user.username == username %}
+                                                                {% if member.user.username == user.username %}
                                                                     <hr>
                                                                     <div class="alert alert-warning">
                                                                         <strong>Warning!</strong><br/>Setting your own permissions to 'earner' will revoke
@@ -312,9 +350,11 @@
                                                       </form>
                                                   </div>
                                               <div class="col-xs-1" style="padding-right: 0px;">
-                                                  <button type="submit" class="btn btn-xs btn-default" value="{{ invite.recipient.id }}" name="revokeInvite">
-                                                      <span class="glyphicon glyphicon-trash"></span>
-                                                  </button>
+                                                  <form action="" method="post">{% csrf_token %}
+                                                      <button type="submit" class="btn btn-xs btn-default" value="{{ invite.recipient }}" name="revokeInvite">
+                                                          <span class="glyphicon glyphicon-trash"></span>
+                                                      </button>
+                                                  </form>
                                               </div>
                                           </div>
                                       </td>
