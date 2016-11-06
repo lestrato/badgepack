@@ -1,5 +1,6 @@
 {% load staticfiles %}
 
+<!-- TODO: If the badge is inactive, add the "inactive-badge" class to this table. -->
 <table class="badge-container">
     <!-- Enable the badge overlay only if the user is a moderator of the community -->
     {% if is_moderator %}
@@ -22,6 +23,9 @@
                             <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
                         </svg>
                     </div>
+                    <!-- TODO: Need to add a conditional statement here.
+                                > if badge is inactive, set text to "INVISIBLE"
+                                > else, set text to "VISIBLE" -->
                     <div class="badge-overlay-title">VISIBLE</div>
                 </li>
                 <li id='assignModal' href="#assignBadge{{id}}" role="button" data-toggle="modal">
@@ -48,8 +52,6 @@
     </div>
     {% endif %}
 
-    <!-- If a moderator: check if the badge is active/inactive
-         If an earner:   check if the badge has been earned or not -->
     <tr>
         <td rowspan="2" class="badge-image-container">
             <div class="badge-image">
@@ -60,7 +62,7 @@
     </tr>
     <tr>
         <td class="badge-description">{{ desc }}</td>
-    </tr>
+    </tr>   
     <tr>
         <td colspan="2" class="badge-footer">
             <div class="badge-footer-left">{{ f_left }}</div>
