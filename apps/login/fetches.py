@@ -1,4 +1,4 @@
-from community.models import Community
+from community.models import Community, Invitation
 from django.contrib.auth.models import User
 
 def get_navbar_information(request):
@@ -18,3 +18,8 @@ def u_instance(username):
     except User.DoesNotExist:
        username = None
     return username
+
+def u_all_invitations(user):
+    all_invites = Invitation.objects.filter(
+        recipient=user,
+    )

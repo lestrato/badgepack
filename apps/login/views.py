@@ -7,14 +7,14 @@ from django.template import RequestContext
 from django.shortcuts import render
 from django.contrib.auth.views import login
 
-from login.fetches import get_navbar_information
+from login.fetches import *
 from login.forms import *
 from community.models import Invitation
 from badge.models import BadgeClass, BadgeInstance
 
 def login_page(request):
     if request.user.is_authenticated():
-        return  HttpResponseRedirect('/home/')
+        return HttpResponseRedirect('/home/')
     else:
         # return login(request, 'registration/login.html', MyAuthenticationForm)
         if request.method == 'POST':
@@ -37,9 +37,9 @@ def register(request):
             form = RegistrationForm(request.POST)
             if form.is_valid():
                 user = User.objects.create_user(
-                username=form.cleaned_data['username'],
-                password=form.cleaned_data['password1'],
-                email=form.cleaned_data['email']
+                    username=form.cleaned_data['username'],
+                    password=form.cleaned_data['password1'],
+                    email=form.cleaned_data['email']
                 )
                 return HttpResponseRedirect('/register/success/')
         else:
@@ -61,15 +61,9 @@ def logout_page(request):
 
 @login_required
 def home(request):
-    invitations = Invitation.objects.filter(
-        recipient_id=request.user.id,
-    )
+    invitations = u_all_invitations(request.user)
 
     mod_communities, earner_communities = get_navbar_information(request)
-
-    # badge_instances = BadgeInstance.objects.filter(
-    #     earner=request.user,
-    # )
 
     return render_to_response('home.html', {
     'invitations': invitations,

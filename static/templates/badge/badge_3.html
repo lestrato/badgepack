@@ -1,7 +1,7 @@
 {% load staticfiles %}
 
 <!-- TODO: If the badge is inactive, add the "inactive-badge" class to this table. -->
-<table class="badge-container {% if not badge.is_available %}inactive-badge{% endif %}">
+<table class="badge-container">
     <!-- Enable the badge overlay only if the user is a moderator of the community -->
     {% if is_moderator %}
     <div class="badge-overlay">
@@ -16,27 +16,18 @@
                     </div>
                     <div class="badge-overlay-title">EDIT</div>
                 </li>
-                <form id="badgeAvailabilityForm{{name}}" style="display: inline !important;" method="POST">{% csrf_token %}
-                    <input type="hidden" value="{{ name }}" name="changeBadgeAvailabilitySubmit">
-                    <li role="button" type="submit" onclick="toggleBadgeVisibility(this); document.getElementById('badgeAvailabilityForm{{name}}').submit();">
-                        <div class="badge-overlay-icon">
-                            <svg height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M0 0h24v24H0z" fill="none"/>
-                                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-                            </svg>
-                        </div>
-                        <!-- TODO: Need to add a conditional statement here.
-                                    > if badge is inactive, set text to "INVISIBLE"
-                                    > else, set text to "VISIBLE" -->
-                        <div class="badge-overlay-title">
-                            {% if badge.is_available %}
-                                VISIBLE
-                            {% else %}
-                                INVISIBLE
-                            {% endif %}
-                        </div>
-                    </li>
-                </form>
+                <li href="#availabilityBadge{{name}}" role="button" data-toggle="modal">
+                    <div class="badge-overlay-icon">
+                        <svg height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                        </svg>
+                    </div>
+                    <!-- TODO: Need to add a conditional statement here.
+                                > if badge is inactive, set text to "INVISIBLE"
+                                > else, set text to "VISIBLE" -->
+                    <div class="badge-overlay-title">VISIBLE</div>
+                </li>
                 <li id='assignModal' href="#assignBadge{{name}}" role="button" data-toggle="modal">
                     <div class="badge-overlay-icon">
                         <svg height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
@@ -60,7 +51,6 @@
         </div>
     </div>
     {% endif %}
-
     <tr>
         <td rowspan="2" class="badge-image-container">
             <div class="badge-image">

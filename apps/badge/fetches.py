@@ -7,11 +7,11 @@ def all_badge_classes(community):
     )
     return all_badges
 
-def a_badge_class(class_id):
+def a_badge_class(class_name):
     # user badge instance return it or none
     try:
         badge_class = BadgeClass.objects.get(
-            id=class_id,
+            name=class_name,
         )
     except BadgeClass.DoesNotExist:
        badge_class = None

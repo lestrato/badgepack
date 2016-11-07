@@ -2,32 +2,6 @@ from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
-class UserBadgeAssignForm(forms.Form):
-    CHOICES= (
-    ('nothing', 'Nothing'),
-    ('gift', 'Gift'),
-    )
-    badge_assign = forms.CharField(
-        widget=forms.Select(
-            choices=CHOICES,
-            attrs={
-                "class":"form-control",
-            }
-        )
-    )
-
-    def clean_badge_assign(self):
-        badge_assign = self.cleaned_data.get("badge_assign")
-        return badge_assign
-
-class OneBadgeAssignForm(forms.Form):
-    badge_assign = forms.BooleanField(
-        widget=forms.CheckboxInput(
-            attrs={
-            }
-        )
-    )
-
 class UserPermissionForm(forms.Form):
     CHOICES= (
     (False, 'earner'),
@@ -47,7 +21,6 @@ class UserPermissionForm(forms.Form):
         return permissions
 
 class UserSearchForm(forms.Form):
-
     username = forms.CharField(
         widget=forms.TextInput(
             attrs={

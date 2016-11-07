@@ -51,14 +51,16 @@
                     </div>
                     <form method="POST" enctype="multipart/form-data">{% csrf_token %}
                         <div class="modal-body">
+
                             <div class="row">
-                                <div class="col-xs-8">
+                                <div class="col-sm-8">
                                     <h4>Badge Name</h4>
                                     {{ BCForm.name }}
                                     <h4>Badge Description</h4>
                                     {{ BCForm.description }}
                                 </div>
-                                <div class="col-xs-4">
+                                <div class="col-sm-4">
+                                  <h4>Badge image</h4>
                                   {{ BCForm.image }}
                                   <img src="{% static "images/uploadimage.png" %}" class="img-thumbnail" id="badgeImage" style="width:150px;height:150px;cursor:pointer;"></img>
                                 </div>
@@ -89,8 +91,63 @@
                 </div>
             </li>
             {% for badge in all_badge_classes %}
-                <!-- Modal HTML -->
-                <div id="assignBadge{{ badge.id }}" class="modal fade">
+
+                <div id="editBadge{{ badge.name }}" class="modal fade">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h3 class="modal-title">Edit the "{{ badge.name }}" badge</h3>
+                            </div>
+                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <h4>Edit name</h4>
+                                            {{ BCForm.name }}
+                                            <h4>Edit description</h4>
+                                            {{ BCForm.description }}
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <h4>Change image</h4>
+                                          {{ BCForm.image }}
+                                          <img src="{{ badge.image.url }}" class="img-thumbnail" id="badgeImage" style="width:150px;height:150px;cursor:pointer;"></img>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                    <button type="submit" value="{{ badge.name }}" class="btn btn-primary" name="editBadgeSubmit">Edit Badge</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- <div id="availabilityBadge{{ badge.name }}" class="modal fade">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h3 class="modal-title">Change the availability of "{{ badge.name }}"</h3>
+                            </div>
+                            <form method="POST">{% csrf_token %}
+                                <div class="modal-body">
+                                    <div class="row-row">
+                                        <h4>Set availability</h4>
+                                        {{ BSAForm.availability }}
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                    <button type="submit" value="{{ badge.name }}" class="btn btn-primary" name="changeBadgeAvailabilitySubmit">Set availability</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div> -->
+
+                <div id="assignBadge{{ badge.name }}" class="modal fade">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -133,13 +190,37 @@
 
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                                    <button type="submit" value="{{ badge.id }}" class="btn btn-primary" name="oneBadgeSubmit">Gift Badge</button>
+                                    <button type="submit" value="{{ badge.name }}" class="btn btn-primary" name="oneBadgeSubmit">Gift Badge</button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
 
+                <div id="discontinueBadge{{ badge.name }}" class="modal fade">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h3 class="modal-title">Discontinue the "{{ badge.name }} badge"</h3>
+                            </div>
+                            <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                <div class="modal-body">
+                                    <div class="row-row">
+                                        <div class="alert alert-danger" role="alert">
+                                            Are you sure you want to discontinue this badge? This will destroy all badge instances
+                                            for this badge and cannot be undone.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                    <button type="submit" value="{{ badge.name }}" class="btn btn-primary" name="discontinueBadgeSubmit">Discontinue badge</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
                 <li>{% include "badge/badge.html" with id=badge.id image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None' %}</li>
             {% endfor %}
         </ul>

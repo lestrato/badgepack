@@ -23,7 +23,9 @@
                       {% for community in mod_communities %}
                           <li>
                               <a href="{% url 'community' community.tag %}">{{ community.tag }}
-                                <label class="label label-info pull-right" style="margin-top: 2px; font-weight: normal; font-size: 85%;">MOD</label>
+                                <label class="label label-info pull-right" style="margin-bottom: 0px; font-weight: normal; font-size: 85%;">
+                                  <div style="margin-top: 4px;">MOD</div>
+                                </label>
                               </a>
                           </li>
                       {% endfor %}

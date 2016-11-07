@@ -11,7 +11,6 @@ class BadgeCreationForm(forms.Form):
             }
         ),
     )
-    # input class="hidden" type="file" style="margin-left:20%;" placeholder="Picture" id="badgeImageUpload"
 
     name=forms.CharField(
         max_length=20,
@@ -47,3 +46,53 @@ class BadgeCreationForm(forms.Form):
     def clean_name(self):
         name = self.cleaned_data.get('username')
         return name
+        # check to see if name exists
+        # try:
+        #     user = BadgeClass.objects.get(name__iexact=name)
+        # except BadgeClass.DoesNotExist:
+        #     return name
+        # raise forms.ValidationError(_("The badge name already exists. Please try another one."))
+
+class UserBadgeAssignForm(forms.Form):
+    CHOICES= (
+    ('nothing', 'Nothing'),
+    ('gift', 'Gift'),
+    )
+    badge_assign = forms.CharField(
+        widget=forms.Select(
+            choices=CHOICES,
+            attrs={
+                "class":"form-control",
+            }
+        )
+    )
+
+    def clean_badge_assign(self):
+        badge_assign = self.cleaned_data.get("badge_assign")
+        return badge_assign
+
+class OneBadgeAssignForm(forms.Form):
+    badge_assign = forms.BooleanField(
+        widget=forms.CheckboxInput(
+            attrs={
+            }
+        )
+    )
+
+class BadgeSetAvailabilityForm(forms.Form):
+    CHOICES= (
+    (False, 'unavailable'),
+    (True, 'available'),
+    )
+    availability = forms.CharField(
+        widget=forms.Select(
+            choices=CHOICES,
+            attrs={
+                "class":"form-control",
+            }
+        )
+    )
+
+    def clean_badge_assign(self):
+        badge_assign = self.cleaned_data.get("availability")
+        return badge_assign
