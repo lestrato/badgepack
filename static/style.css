@@ -215,25 +215,25 @@ hr {
 }
 
 /* Edit */
-.badge-overlay-content > ul > li:hover:nth-child(1) {
+#badge-overlay-edit:hover {
     fill: #51FF3D;
     color: #51FF3D;
 }
 
 /* Set */
-.badge-overlay-content > ul > li:hover:nth-child(2) {
+#badge-overlay-visible:hover { 
     fill: #F6FF00;
     color: #F6FF00;
 }
 
 /* Assign */
-.badge-overlay-content > ul > li:hover:nth-child(3) {
+#assignModal:hover {
     fill: #40F5FF;
     color: #40F5FF;
 }
 
 /* Delete */
-.badge-overlay-content > ul > li:hover:nth-child(4) {
+#badge-overlay-delete:hover {
     fill: #FF3D3D;
     color: #FF3D3D;
 }
