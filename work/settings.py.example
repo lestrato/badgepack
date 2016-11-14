@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'login',
     'community',
     'badge',
+    'randomslugfield',
 ]
 
 MIDDLEWARE = [

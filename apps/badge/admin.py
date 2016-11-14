@@ -3,7 +3,7 @@ from badge.models import BadgeClass, BadgeInstance
 
 class BadgeClassAdmin(admin.ModelAdmin):
     readonly_fields = () #'created', 'name',
-    list_display = ('name', 'description', 'image', 'community', 'creator',
+    list_display = ('name', 'description', 'slug', 'image', 'community', 'creator',
         'created_on', 'is_available', 'is_discontinued',)
     list_filter = ('is_available', 'is_discontinued',)
     search_fields = ('name', 'description', 'community', 'creator',)

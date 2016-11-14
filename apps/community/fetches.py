@@ -44,13 +44,6 @@ def u_membership(community, user):
        membership = None
     return membership
 
-def all_community_badge_classes(community):
-    # all community badgeclasses
-    all_badges = BadgeClass.objects.filter(
-        community=community,
-    )
-    return all_badges
-
 def u_invitation(community, user):
     # user's invitation return first object or none
     try:

@@ -36,6 +36,7 @@ badgepack
 * `pip install Django==1.10.2`
 * `pip install mysql-python`
 * `pip install Pillow`
+* `pip install django-randomslugfield`
 
 ### Customize local settings to your environment
 * cp work/settings.py.example work/settings.py

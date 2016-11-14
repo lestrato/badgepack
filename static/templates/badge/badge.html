@@ -1,13 +1,15 @@
 {% load staticfiles %}
 
 <!-- TODO: If the badge is inactive, add the "inactive-badge" class to this table. -->
-<table class="badge-container {% if not badge.is_available %}inactive-badge{% endif %}">
+<table class="badge-container {% if not available %}inactive-badge{% endif %}">
     <!-- Enable the badge overlay only if the user is a moderator of the community -->
     {% if is_moderator %}
     <div class="badge-overlay">
         <div class="badge-overlay-content">
             <ul>
-                <li href="#editBadge{{name}}" role="button" data-toggle="modal">
+                <!-- If badge is available, you can't edit or make unavailable -->
+                {% if not badge.is_available %}
+                <li href="#editBadge{{badge.slug}}" role="button" data-toggle="modal">
                     <div class="badge-overlay-icon">
                         <svg height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
                             <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
@@ -16,28 +18,18 @@
                     </div>
                     <div class="badge-overlay-title">EDIT</div>
                 </li>
-                <form id="badgeAvailabilityForm{{name}}" style="display: inline !important;" method="POST">{% csrf_token %}
-                    <input type="hidden" value="{{ name }}" name="changeBadgeAvailabilitySubmit">
-                    <li role="button" type="submit" onclick="toggleBadgeVisibility(this); document.getElementById('badgeAvailabilityForm{{name}}').submit();">
-                        <div class="badge-overlay-icon">
-                            <svg height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M0 0h24v24H0z" fill="none"/>
-                                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-                            </svg>
-                        </div>
-                        <!-- TODO: Need to add a conditional statement here.
-                                    > if badge is inactive, set text to "INVISIBLE"
-                                    > else, set text to "VISIBLE" -->
-                        <div class="badge-overlay-title">
-                            {% if badge.is_available %}
-                                VISIBLE
-                            {% else %}
-                                INVISIBLE
-                            {% endif %}
-                        </div>
-                    </li>
-                </form>
-                <li id='assignModal' href="#assignBadge{{name}}" role="button" data-toggle="modal">
+                <li href="#availabilityBadge{{badge.slug}}" role="button" data-toggle="modal">
+                    <div class="badge-overlay-icon">
+                        <svg height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                        </svg>
+                    </div>
+                    <div class="badge-overlay-title">INVISIBLE</div>
+                </li>
+                {% endif %}
+                {% if badge.is_available %}
+                <li id='assignModal' href="#assignBadge{{badge.slug}}" role="button" data-toggle="modal">
                     <div class="badge-overlay-icon">
                         <svg height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
@@ -46,7 +38,8 @@
                     </div>
                     <div class="badge-overlay-title">ASSIGN</div>
                 </li>
-                <li href="#discontinueBadge{{name}}" role="button" data-toggle="modal">
+                {% endif %}
+                <li href="#discontinueBadge{{badge.slug}}" role="button" data-toggle="modal">
                     <div class="badge-overlay-icon">
                         <svg height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
                             <path d="M0 0h24v24H0V0z" fill="none"/>
@@ -64,18 +57,18 @@
     <tr>
         <td rowspan="2" class="badge-image-container">
             <div class="badge-image">
-                <img class="img-thumbnail" src="{{ image }}">
+                <img class="img-thumbnail" src="{{ badge.image.url }}" style="width: 100px; height: 100px;">
             </div>
         </td>
-        <td class="badge-name">{{ name }}</td>
+        <td class="badge-name">{{ badge.name }}</td>
     </tr>
     <tr>
-        <td class="badge-description">{{ desc }}</td>
+        <td class="badge-description">{{ badge.description }}</td>
     </tr>
     <tr>
         <td colspan="2" class="badge-footer">
-            <div class="badge-footer-left">{{ f_left }}</div>
-            <div class="badge-footer-right">{{ f_right }}</div>
+            <div class="badge-footer-left">{{ badge.created_on }}</div>
+            <div class="badge-footer-right">{{ 'None' }}</div>
         </td>
     </tr>
 </table>

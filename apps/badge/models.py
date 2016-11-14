@@ -5,13 +5,19 @@ from datetime import datetime
 from django.conf import settings
 from community.models import Community
 from django.utils import timezone
+from randomslugfield import RandomSlugField
 
 class BadgeClass(models.Model):
     name = models.CharField(max_length=20, unique=True)
     description = models.CharField(max_length=140)
     # imagefield is why we need PILLOW installed
-    image = models.ImageField(upload_to='uploads/badges/')
-
+    image = models.ImageField(
+        upload_to='uploads/badges/',
+    )
+    slug = RandomSlugField(
+        length=7,
+        unique=True
+    )
     community = models.ForeignKey(Community, on_delete=models.CASCADE)
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL,

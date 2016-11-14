@@ -106,25 +106,25 @@
     {% if earner_communities %}
 
         {% for community in earner_communities %}
-        {% with community|instances:user as my_instances %}
-
             <h2><a href="{% url 'community' community.tag %}">{{ community.tag }}</a>
                 <small style="margin-left: 10px; font-size: 45%;">
+                  {% with community|instances:user as my_instances %}
                   {{ my_instances.count }}/{{ community.get_badge_classes.count }} earned
-
+                  {% endwith %}
                 </small>
             </h2>
             <div class="container">
                 <!-- Display badge list -->
                 {% if community.get_badge_classes.count > 0 %}
                     <ul class="badge-list">
-                        {% for badge_instance in my_instances.all %}
-                            {% with badge_instance.badge_class as badge %}
-                            <!--  check if class has an isntance for this user -->
+                        {% for badge in community|classes %}
                             <li>
-                              {% include "badge/badge.html" with image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None' %}
+                              {% if user in badge.instances.all %}
+                                  {% include "badge/badge.html" with available=True image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None'%}
+                              {% else %}
+                                  {% include "badge/badge.html" with available=False image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None'%}
+                              {% endif %}
                             </li>
-                            {% endwith %}
                         {% endfor %}
                     </ul>
                 {% else %}
@@ -132,7 +132,6 @@
                 {% endif %}
             </div>
             <hr>
-        {% endwith %}
         {% endfor %}
 
     {% else %}

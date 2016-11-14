@@ -51,7 +51,7 @@
                     </div>
                     <form method="POST" enctype="multipart/form-data">{% csrf_token %}
                         <div class="modal-body">
-
+                            <div id="checkBadgeNameError"></div>
                             <div class="row">
                                 <div class="col-sm-8">
                                     <h4>Badge Name</h4>
@@ -61,8 +61,12 @@
                                 </div>
                                 <div class="col-sm-4">
                                   <h4>Badge image</h4>
-                                  {{ BCForm.image }}
-                                  <img src="{% static "images/uploadimage.png" %}" class="img-thumbnail" id="badgeImage" style="width:150px;height:150px;cursor:pointer;"></img>
+                                  <div style="height: 150px; width: 150px; position: relative">
+                                      {{ BCForm.image }}
+                                      <img src="{% static "images/uploadimage.png" %}" class="img-thumbnail badgeImage"
+                                      style="width:150px;height:150px;cursor:pointer;position:absolute;"
+                                      onclick="$(this).siblings('input').trigger('click')"></img>
+                                  </div>
                                 </div>
                             </div>
                         </div>
@@ -92,7 +96,7 @@
             </li>
             {% for badge in all_badge_classes %}
 
-                <div id="editBadge{{ badge.name }}" class="modal fade">
+                <div id="editBadge{{ badge.slug }}" class="modal fade">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -110,8 +114,12 @@
                                         </div>
                                         <div class="col-sm-4">
                                           <h4>Change image</h4>
-                                          {{ BCForm.image }}
-                                          <img src="{{ badge.image.url }}" class="img-thumbnail" id="badgeImage" style="width:150px;height:150px;cursor:pointer;"></img>
+                                          <div style="height: 150px; width: 150px; position: relative">
+                                              {{ BCForm.image }}
+                                              <img src="{{ badge.image.url }}" class="img-thumbnail badgeImage"
+                                              style="width:150px;height:150px;cursor:pointer;position:absolute;"
+                                              onclick="$(this).siblings('input').trigger('click')"></img>
+                                          </div>
                                         </div>
                                     </div>
                                 </div>
@@ -124,7 +132,7 @@
                     </div>
                 </div>
 
-                <!-- <div id="availabilityBadge{{ badge.name }}" class="modal fade">
+                <div id="availabilityBadge{{ badge.slug }}" class="modal fade">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -133,21 +141,21 @@
                             </div>
                             <form method="POST">{% csrf_token %}
                                 <div class="modal-body">
-                                    <div class="row-row">
-                                        <h4>Set availability</h4>
-                                        {{ BSAForm.availability }}
+                                    <div class="alert alert-warning" role="alert">
+                                        Are you sure you want to make this badge available? Once available, you will not
+                                        be able to change this badge's availability or edit this badge.
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                                    <button type="submit" value="{{ badge.name }}" class="btn btn-primary" name="changeBadgeAvailabilitySubmit">Set availability</button>
+                                    <button type="submit" value="{{ badge.name }}" class="btn btn-primary" name="setBadgeAvailableSubmit">Set available</button>
                                 </div>
                             </form>
                         </div>
                     </div>
-                </div> -->
+                </div>
 
-                <div id="assignBadge{{ badge.name }}" class="modal fade">
+                <div id="assignBadge{{ badge.slug }}" class="modal fade">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -197,7 +205,7 @@
                     </div>
                 </div>
 
-                <div id="discontinueBadge{{ badge.name }}" class="modal fade">
+                <div id="discontinueBadge{{ badge.slug }}" class="modal fade">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -206,11 +214,9 @@
                             </div>
                             <form method="POST" enctype="multipart/form-data">{% csrf_token %}
                                 <div class="modal-body">
-                                    <div class="row-row">
-                                        <div class="alert alert-danger" role="alert">
-                                            Are you sure you want to discontinue this badge? This will destroy all badge instances
-                                            for this badge and cannot be undone.
-                                        </div>
+                                    <div class="alert alert-danger" role="alert">
+                                        Are you sure you want to discontinue this badge? This will destroy all badge instances
+                                        for this badge and cannot be undone.
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -221,7 +227,7 @@
                         </div>
                     </div>
                 </div>
-                <li>{% include "badge/badge.html" with id=badge.id image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None' %}</li>
+                <li>{% include "badge/badge.html" with available=badge.is_available %}</li>
             {% endfor %}
         </ul>
     </div>
@@ -262,11 +268,11 @@
                                     </td>
                                     <td>{{ member.joined_on }}</td>
                                     <td>
-                                        <button class="btn btn-xs btn-default" href="#assignBadge{{ member.id }}" data-toggle="modal">
+                                        <button class="btn btn-xs btn-default" href="#assignBadge{{ member.user }}" data-toggle="modal">
                                             <span class="glyphicon glyphicon-briefcase"></span>
                                         </button>
 
-                                        <div id="assignBadge{{ member.id }}" class="modal fade">
+                                        <div id="assignBadge{{ member.user }}" class="modal fade">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
@@ -275,7 +281,7 @@
                                                     </div>
                                                     <form method="post">{% csrf_token %}
                                                         <div class="modal-body">
-                                                          {% if all_badge_classes.count > 0 %}
+                                                          {% if all_avail_badges.count > 0 %}
                                                           <div class="table-responsive">
                                                               <table class="table table-condensed table-striped table-hover">
                                                                   <thead>
@@ -288,7 +294,7 @@
                                                                   </thead>
                                                                   <tbody>
                                                                       {{ UBAFormset.management_form }}
-                                                                      {% for badge in all_badge_classes %}
+                                                                      {% for badge in all_avail_badges %}
                                                                           <tr>
                                                                           <td style="vertical-align:middle;"><img class="img-thumbnail" src="{{ badge.image.url }}" style="width:40px; height:40px;"> </img></td>
                                                                           <td style="vertical-align:middle;">{{ badge.name }}</td>
@@ -318,18 +324,18 @@
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                                                            <button name="assignBadgesSubmit" value="{{ member.id }}" type="submit" class="btn btn-primary">Confirm</button>
+                                                            <button name="assignBadgesSubmit" value="{{ member.user }}" type="submit" class="btn btn-primary">Confirm</button>
                                                         </div>
                                                     </form>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <button class="btn btn-xs btn-default" href="#changeSettings{{ member.id }}" data-toggle="modal">
+                                        <button class="btn btn-xs btn-default" href="#changeSettings{{ member.user }}" data-toggle="modal">
                                             <span class="glyphicon glyphicon-cog"></span>
                                         </button>
                                         <form action="" method="post">{% csrf_token %}
-                                            <div id="changeSettings{{ member.id }}" class="modal fade">
+                                            <div id="changeSettings{{ member.user }}" class="modal fade">
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
@@ -351,7 +357,7 @@
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                                                                <input type="hidden" value="{{ member.user.id }}" name="member">
+                                                                <input type="hidden" value="{{ member.user }}" name="member">
                                                                 <input type="submit" class="btn btn-primary" name="permissionSubmit" value="Save"></input>
                                                             </div>
                                                         </div>
@@ -402,11 +408,11 @@
                                       <td>
                                           <div class="row-fluid">
                                               <div class="col-xs-1" style="padding-left: 0px;">
-                                                  <button class="btn btn-xs btn-default" href="#changeSettings{{ invite.recipient.id }}" data-toggle="modal">
+                                                  <button class="btn btn-xs btn-default" href="#changeSettings{{ invite.recipient }}" data-toggle="modal">
                                                       <span class="glyphicon glyphicon-cog"></span>
                                                   </button>
                                                   <form action="" method="post">{% csrf_token %}
-                                                      <div id="changeSettings{{ invite.recipient.id }}" class="modal fade">
+                                                      <div id="changeSettings{{ invite.recipient }}" class="modal fade">
                                                               <div class="modal-dialog">
                                                                   <div class="modal-content">
                                                                       <div class="modal-header">
@@ -421,7 +427,7 @@
                                                                       </div>
                                                                       <div class="modal-footer">
                                                                           <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                                                                          <input type="hidden" value="{{ invite.recipient.id }}" name="invited">
+                                                                          <input type="hidden" value="{{ invite.recipient }}" name="invited">
                                                                           <input type="submit" class="btn btn-primary" name="invitedPermissionSubmit" value="Save"></input>
                                                                       </div>
                                                                   </div>
@@ -521,7 +527,7 @@
                                     <td>
                                         {% if not application.accepted_by %}
                                             <form action="" method="post">{% csrf_token %}
-                                                <button type="submit" class="btn btn-xs btn-default" value="{{ application.applicant.id }}" name="acceptApplication">
+                                                <button type="submit" class="btn btn-xs btn-default" value="{{ application.applicant }}" name="acceptApplication">
                                                     <span class="glyphicon glyphicon-ok"></span>
                                                 </button>
                                             </form>
@@ -674,20 +680,25 @@
 
     <!-- Script for rendering image for badge upload -->
     <script>
-        $('#badgeImage').click(function(){
-            $('#badgeImageUpload').trigger('click');
-        });
-
-        document.getElementById("badgeImageUpload").onchange = function () {
+    function readURL(input) {
+        console.log('yay!');
+        if (input.files && input.files[0]) {
             var reader = new FileReader();
 
             reader.onload = function (e) {
-                // get loaded data and render thumbnail.
-                document.getElementById("badgeImage").src = e.target.result;
-            };
+                $(input).siblings('img').attr('src', e.target.result);
+            }
 
-            // read the image file as a data URL.
-            reader.readAsDataURL(this.files[0]);
-        };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $(".badgeImageUpload").change(function(){
+        readURL(this);
+    });
+    </script>
+
+    <script>
+
     </script>
 {% endblock %}

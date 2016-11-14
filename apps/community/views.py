@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.utils.html import escape
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.forms.formsets import formset_factory
+from django.utils.translation import ugettext_lazy as _
 
 from community.forms import *
 from community.models import *
@@ -56,9 +57,19 @@ def community(request, community_tag):
         community=community,
     )
     # all community badge classes
-    all_badges = all_community_badge_classes(
+    all_badges = all_badge_classes(
         community=community
     )
+    # all available community badge classes
+    all_avail_badges = all_available_badge_classes(
+        community=community,
+    )
+
+    # user's badge instances
+    # instances = BadgeInstance.objects.filter(
+    #     user=request.user,
+    #     community=community
+    # )
 
     # use proper template extension based on current permissions
     if not membership:
@@ -212,10 +223,11 @@ def community(request, community_tag):
                         return JsonResponse(USForm.errors)
 
                 if 'acceptApplication' in request.POST:
+                    user = u_instance(request.POST['acceptApplication'])
                     # check if user has a pending application
                     application = u_application(
                         community=community,
-                        user=request.POST['acceptApplication'],
+                        user=user,
                     )
                     if application:
                         # accept application and create membership
@@ -223,6 +235,13 @@ def community(request, community_tag):
                             accepted_by=request.user,
                         )
                         application.save()
+                        # create new membership
+                        new_membership = Membership(
+                            user=user,
+                            community=community,
+                            is_moderator=False,
+                        )
+                        new_membership.save()
 
                 if 'revokeInvite' in request.POST:
                     # fetch user's instance
@@ -239,10 +258,12 @@ def community(request, community_tag):
                 if 'invitedPermissionSubmit' in request.POST:
                     UPForm = UserPermissionForm(request.POST)
                     if UPForm.is_valid():
+                        # fetch user's instance
+                        user = u_instance(request.POST['invited'])
                         # refetch invitation
                         invite = u_invitation(
                             community=community,
-                            user=request.POST['invited'],
+                            user=user,
                         )
                         if invite:
                             invite = invite.edit_permissions(
@@ -256,10 +277,12 @@ def community(request, community_tag):
                 if 'permissionSubmit' in request.POST:
                     UPForm = UserPermissionForm(request.POST)
                     if UPForm.is_valid():
+                        # fetch user's instance
+                        user = u_instance(request.POST['member'])
                         # get user membership and check if it exists
                         membership = u_membership(
                             community=community,
-                            user=request.POST['member']
+                            user=user,
                         )
 
                         if membership:
@@ -364,40 +387,68 @@ def community(request, community_tag):
                 if 'addBadgeSubmit' in request.POST:
                     BCForm = BadgeCreationForm(request.POST, request.FILES)
                     if BCForm.is_valid():
-                        # create new badgeclass
-                        new_badgeclass = BadgeClass(
-                            name=request.POST['name'],
-                            description=request.POST['description'],
-                            image=request.FILES['image'],
-                            community=community,
-                            creator=request.user,
-                        )
-                        new_badgeclass.save()
+                        # check if badgeclass name exists already
+                        if not a_badge_class(BCForm.cleaned_data['name']):
+                            # create new badgeclass
+                            new_badgeclass = BadgeClass(
+                                name=BCForm.cleaned_data['name'],
+                                description=BCForm.cleaned_data['description'],
+                                image=BCForm.cleaned_data['image'],
+                                community=community,
+                                creator=request.user,
+                            )
+                            new_badgeclass.save()
+                    else:
+                        return JsonResponse(BCForm.errors)
+
+                if 'editBadgeSubmit' in request.POST:
+                    BCForm = BadgeCreationForm(request.POST, request.FILES)
+                    if BCForm.is_valid():
+                        # fetch badge class
+                        badge_class = a_badge_class(request.POST['editBadgeSubmit'])
+
+                        # check if badge_class is in this community and if the badge is unavailable
+                        if badge_class and not badge_class.is_available and \
+                            badge_class in all_badge_classes(community=community):
+                            # check if badgeclass is same as this one or name doesnt exist already
+                            if BCForm.cleaned_data['name'] == request.POST['editBadgeSubmit'] or \
+                                not a_badge_class(BCForm.cleaned_data['name']):
+                                # change badge_class
+                                badge_class.name = BCForm.cleaned_data['name']
+                                badge_class.description = BCForm.cleaned_data['description']
+                                # remove old image from folder
+                                badge_class.image.delete()
+                                badge_class.image = BCForm.cleaned_data['image']
+                                badge_class.save()
+
 
                 if 'assignBadgesSubmit' in request.POST:
                     uba_formset = UBAFormset(request.POST)
                     if uba_formset.is_valid():
+                        # fetch user instance
+                        user = u_instance(request.POST['assignBadgesSubmit'])
                         # fetch community membership
                         membership = u_membership(
-                            user=request.POST['assignBadgesSubmit'],
+                            community=community,
+                            user=user,
                         )
                         if not membership:
                             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/home/'))
 
-                        # refetch community badge classes
-                        all_badges = all_badges_classes(
+                        # refetch available community badge classes
+                        all_badges = all_available_badge_classes(
                             community=community,
                         )
                         # TODO: there should be a better way to couple the form number and the
                         #       badge class it represents
                         form_counter = 0
                         for badgeclass in all_badges:
-                            # check if badgeclass exists in community
-                            if badgeclass in all_badge_classes(community=community) and uba_formset[form_counter].cleaned_data.get('badge_assign') == 'gift':
+                            # check if badgeclass exists in community and the badge is made available and if the moderator is gifting the badge
+                            if badgeclass in all_badge_classes(community=community) and badgeclass.is_available and uba_formset[form_counter].cleaned_data.get('badge_assign') == 'gift':
                                 # check if badgeinstance exists for the user
                                 badgeinstance = u_badge_instance(
                                     badgeclass=badgeclass,
-                                    earner=membership,
+                                    earner=user,
                                 )
                                 if not badgeinstance:
                                     # create new badge instance
@@ -420,8 +471,8 @@ def community(request, community_tag):
                         badge_class = a_badge_class(
                             class_name=request.POST['oneBadgeSubmit'],
                         )
-                        # check if badge class exists and is part of the community
-                        if badge_class and badge_class in all_badge_classes(community=community):
+                        # check if badge class exists and is part of the community and is available
+                        if badge_class and badge_class.is_available and badge_class in all_badge_classes(community=community):
                             # TODO: there should be a better way to couple the form number and the
                             #       membership it represents
                             form_counter = 0
@@ -446,17 +497,15 @@ def community(request, community_tag):
                                         new_badgeinstance.save()
                                 form_counter += 1
 
-                if 'changeBadgeAvailabilitySubmit' in request.POST:
+                if 'setBadgeAvailableSubmit' in request.POST:
                     # fetch badge class
                     badge_class = a_badge_class(
-                        class_name=escape(request.POST['changeBadgeAvailabilitySubmit']),
+                        class_name=escape(request.POST['setBadgeAvailableSubmit']),
                     )
                     # check if badge_class is in this community
                     if badge_class and badge_class in all_badge_classes(community=community):
-                        if badge_class.is_available:
-                            badge_class.is_available = False
-                        else:
-                            badge_class.is_available = True
+                        # set badge to unavailable
+                        badge_class.is_available = True
                         badge_class.save()
 
                 if 'discontinueBadgeSubmit' in request.POST:
@@ -466,6 +515,8 @@ def community(request, community_tag):
                     )
                     # check if badge_class is in this community
                     if badge_class and badge_class in all_badge_classes(community=community):
+                        # remove old image from folder
+                        badge_class.image.delete()
                         # destroy the badge
                         badge_class.delete()
 
@@ -473,6 +524,7 @@ def community(request, community_tag):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/home/'))
 
     else:
+
         ''' FORM CREATION '''
         BCForm = BadgeCreationForm()
         UPForm = UserPermissionForm()
@@ -499,6 +551,7 @@ def community(request, community_tag):
         'is_invited': invitation,
 
         'all_badge_classes' : all_badges,
+        'all_avail_badges' : all_avail_badges,
 
         'BCForm' : BCForm,
         'UPForm' : UPForm,

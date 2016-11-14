@@ -7,8 +7,16 @@ def all_badge_classes(community):
     )
     return all_badges
 
+def all_available_badge_classes(community):
+    all_badges = BadgeClass.objects.filter(
+        community=community,
+        is_available=True,
+    )
+    return all_badges
+
+
 def a_badge_class(class_name):
-    # user badge instance return it or none
+    # user badge class return it or none
     try:
         badge_class = BadgeClass.objects.get(
             name=class_name,

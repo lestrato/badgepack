@@ -1,15 +1,21 @@
 from django import forms
+from django.utils.translation import ugettext_lazy as _
+
+from badge.models import BadgeClass
 
 class BadgeCreationForm(forms.Form):
     image = forms.FileField(
         widget=forms.FileInput(
             attrs={
                 "required":True,
-                "class":"hidden",
-                "id":"badgeImageUpload",
+                # This is a kind of hacky way to overlay an image over the input
+                # Sorry, styling gods
+                "style":"height: 150px; width: 150px; \
+                    opacity: 0; position: absolute;",
+                "class":"badgeImageUpload",
                 "type":"file",
             }
-        ),
+        )
     )
 
     name=forms.CharField(
@@ -21,6 +27,8 @@ class BadgeCreationForm(forms.Form):
                 "class":"form-control input-sm",
                 "placeholder":"Badge name",
                 "type":"text",
+                "id":"addBadgeName",
+                "name":"addBadgeName",
             }
         ),
     )
@@ -29,6 +37,7 @@ class BadgeCreationForm(forms.Form):
         max_length=140,
         widget=forms.Textarea(
             attrs={
+                "required":True,
                 "style":"resize: vertical; height:100px;",
                 "class":"form-control",
                 "maxlength":140,
@@ -38,20 +47,9 @@ class BadgeCreationForm(forms.Form):
         ),
     )
 
+    def clean(self):
+        return self.cleaned_data
 
-    def clean_description(self):
-        description = self.cleaned_data.get("description")
-        return description
-
-    def clean_name(self):
-        name = self.cleaned_data.get('username')
-        return name
-        # check to see if name exists
-        # try:
-        #     user = BadgeClass.objects.get(name__iexact=name)
-        # except BadgeClass.DoesNotExist:
-        #     return name
-        # raise forms.ValidationError(_("The badge name already exists. Please try another one."))
 
 class UserBadgeAssignForm(forms.Form):
     CHOICES= (

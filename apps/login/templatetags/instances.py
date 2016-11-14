@@ -11,3 +11,13 @@ def instances(community, user):
     )
     #
     return badge_instances
+
+@register.filter
+def classes(community):
+    bc = apps.get_model('badge', 'BadgeClass')
+    badge_classes = bc.objects.filter(
+        community=community,
+        is_available=True,
+    )
+    #
+    return badge_classes
