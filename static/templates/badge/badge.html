@@ -9,6 +9,7 @@
             <ul>
                 <!-- If badge is available, you can't edit or make unavailable -->
                 {% if not badge.is_available %}
+                <li class="empty-icon"></li>
                 <li id='badge-overlay-edit' href="#editBadge{{badge.slug}}" role="button" data-toggle="modal">
                     <div class="badge-overlay-icon">
                         <svg height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
@@ -29,6 +30,7 @@
                 </li>
                 {% endif %}
                 {% if badge.is_available %}
+                <li class="empty-icon-more"></li>
                 <li id='badge-overlay-assign' href="#assignBadge{{badge.slug}}" role="button" data-toggle="modal">
                     <div class="badge-overlay-icon">
                         <svg height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">

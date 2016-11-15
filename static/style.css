@@ -177,8 +177,7 @@ hr {
 
 .badge-overlay-content > ul > li {
     display: inline-table;
-    margin: 0 0 0 2.5px;
-    width: 60px;
+/*    margin: auto auto auto 10px;*/
     text-align: center;
     overflow: hidden;
 
@@ -214,6 +213,15 @@ hr {
                         color .25s ease;
 }
 
+/* Padding for empty icons */
+.empty-icon {
+    width: 10px;
+}
+
+.empty-icon-more {
+    width: 60px;
+}
+
 /* Edit */
 #badge-overlay-edit:hover {
     fill: #51FF3D;
@@ -242,12 +250,12 @@ hr {
     border-radius: 10px;
     width: 50px;
     height: 50px;
-    margin: auto;
+    margin: auto 10px auto 10px;
     background-color: #000;
 }
 
 .badge-overlay-title {
-    margin-top: 2px;
+    margin: auto 10px auto 10px;
     font-size: 12px;
 }
 
