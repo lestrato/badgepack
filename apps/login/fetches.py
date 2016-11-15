@@ -23,3 +23,4 @@ def u_all_invitations(user):
     all_invites = Invitation.objects.filter(
         recipient=user,
     )
+    return all_invites

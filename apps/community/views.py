@@ -353,7 +353,7 @@ def community(request, community_tag):
                         if request.POST['privacy'] == 'True':
                             # set privacy as true
                             community = community.change_privacy(
-                                change_privacy=True,
+                                is_private=True,
                             )
                             community.save()
                         elif request.POST['privacy'] == 'False':

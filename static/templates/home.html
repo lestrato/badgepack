@@ -106,16 +106,17 @@
     {% if earner_communities %}
 
         {% for community in earner_communities %}
+        {% with community|classes as community_classes %}
             <h2><a href="{% url 'community' community.tag %}">{{ community.tag }}</a>
                 <small style="margin-left: 10px; font-size: 45%;">
                   {% with community|instances:user as my_instances %}
-                  {{ my_instances.count }}/{{ community.get_badge_classes.count }} earned
+                  {{ my_instances.count }}/{{ community_classes.count }} earned
                   {% endwith %}
                 </small>
             </h2>
             <div class="container">
                 <!-- Display badge list -->
-                {% if community.get_badge_classes.count > 0 %}
+                {% if community_classes.count > 0 %}
                     <ul class="badge-list">
                         {% for badge in community|classes %}
                             <li>
@@ -132,8 +133,8 @@
                 {% endif %}
             </div>
             <hr>
+        {% endwith %}
         {% endfor %}
-
     {% else %}
         <div class="container">
             <h2><small>You are not in any communities yet.</small></h2>
