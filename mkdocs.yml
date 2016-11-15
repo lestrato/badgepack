@@ -2,6 +2,7 @@ site_name: Badgepack
 repo_url: https://github.com/lestrato/badgepack
 pages:
     - Home: index.md
+    - Usability Testing Script: test-script.md
     - Project Documentation: 
         - URLs: project/urls.md
         - Static Files and CSS: project/static.md
