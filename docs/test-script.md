@@ -1,3 +1,5 @@
+# Script
+
 ## Introduction
 
 Hi <user>, I'm <name> and I'm hoping to gather user feedback on Badgepack, a web-based badge achievement system. I'll be asking you to go through a few tasks, and for each task, I ask that you voice your thoughts as often as possible.
@@ -35,3 +37,47 @@ Hi <user>, I'm <name> and I'm hoping to gather user feedback on Badgepack, a web
 * Finally, log out and sign in as the user "potato", using the password "monday123". "potato" is a member of multiple communities, and their main page displays a list of all their communities, as well as which badges they've earned.
     * How do you feel about this layout?
 * Feel free to click around and explore the site as "potato". Do you have any further thoughts about the site when viewing it as a regular user?
+
+# Notes
+
+## User Stories
+
+### User
+* log into the system
+* search for a community
+* request to join a community
+* accept an invitation to join a community
+* <del>leave a community</del>
+* view all earned badges in my backpack
+* view all unearned/earned badges in a community
+* view my progress towards earning a badge
+
+### Moderator
+* set another user as a moderator to this community
+* accept a user's request to join my community
+* invite a user to join my community
+* remove moderator privileges from a moderator in my community
+* create a badge for my community
+* discontinue a badge for my community
+* <del>set a badge to be available/unavailable to achieve in my community</del>
+* assign a badge to users inside of my community
+
+### Admin
+* set another user as an admin
+* create a community
+* discontinue a community
+* set a user as a moderator to this community
+
+## Questions / Comments
+
+* We have the functionality for users to join communities, but there is no way of searching for communities to join at the moment.
+
+* Moderators: add a way to see a list of which users have received which badge, and a way to export this information as a CSV? (`name,badge1_name,badge2_name,...`)
+
+* When doing user testing: if I demo to an instructor, should I ask them to go through both the moderator and earner views of the site?
+    * How about if I demo to a student?    
+
+## Things to Add
+
+* Resources to help people know how to do things
+* Visual feedback when you earned a badge?
