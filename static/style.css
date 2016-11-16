@@ -17,6 +17,36 @@ hr {
     background: #cdcdcd;
 }
 
+@media (min-width: 768px) {
+  #communitySearch {
+    margin-top: 10px;
+  }
+  #communitySearch > .input-group-btn {
+    width: inherit;
+  }
+}
+
+@media (max-width: 767px) {
+  #communitySearch {
+    margin-bottom: 10px;
+    margin-left: 15px;
+  }
+  #communitySearch > input {
+    width: 100%;
+  }
+  #communitySearch > .input-group-btn {
+    width: 1%;
+  }
+}
+
+#communitySearch {
+  margin-right: 15px;
+}
+
+#communitySearch > input {
+  display: inherit;
+}
+
 .navbar-default {
     background-color: #001C2E;
     font-size: 16px;

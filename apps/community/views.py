@@ -25,6 +25,8 @@ def community(request, community_tag):
     mod_communities, earner_communities = get_navbar_information(
         request=request,
     )
+    searchform = CommunitySearchForm()
+
     # this commounity, based on tag
     community = community_object(
         community_tag=community_tag,
@@ -422,7 +424,7 @@ def community(request, community_tag):
                                 badge_class.save()
 
 
-                if 'assignBadgesSubmit' in request.POST:
+                if 'assignBadgesSubmit' in request.POST and 'form-TOTAL_FORMS' in request.POST:
                     uba_formset = UBAFormset(request.POST)
                     if uba_formset.is_valid():
                         # fetch user instance
@@ -536,6 +538,7 @@ def community(request, community_tag):
     return render(request, 'community/community.html', {
         'mod_communities': mod_communities,
         'earner_communities': earner_communities,
+        'searchform': searchform,
 
         'user': request.user,
         'community': community,
