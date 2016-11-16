@@ -7,7 +7,7 @@ class CommunitySearchForm(forms.Form):
                 "required":True,
                 "max_length":30,
                 "class":"form-control input-sm",
-                "placeholder":"search for a community",
+                "placeholder":"Search for a community...",
                 "type":"text",
                 # "id":"csInput",
             }
