@@ -11,6 +11,7 @@ from login.fetches import *
 from login.forms import *
 from community.models import Invitation
 from badge.models import BadgeClass, BadgeInstance
+from base.forms import *
 
 def login_page(request):
     if request.user.is_authenticated():
@@ -61,14 +62,19 @@ def logout_page(request):
 
 @login_required
 def home(request):
-    invitations = u_all_invitations(request.user)
 
-    mod_communities, earner_communities = get_navbar_information(request)
+    invitations = u_all_invitations(request.user)
+    mod_communities, earner_communities = get_navbar_information(
+        request=request,
+    )
+    searchform = CommunitySearchForm()
 
     return render_to_response('home.html', {
-    'invitations': invitations,
+
     'mod_communities': mod_communities,
     'earner_communities': earner_communities,
+    'searchform': searchform,
+
     'user': request.user,
-    # 'badge_instances': badge_instances,
+    'invitations': invitations,
     })

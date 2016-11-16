@@ -1,4 +1,6 @@
 from community.models import Community, Invitation
+from base.forms import *
+
 from django.contrib.auth.models import User
 
 def get_navbar_information(request):
@@ -11,6 +13,10 @@ def get_navbar_information(request):
         membership__is_moderator='False'
     )
     return mod_communities, earner_communities
+
+def get_search_form():
+    return CommunitySearchForm()
+
 
 def u_instance(username):
     try:
