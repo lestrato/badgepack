@@ -4,6 +4,8 @@ Created by Mark Clapa, Elaine Huynh, Andrew Petersen, and Steve Engels.
 
 ## Project Layout
 
+(Needs to be revamped.)
+
     mkdocs.yml     # The configuration file.
     docs/
         index.md   # Documentation homepage.

@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Hi <user>, I'm <name> and I'm hoping to gather user feedback on Badgepack, a web-based badge achievement system. I'll be asking you to go through a few tasks, and for each task, I ask that you voice your thoughts as often as possible.
+Hi (user), I'm (name) and I'm hoping to gather user feedback on Badgepack, a web-based badge achievement system. I'll be asking you to go through a few tasks, and for each task, I ask that you voice your thoughts as often as possible.
 
 (open the website)
 
@@ -76,6 +76,9 @@ Hi <user>, I'm <name> and I'm hoping to gather user feedback on Badgepack, a web
 
 * When doing user testing: if I demo to an instructor, should I ask them to go through both the moderator and earner views of the site?
     * How about if I demo to a student?    
+
+* **Do the demo without this stuff**
+    * Feedback might validate that that's something we need
 
 ## Things to Add
 
