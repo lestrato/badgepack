@@ -1,4 +1,5 @@
 <!-- Navigation Bar -->
+{% load static %}
 <nav role="navigation" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -10,7 +11,7 @@
                 <span class="icon-bar"></span>
             </button>
 
-            <a href="/home/" class="navbar-brand">Badgepack</a>
+            <a href="/home/" class="navbar-brand"><img class="navbar-icon" src="{% static "images/badgepack_filled.png" %}">adgepack</a>
 
         </div>
         <!-- Collection of nav links and other content for toggling -->
