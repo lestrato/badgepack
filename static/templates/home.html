@@ -31,17 +31,17 @@
             <h1>My Badges<small style="margin-left: 10px; font-size: 45%;">0 earned</small></h1>
         </div>
         <div class="col-sm-4 bottom-align-text">
-            <button class="btn btn-primary" style="margin-bottom: 10px;" data-toggle="modal" href="#communityInvites">Community Invites</button>
+            <button class="btn btn-primary" style="margin-bottom: 10px;" data-toggle="modal" href="#communityInvites">Community Invites {% if pending_invitations %}<b>({{ pending_invitations|length }})</b>{% else %}(0){% endif %}</button>
 
             <div id="communityInvites" class="modal fade">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h3 class="modal-title">My Community Invitations</h3>
+                            <h3 class="modal-title">Pending Invitations</h3>
                         </div>
                         <div class="modal-body">
-                            {% if invitations %}
+                            {% if pending_invitations %}
                             <table class="table table-striped table-compressed table-hover">
                                 <thead>
                                     <tr>
@@ -51,7 +51,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for invite in invitations %}
+                                    {% for invite in pending_invitations %}
                                         <tr>
                                             <td>
                                                 <a href="{% url 'community' invite.community.tag %}">{{ invite.community.name }}</a>

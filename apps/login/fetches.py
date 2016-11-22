@@ -30,3 +30,14 @@ def u_all_invitations(user):
         recipient=user,
     )
     return all_invites
+
+def u_pending_invitations(user):
+    pending_invites = Invitation.objects.filter(
+        recipient=user
+    ).exclude(
+        community__in = Community.objects.filter(
+            members=user
+        ).values_list('id', flat=True)
+    )
+
+    return pending_invites

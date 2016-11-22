@@ -68,6 +68,7 @@ def home(request):
         request=request,
     )
     searchform = CommunitySearchForm()
+    pending_invites = u_pending_invitations(request.user)
 
     return render_to_response('home.html', {
 
@@ -77,4 +78,5 @@ def home(request):
 
     'user': request.user,
     'invitations': invitations,
+    'pending_invitations': pending_invites,
     })
