@@ -442,3 +442,11 @@ hr {
 .badge-list .hidden-earned-badge, .badge-list .hidden-in-progress {
     display: none;
 }
+
+.dataTable > thead > tr > th, .dataTable > tbody > tr > td {
+    border-right: 1px solid #dddddd;
+}
+
+.dataTable > thead > tr > th:last-child, .dataTable > tbody > tr > td:last-child {
+    border-right: none;
+}
