@@ -693,7 +693,9 @@
             // Instantiating 'datatable' objects for orderby/searching
             $('#membersTable').DataTable();
             $('#invitesTable').DataTable();
-            $('#applicationsTable').DataTable();
+            $('#applicationsTable').DataTable({
+                "order": [[4, "desc"]]
+            });
         });
     </script>
 
