@@ -154,7 +154,8 @@ $(document).ready(function() {
             // Hide any earned badges:
             var earnedBadges = $('.badge-container:not(.inactive-badge)');
             for (var i = 0; i < earnedBadges.length; i++) {
-                $(earnedBadges[i]).addClass('hidden-earned-badge');
+                console.log($(earnedBadges[i]).parent())
+                $(earnedBadges[i]).parent().addClass('hidden-earned-badge');
             }
         } else {
             var hiddenEarnedBadges = $('.hidden-earned-badge');
@@ -169,7 +170,7 @@ $(document).ready(function() {
             // Hide any unearned badges:
             var earnedBadges = $('.inactive-badge');
             for (var i = 0; i < earnedBadges.length; i++) {
-                $(earnedBadges[i]).addClass('hidden-in-progress');
+                $(earnedBadges[i]).parent().addClass('hidden-in-progress');
             }
         } else {
             var hiddenEarnedBadges = $('.hidden-in-progress');
