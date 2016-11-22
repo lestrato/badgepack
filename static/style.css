@@ -17,6 +17,37 @@ hr {
     background: #cdcdcd;
 }
 
+
+.icon-desc {
+    border-radius: 3px;
+    margin: auto;
+    position: absolute;
+    margin-top: -47px;
+    margin-left: 25px;
+    z-index: 1;
+
+    padding: 2px 5px 2px 5px;
+
+    padding-left: 5px;
+    padding-right: 5px;
+
+    text-align: center;
+    color: #eeeeee;
+    
+    opacity: 0;
+    background-color: transparent;
+
+    visibility: hidden;
+
+    -webkit-transition: visibility 0s ease, background .3s ease, opacity .3s ease;
+    -moz-transition: visibility 0s ease, background .3s ease, opacity .3s ease;
+    transition: visibility 0s ease, background .3s ease, opacity .3s ease;
+}
+
+.icon-container {
+    display: inline-block;
+}
+
 .navbar-search-icon {
     background-color: #000;
     color: #fff;
@@ -103,25 +134,38 @@ hr {
 
 
 @media (min-width: 768px) {
-  #communitySearch {
+    #communitySearch {
     margin-top: 10px;
-  }
-  #communitySearch > .input-group-btn {
+    }
+    #communitySearch > .input-group-btn {
     width: inherit;
-  }
+    }
+
+    .icon-container:hover > .icon-desc {
+        opacity: 1;
+
+        visibility: visible;
+
+        background-color: #001C2E;
+        color: #fff;
+
+        -webkit-transition: visibility 0s ease, background .3s ease, opacity .3s ease;
+        -moz-transition: visibility 0s ease, background .3s ease, opacity .3s ease;
+        transition: visibility 0s ease, background .3s ease, opacity .3s ease;
+    }
 }
 
 @media (max-width: 767px) {
-  #communitySearch {
+    #communitySearch {
     margin-bottom: 10px;
     margin-left: 15px;
-  }
-  #communitySearch > input {
+    }
+    #communitySearch > input {
     width: 100%;
-  }
-  #communitySearch > .input-group-btn {
+    }
+    #communitySearch > .input-group-btn {
     width: 1%;
-  }
+    }
 }
 
 /* Badge List */

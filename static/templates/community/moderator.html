@@ -257,20 +257,26 @@
                         <tbody>
                             {% for member in all_members %}
                                 <tr>
-                                    <td>{{ member.user }}</td>
+                                    <td><a href="#assignBadge{{ member.user }}" data-toggle="modal">{{ member.user }}</a></td>
                                     <td>{{ member.user.email }}</td>
-                                    <td>
+                                    <td><a href="#changeSettings{{ member.user }}" data-toggle="modal">
                                         {% if member.is_moderator %}
                                             moderator
                                         {% else %}
                                             earner
                                         {% endif %}
+                                    </a>
                                     </td>
                                     <td>{{ member.joined_on }}</td>
                                     <td>
-                                        <button class="btn btn-xs btn-default" href="#assignBadge{{ member.user }}" data-toggle="modal">
-                                            <span class="glyphicon glyphicon-briefcase"></span>
-                                        </button>
+                                        <div class="icon-container">
+                                            <button class="btn btn-xs btn-default" href="#assignBadge{{ member.user }}" data-toggle="modal">
+                                                <span class="glyphicon glyphicon-briefcase"></span>
+                                            </button>
+                                            <div class="icon-desc">
+                                                Assign Badges
+                                            </div>
+                                        </div>
 
                                         <div id="assignBadge{{ member.user }}" class="modal fade">
                                             <div class="modal-dialog">
@@ -331,9 +337,13 @@
                                             </div>
                                         </div>
 
-                                        <button class="btn btn-xs btn-default" href="#changeSettings{{ member.user }}" data-toggle="modal">
-                                            <span class="glyphicon glyphicon-cog"></span>
-                                        </button>
+                                        <div class="icon-container">
+                                            <button class="btn btn-xs btn-default" href="#changeSettings{{ member.user }}" data-toggle="modal">
+                                                <span class="glyphicon glyphicon-cog"></span>
+                                            </button>
+                                            <div class="icon-desc">Set Permissions</div>
+                                        </div>
+
                                         <form action="" method="post">{% csrf_token %}
                                             <div id="changeSettings{{ member.user }}" class="modal fade">
                                                     <div class="modal-dialog">
@@ -408,9 +418,12 @@
                                       <td>
                                           <div class="row-fluid">
                                               <div class="col-xs-1" style="padding-left: 0px;">
-                                                  <button class="btn btn-xs btn-default" href="#changeSettings{{ invite.recipient }}" data-toggle="modal">
-                                                      <span class="glyphicon glyphicon-cog"></span>
-                                                  </button>
+                                                <div class="icon-container">
+                                                      <button class="btn btn-xs btn-default" href="#changeSettings{{ invite.recipient }}" data-toggle="modal">
+                                                          <span class="glyphicon glyphicon-cog"></span>
+                                                      </button>
+                                                      <div class="icon-desc">Set Permissions</div>
+                                                  </div>
                                                   <form action="" method="post">{% csrf_token %}
                                                       <div id="changeSettings{{ invite.recipient }}" class="modal fade">
                                                               <div class="modal-dialog">
@@ -438,9 +451,12 @@
                                                   </div>
                                               <div class="col-xs-1" style="padding-right: 0px;">
                                                   <form action="" method="post">{% csrf_token %}
-                                                      <button type="submit" class="btn btn-xs btn-default" value="{{ invite.recipient }}" name="revokeInvite">
-                                                          <span class="glyphicon glyphicon-trash"></span>
-                                                      </button>
+                                                    <div class="icon-container">
+                                                          <button type="submit" class="btn btn-xs btn-default" value="{{ invite.recipient }}" name="revokeInvite">
+                                                              <span class="glyphicon glyphicon-trash"></span>
+                                                          </button>
+                                                          <div class="icon-desc">Cancel Invitation</div>
+                                                      </div>
                                                   </form>
                                               </div>
                                           </div>
@@ -527,9 +543,12 @@
                                     <td>
                                         {% if not application.accepted_by %}
                                             <form action="" method="post">{% csrf_token %}
-                                                <button type="submit" class="btn btn-xs btn-default" value="{{ application.applicant }}" name="acceptApplication">
-                                                    <span class="glyphicon glyphicon-ok"></span>
-                                                </button>
+                                                <div class="icon-container">
+                                                    <button type="submit" class="btn btn-xs btn-default" value="{{ application.applicant }}" name="acceptApplication">
+                                                        <span class="glyphicon glyphicon-ok"></span>
+                                                    </button>
+                                                    <div class="icon-desc">Accept Application</div>
+                                                </div>
                                             </form>
                                         {% endif %}
                                     </td>
