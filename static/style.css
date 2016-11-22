@@ -17,7 +17,6 @@ hr {
     background: #cdcdcd;
 }
 
-
 .icon-desc {
     border-radius: 3px;
     margin: auto;
@@ -166,6 +165,10 @@ hr {
     #communitySearch > .input-group-btn {
     width: 1%;
     }
+}
+
+.hidden-earned-badge, .hidden-in-progress {
+    display: none;
 }
 
 /* Badge List */

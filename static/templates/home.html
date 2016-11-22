@@ -90,8 +90,8 @@
             </div>
         </div>
         <div class="col-xs-12 col-sm-6 col-md-4" style="margin-top: 10px;">
-          <label class="checkbox-inline"><input type="checkbox" value="">Hide Earned</label>
-          <label class="checkbox-inline"><input type="checkbox" value="">Hide in Progress</label>
+          <label class="checkbox-inline"><input type="checkbox" id="hide-earned" value="">Hide Earned</label>
+          <label class="checkbox-inline"><input type="checkbox" id="hide-in-progress" value="">Hide in Progress</label>
         </div>
     </div>
     <hr>
@@ -143,5 +143,42 @@
     {% endif %}
 
 </div>
+
+<script>
+$(document).ready(function() {
+    $('#hide-earned').val(this.checked);
+    $('#hide-in-progress').val(this.checked);
+
+    $('#hide-earned').change(function(){
+        if (this.checked) {
+            // Hide any earned badges:
+            var earnedBadges = $('.badge-container:not(.inactive-badge)');
+            for (var i = 0; i < earnedBadges.length; i++) {
+                $(earnedBadges[i]).addClass('hidden-earned-badge');
+            }
+        } else {
+            var hiddenEarnedBadges = $('.hidden-earned-badge');
+            for (var i = 0; i < hiddenEarnedBadges.length; i++) {
+                $(hiddenEarnedBadges[i]).removeClass('hidden-earned-badge');
+            }
+        }
+    })
+
+    $('#hide-in-progress').change(function(){
+        if (this.checked) {
+            // Hide any unearned badges:
+            var earnedBadges = $('.inactive-badge');
+            for (var i = 0; i < earnedBadges.length; i++) {
+                $(earnedBadges[i]).addClass('hidden-in-progress');
+            }
+        } else {
+            var hiddenEarnedBadges = $('.hidden-in-progress');
+            for (var i = 0; i < hiddenEarnedBadges.length; i++) {
+                $(hiddenEarnedBadges[i]).removeClass('hidden-in-progress');
+            }
+        }
+    })
+})
+</script>
 
 {% endblock %}
