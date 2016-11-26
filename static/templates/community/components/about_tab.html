@@ -1,0 +1,88 @@
+
+<div id="aboutCommunity" class="tab-pane fade in {% if user_status == 'visitor' %}active{% endif %}">
+    <div class="row">
+        <div class="col-sm-6">
+            <h3 style="margin-top: 0px;">
+                Description
+                {% if user_status == 'owner' %}
+                    <small><a href="#" id="editDescription">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a></small>
+                {% endif %}
+            </h3>
+            <div id="originalDescription">
+                {{ community.description|linebreaksbr }}
+            </div>
+            {% if user_status == 'owner' %}
+                <form method='POST'>{% csrf_token %}
+                    {{ CDForm.description }}
+                    <div class="row-fluid" style="margin-top: 10px;">
+                        <button type="submit" name="submitDescription" id="saveDescription" class="btn btn-sm btn-success" style="display: none;">
+                            Save
+                        </button>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+        <hr class="visible-xs">
+        <div class="col-sm-3">
+            <h3 style="margin-top: 0px;">
+                Is private
+                {% if user_status == 'owner' %}
+                    <small><a href="#" id="editPrivacy">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a></small>
+                {% endif %}
+            </h3>
+            <div id="originalPrivacy">
+            {{ community.is_private }}
+            </div>
+            {% if user_status == 'owner' %}
+                <form method='POST'>{% csrf_token %}
+                    {{ CPForm.privacy }}
+                    <div class="row-fluid">
+                        <button type="submit" name='changePrivacySubmit' id="savePrivacy" class="btn btn-sm btn-success" style="display: none; margin-top: 10px;">
+                            Save
+                        </button>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+        <hr class="visible-xs">
+        <div class="col-sm-3">
+            <h3 style="margin-top: 0px;">Created on</h3>
+            {{ community.created_on }}
+        </div>
+    </div>
+</div>
+
+{% if user_status == 'owner' %}
+    <!-- Community settings scripts -->
+    <script language="JavaScript">
+        $( document ).ready(function() {
+            var communityDescription = '{% filter escapejs %}{{ community.description|safe }}{% endfilter %}';
+            $("#descriptionEditor").val(communityDescription);
+
+            // Toggle the editor
+            $("#editDescription").click(function() {
+              // toggle save button
+              $("#saveDescription").toggle();
+              // toggle existing description
+              $("#originalDescription").toggle();
+              // toggle description editor
+              $("#descriptionEditor").toggle();
+            });
+
+            // Toggle the select
+            $("#editPrivacy").click(function() {
+              // toggle save button
+              $("#savePrivacy").toggle();
+              // toggle existing description
+              $("#originalPrivacy").toggle();
+              // toggle description editor
+              $("#privacyEditor").toggle();
+            });
+
+        });
+    </script>
+{% endif %}

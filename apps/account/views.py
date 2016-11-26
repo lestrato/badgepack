@@ -1,17 +1,18 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
-from django.template import RequestContext
 from django.shortcuts import render
 from django.contrib.auth.views import login
+from django.utils.decorators import method_decorator
 
-from login.fetches import *
-from login.forms import *
+from account.fetches import *
+from account.forms import *
 from community.models import Invitation
+from community.fetches import *
 from badge.models import BadgeClass, BadgeInstance
 from base.forms import *
+from base.views import AbstractBaseView
 
 def login_page(request):
     if request.user.is_authenticated():
@@ -29,7 +30,6 @@ def login_page(request):
             form = MyAuthenticationForm()
         return render(request, 'login/login.html', {'form': form })
 
-@csrf_protect
 def register(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/home/')
@@ -60,21 +60,18 @@ def logout_page(request):
     logout(request)
     return HttpResponseRedirect('/')
 
-@login_required
-def home(request):
+@method_decorator(login_required, name='dispatch')
+class HomeView(AbstractBaseView):
+    template_name = 'home.html'
 
-    invitations = u_all_invitations(request.user)
-    mod_communities, earner_communities = get_navbar_information(
-        request=request,
-    )
-    searchform = CommunitySearchForm()
+    def fetch(self, request):
+        # fetch user's community invitations
+        invitations = Invitation.objects.filter(
+            recipient=request.user,
+        )
+        user_communities = Community.objects.filter(
+            members=request.user,
+        )
 
-    return render_to_response('home.html', {
-
-    'mod_communities': mod_communities,
-    'earner_communities': earner_communities,
-    'searchform': searchform,
-
-    'user': request.user,
-    'invitations': invitations,
-    })
+        self.template_items['invitations'] = invitations
+        self.template_items['user_communities'] = user_communities

@@ -4,14 +4,15 @@ from django.utils.translation import ugettext_lazy as _
 
 class UserPermissionForm(forms.Form):
     CHOICES= (
-    (False, 'earner'),
-    (True, 'moderator'),
+    ('earner', 'earner'),
+    ('moderator', 'moderator'),
     )
     permissions = forms.CharField(
         widget=forms.Select(
             choices=CHOICES,
             attrs={
-                "class":"form-control",
+                "class":"form-control input-sm",
+                'required':'True',
             }
         )
     )
@@ -28,7 +29,7 @@ class UserSearchForm(forms.Form):
                 'id':"user-name",
                 'placeholder':"Add user...",
                 'autocomplete':"off",
-                "class":"form-control",
+                "class":"form-control input-sm",
             }
         )
     )
@@ -39,6 +40,28 @@ class UserSearchForm(forms.Form):
             return self.cleaned_data['username']
         except User.DoesNotExist:
             raise forms.ValidationError(_("The username does not exist. Please try another one."))
+
+class CSVUploadForm(forms.Form):
+    csv_file = forms.FileField(
+        widget=forms.FileInput(
+            attrs={
+                "required":True,
+                "type":"file",
+                "id":"csvUpload",
+            }
+        )
+    )
+
+    def clean_csv_file(self):
+        csv_file = self.cleaned_data['csv_file']
+        file_name = csv_file.name
+        if file_name.endswith('.csv'):
+            if csv_file._size > 5242880:
+                raise forms.ValidationError(_('Please keep filesize under 5mb. Current filesize %s') % (filesizeformat(csv_file._size)))
+        else:
+            raise forms.ValidationError(_('File type is not supported'))
+
+        return csv_file
 
 class CommunityPrivacyForm(forms.Form):
     CHOICES= (

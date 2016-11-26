@@ -52,10 +52,19 @@ class Membership(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     community = models.ForeignKey(Community, on_delete=models.CASCADE)
     joined_on = models.DateField(default=datetime.now)
-    is_moderator = models.BooleanField(default=False)
+    USER_STATUS_CHOICES = (
+        ('earner', 'earner'),
+        ('moderator', 'moderator'),
+        ('owner', 'owner'),
+    )
+    user_status = models.CharField(
+        max_length=10,
+        choices=USER_STATUS_CHOICES,
+        default='earner',
+    )
 
     def edit_permissions(self, permissions):
-        self.is_moderator=permissions
+        self.user_status=permissions
         return self
 
     class Meta:

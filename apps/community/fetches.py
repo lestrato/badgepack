@@ -61,3 +61,10 @@ def all_community_invitations(community):
         community=community,
     )
     return all_invitations
+
+def u_communities(members, user_status):
+    communities = Community.objects.filter(
+        members=members,
+        membership__user_status=user_status
+    )
+    return communities

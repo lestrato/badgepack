@@ -17,26 +17,34 @@ hr {
     background: #cdcdcd;
 }
 
-@media (min-width: 768px) {
-  #communitySearch {
-    margin-top: 10px;
-  }
-  #communitySearch > .input-group-btn {
-    width: inherit;
-  }
+.icon-desc {
+    border-radius: 3px;
+    margin: auto;
+    position: absolute;
+    margin-top: -47px;
+    margin-left: 25px;
+    z-index: 1;
+
+    padding: 2px 5px 2px 5px;
+
+    padding-left: 5px;
+    padding-right: 5px;
+
+    text-align: center;
+    color: #eeeeee;
+
+    opacity: 0;
+    background-color: transparent;
+
+    visibility: hidden;
+
+    -webkit-transition: visibility 0s ease, background .3s ease, opacity .3s ease;
+    -moz-transition: visibility 0s ease, background .3s ease, opacity .3s ease;
+    transition: visibility 0s ease, background .3s ease, opacity .3s ease;
 }
 
-@media (max-width: 767px) {
-  #communitySearch {
-    margin-bottom: 10px;
-    margin-left: 15px;
-  }
-  #communitySearch > input {
-    width: 100%;
-  }
-  #communitySearch > .input-group-btn {
-    width: 1%;
-  }
+.icon-container {
+    display: inline-block;
 }
 
 .navbar-search-icon {
@@ -63,7 +71,31 @@ hr {
     transition: background 0.25s ease;
 }
 
+.navbar-default .navbar-brand {
+    font-family: 'Helvetica Neue', sans-serif;
+    text-decoration: none;
+    font-weight: 100;
+    font-size: 22px;
+    top: -2px;
+    color: #eaedef;
+    display: inline;
+    position: absolute;
+}
+
+.navbar-default .navbar-brand:hover {
+    color: #eaedef;
+}
+
+.navbar-brand > img {
+    display: inline;
+    position: relative;
+    top: -6px;
+    margin-right: 1px;
+    width: 40px;
+}
+
 #communitySearch {
+    margin-top: 15px;
     margin-right: 15px;
 }
 
@@ -97,6 +129,42 @@ hr {
 .navbar-default .navbar-nav > li > a:focus {
     background-color: #70828A;      /* bg-color change upon hover */
     color: #eaedef;
+}
+
+
+@media (min-width: 768px) {
+    #communitySearch {
+    margin-top: 10px;
+    }
+    #communitySearch > .input-group-btn {
+    width: inherit;
+    }
+
+    .icon-container:hover > .icon-desc {
+        opacity: 1;
+
+        visibility: visible;
+
+        background-color: #001C2E;
+        color: #fff;
+
+        -webkit-transition: visibility 0s ease, background .3s ease, opacity .3s ease;
+        -moz-transition: visibility 0s ease, background .3s ease, opacity .3s ease;
+        transition: visibility 0s ease, background .3s ease, opacity .3s ease;
+    }
+}
+
+@media (max-width: 767px) {
+    #communitySearch {
+    margin-bottom: 10px;
+    margin-left: 15px;
+    }
+    #communitySearch > input {
+    width: 100%;
+    }
+    #communitySearch > .input-group-btn {
+    width: 1%;
+    }
 }
 
 /* Badge List */
@@ -369,4 +437,16 @@ hr {
     font-size: 100px;
     text-align: center;
     top: 25px;
+}
+
+.badge-list .hidden-earned-badge, .badge-list .hidden-in-progress {
+    display: none;
+}
+
+.dataTable > thead > tr > th, .dataTable > tbody > tr > td {
+    border-right: 1px solid #dddddd;
+}
+
+.dataTable > thead > tr > th:last-child, .dataTable > tbody > tr > td:last-child {
+    border-right: none;
 }

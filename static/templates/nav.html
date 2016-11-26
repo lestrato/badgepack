@@ -1,4 +1,5 @@
 <!-- Navigation Bar -->
+{% load static %}
 <nav role="navigation" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -10,7 +11,7 @@
                 <span class="icon-bar"></span>
             </button>
 
-            <a href="/home/" class="navbar-brand">Badgepack</a>
+            <a href="/home/" class="navbar-brand"><img class="navbar-icon" src="{% static "images/badgepack_icon.png" %}">adgepack</a>
 
         </div>
         <!-- Collection of nav links and other content for toggling -->
@@ -32,6 +33,15 @@
                 <li class="dropdown">
                     <a href="" data-toggle="dropdown" class="dropdown-toggle">Communities <b class="caret"></b></a>
                     <ul class="dropdown-menu">
+                      {% for community in owner_communities %}
+                          <li>
+                              <a href="{% url 'community' community.tag %}">{{ community.tag }}
+                                <label class="label label-danger pull-right" style="margin-bottom: 0px; font-weight: normal; font-size: 85%;">
+                                  <div style="margin-top: 4px;">OWNER</div>
+                                </label>
+                              </a>
+                          </li>
+                      {% endfor %}
                       {% for community in mod_communities %}
                           <li>
                               <a href="{% url 'community' community.tag %}">{{ community.tag }}
@@ -44,7 +54,7 @@
                       {% for community in earner_communities %}
                           <li><a href="{% url 'community' community.tag %}">{{ community.tag }}</a></li>
                       {% endfor %}
-                      {% if not mod_communities and not earner_communities %}
+                      {% if not owner_communities and not mod_communities and not earner_communities %}
                           <li><a>None available</a></li>
                       {% endif %}
                     </ul>

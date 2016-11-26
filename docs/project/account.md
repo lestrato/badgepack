@@ -1,6 +1,6 @@
-# Login
+# Account
 
-Path: `/badgepack/login/`
+Path: `/badgepack/account/`
 
 ## Templates
 

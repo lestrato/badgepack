@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib.auth import views as auth_views
 from django.contrib import admin
-from login.views import *
+from account.views import *
 from community.views import *
 from base.views import *
 
@@ -30,9 +30,9 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^register/$', register),
     url(r'^register/success/$', register_success),
-    url(r'^home/$', home),
-    url(r'^community/(?P<community_tag>[a-z||A-Z||0-9]+)$', community, name='community'),
-    url(r'^search/$', search),
+    url(r'^home/$', HomeView.as_view()),
+    url(r'^community/(?P<community_tag>[a-z||A-Z||0-9]+)$', CommunityView.as_view(), name='community'),
+    url(r'^search/$', SearchView.as_view()),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

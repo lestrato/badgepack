@@ -5,6 +5,64 @@
 
 {% include "nav.html" %}
 
-{% include extendTemplate %}
+<div class="container" style="padding-top: 70px;">
+    <div class="row">
+        <div class="col-xs-6 col-sm-8">
+            <h1 style="margin-bottom: 0px;">{{ community.name }}
+            </h1>
+        </div>
+        <div class="col-xs-6 col-sm-4">
+            {% include "community/components/nav_pills.html" %}
+        </div>
+    </div>
 
+    <hr>
+
+    <div class="container">
+        <div class="tab-content">
+            {% include "community/components/badge_tab.html" %}
+            {% include "community/components/members_tab.html" %}
+            {% include "community/components/about_tab.html" %}
+        </div>
+            <!-- {% block members %}
+            {% endblock %}
+
+            {% block about %}
+            {% endblock %} -->
+            <!-- <div id="aboutCommunity" class="tab-pane fade in {% if not is_member %}active{% endif %}">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h3 style="margin-top: 0px;">
+                            Description
+                            {% block editdescriptionglyph %}
+                            {% endblock %}
+                        </h3>
+                        <div id="originalDescription">
+                            {{ community.description|linebreaksbr }}
+                        </div>
+                        {% block editdescriptionform %}
+                        {% endblock %}
+                    </div>
+                    <hr class="visible-xs">
+                    <div class="col-sm-3">
+                        <h3 style="margin-top: 0px;">
+                            Is private
+                            {% block editprivacyglyph %}
+                            {% endblock %}
+                        </h3>
+                        <div id="originalPrivacy">
+                        {{ community.is_private }}
+                        </div>
+                        {% block editprivacyform %}
+                        {% endblock %}
+                    </div>
+                    <hr class="visible-xs">
+                    <div class="col-sm-3">
+                        <h3 style="margin-top: 0px;">Created on</h3>
+                        {{ community.created_on }}
+                    </div>
+                </div>
+            </div> -->
+    </div>
+</div>
 {% endblock %}

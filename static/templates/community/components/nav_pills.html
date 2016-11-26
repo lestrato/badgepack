@@ -1,0 +1,33 @@
+{% if user_status == 'owner' or user_status == 'moderator' %}
+    <ul class="nav nav-pills pull-right nav-stacked" style="text-align: right;">
+        <li class="active" style="text-align: right;">
+          <a data-toggle="tab" href="#viewBadges" style="padding: 5px 7.5px;">Manage Badges</a>
+        </li>
+        <li class="">
+          <a data-toggle="tab" href="#manageUsers" style="padding: 5px 7.5px;">Manage Users</a>
+        </li>
+        <li class="">
+          <a data-toggle="tab" href="#aboutCommunity" style="padding: 5px 7.5px;">Community Settings</a>
+        </li>
+
+    </ul>
+{% elif user_status == 'earner' %}
+    <ul class="nav nav-pills pull-right nav-stacked" style="text-align: right;">
+            <li class="active" style="text-align: right;">
+              <a data-toggle="tab" href="#viewBadges" style= "padding: 5px 7.5px;">View Badges</a>
+            </li>
+            <li class="">
+              <a data-toggle="tab" href="#aboutCommunity" style= "padding: 5px 7.5px;">About Community</a>
+            </li>
+    </ul>
+{% elif user_status == 'visitor' %}
+    <form method="post" action="">{% csrf_token %}
+        {% if has_applied %}
+            <button name="communityJoin" type="submit" class="btn btn-default pull-right" style="margin-top: 25px;">Cancel Application</button>
+        {% elif not community.is_private or is_invited %}
+            <button name="communityJoin" type="submit" class="btn btn-success pull-right" style="margin-top: 25px;">Join Community</button>
+        {% else %}
+            <button name="communityJoin" type="submit" class="btn btn-default pull-right" style="margin-top: 25px;">Apply to Join</button>
+        {% endif %}
+    </form>
+{% endif %}

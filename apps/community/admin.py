@@ -17,13 +17,13 @@ admin.site.register(Community, CommunityAdmin)
 
 class MembershipAdmin(admin.ModelAdmin):
     readonly_fields = () #'created', 'name',
-    list_display = ('user', 'community', 'joined_on', 'is_moderator')
-    list_filter = ('is_moderator',)
+    list_display = ('user', 'community', 'joined_on', 'user_status')
+    list_filter = ('user_status',)
     search_fields = ('user', 'community',)
     fieldsets = (
         ('Metadata', {'fields': ('joined_on',)}),#', classes': ('collapse',)
         ('Properties', {'fields': ('user', 'community')}),
-        ('Permissions', {'fields': ('is_moderator',)}),
+        ('Permissions', {'fields': ('user_status',)}),
     )
     pass
 
