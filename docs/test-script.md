@@ -51,4 +51,8 @@ Hi (user), I'm (name) and I'm hoping to gather user feedback on Badgepack, a web
 * Your main page has now been updated to show the badges in the community. Since we only created one badge earlier, there is only one badge listed in the community. How do you feel about the way this page currently looks?
 * Navigate to the community page for ABC123. This is what a community page looks like for a regular user of a community. What do you think about it, layout and content-wise? Is there anything else you'd like to see on this page?
 * Finally, log out and sign in as the user "potato", using the password "monday123". "potato" is a member of multiple communities, and their main page displays a list of all their communities, as well as which badges they've earned. How do you feel about this layout?
+<<<<<<< HEAD
 * Feel free to click around and explore the site as "potato". Do you have any further thoughts about the site when viewing it as a regular user?
+=======
+* Feel free to click around and explore the site as "potato". Do you have any further thoughts about the site when viewing it as a regular user?
+>>>>>>> 8781f362691425e908f1ac1270a3c0d2b4bd2292

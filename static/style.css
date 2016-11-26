@@ -32,7 +32,11 @@ hr {
 
     text-align: center;
     color: #eeeeee;
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 8781f362691425e908f1ac1270a3c0d2b4bd2292
     opacity: 0;
     background-color: transparent;
 
@@ -449,4 +453,8 @@ hr {
 
 .dataTable > thead > tr > th:last-child, .dataTable > tbody > tr > td:last-child {
     border-right: none;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 8781f362691425e908f1ac1270a3c0d2b4bd2292
