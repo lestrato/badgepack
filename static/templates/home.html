@@ -25,7 +25,6 @@
 </style>
 
 <div class="container" style="padding-top: 70px;">
-
     <div class="row">
         <div class="col-sm-8">
             <h1>My Badges<small style="margin-left: 10px; font-size: 45%;">0 earned</small></h1>
@@ -48,6 +47,7 @@
                                         <th>Community Name</th>
                                         <th>Invited by</th>
                                         <th>Date Invited</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -62,6 +62,16 @@
                                             <td>
                                                 {{ invite.created_on }}
                                             </td>
+                                            <td>
+                                                <form method="post" action="">{% csrf_token %}
+                                                    <div class="icon-container">
+                                                        <button name="acceptPendingInviteBtn" type="submit" value="{{ invite.community.tag }}" class="btn btn-xs btn-default">
+                                                            <span class="glyphicon glyphicon-ok"></span>
+                                                        </button>
+                                                        <div class="icon-desc">Accept Invitation</div>
+                                                    </div>
+                                                </form>
+                                            </td>
                                         <tr>
                                     {% endfor %}
                                 </tbody>
@@ -72,7 +82,6 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
                         </div>
                     </div>
                 </div>

@@ -13,6 +13,8 @@ from community.models import Invitation
 from badge.models import BadgeClass, BadgeInstance
 from base.forms import *
 
+from community.views import *
+
 def login_page(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/home/')
@@ -62,7 +64,6 @@ def logout_page(request):
 
 @login_required
 def home(request):
-
     invitations = u_all_invitations(request.user)
     mod_communities, earner_communities = get_navbar_information(
         request=request,
@@ -70,13 +71,56 @@ def home(request):
     searchform = CommunitySearchForm()
     pending_invites = u_pending_invitations(request.user)
 
-    return render_to_response('home.html', {
+    if request.method == 'POST':
+        if "acceptPendingInviteBtn" in request.POST:
+            # Get community based off tag:
+            community = community_object(request.POST['acceptPendingInviteBtn'])
 
-    'mod_communities': mod_communities,
-    'earner_communities': earner_communities,
-    'searchform': searchform,
+            # Check if user is a member of the community already:
+            membership = u_membership(
+                community=community,
+                user=request.user,
+            )
 
-    'user': request.user,
-    'invitations': invitations,
-    'pending_invitations': pending_invites,
+            if not membership:
+                # Make sure user received an invitation:
+                invitation = u_invitation(
+                                community=community,
+                                user=request.user,
+                            )
+                if invitation:
+                    # create new membership
+                    new_membership = Membership(
+                        user=request.user,
+                        community=community,
+                        is_moderator=invitation.to_be_moderator,
+                    )
+                    new_membership.save()
+
+                # check if user already submitted an application to this community
+                application = u_application(
+                    community=community,
+                    user=request.user,
+                )
+                if application:
+                    # and check if the application hasn't been accepted yet
+                    if not application.accepted_by:
+                        # cancel application
+                        application.delete()
+                # if neither, create new application
+                else:
+                    new_application = Application(
+                        applicant=request.user,
+                        community=community,
+                    )
+                    new_application.save()
+
+    return render(request, 'home.html', {
+        'mod_communities': mod_communities,
+        'earner_communities': earner_communities,
+        'searchform': searchform,
+
+        'user': request.user,
+        'invitations': invitations,
+        'pending_invitations': pending_invites,
     })
