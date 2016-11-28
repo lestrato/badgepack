@@ -254,7 +254,7 @@ def community(request, community_tag):
                         )
                         new_membership.save()
                         msg_dict["open_tab"] = "manageApplications"
-                        msg_dict["return_msg"] = "Added {0} to {1}!".format(user, community)
+                        msg_dict["return_msg"] = "Added {0} to {1}!".format(user, community_tag)
 
                 if 'revokeInvite' in request.POST:
                     # fetch user's instance
@@ -269,7 +269,7 @@ def community(request, community_tag):
                             invite.delete()
 
                         msg_dict["open_tab"] = "manageInvites"
-                        msg_dict["return_msg"] = "Revoked {0}'s invitation to {1}!".format(user, community)
+                        msg_dict["return_msg"] = "Revoked {0}'s invitation to {1}!".format(user, community_tag)
 
                 if 'invitedPermissionSubmit' in request.POST:
                     UPForm = UserPermissionForm(request.POST)
@@ -489,7 +489,7 @@ def community(request, community_tag):
                                     )
                                     new_badgeinstance.save()
                             form_counter += 1
-                            
+
                         msg_dict["open_tab"] = "manageMembers"
                         if form_counter >= 1:
                             msg_dict["return_msg"] = "Updated {0}'s badges!".format(membership.user)
