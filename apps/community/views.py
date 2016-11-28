@@ -17,6 +17,7 @@ from badge.forms import *
 
 from login.fetches import *
 
+from django.contrib import messages
 
 @login_required
 def community(request, community_tag):
@@ -96,6 +97,9 @@ def community(request, community_tag):
     )
 
     if request.method == 'POST':
+        # Variables to keep track of what tab to re-open / what message to display:
+        msg_dict = {"open_tab": None, "return_msg": None}
+
         print request.POST # TODO:for debugging
         # we ALWAYS refetch community
         community = community_object(community_tag)
@@ -125,6 +129,7 @@ def community(request, community_tag):
                                 is_moderator=invitation.to_be_moderator,
                             )
                             new_membership.save()
+
                         # check if user already submitted an application to this community
                         application = u_application(
                             community=community,
@@ -184,6 +189,8 @@ def community(request, community_tag):
                                         is_moderator=False,
                                     )
                                     new_membership.save()
+                                    msg_dict["open_tab"] = "manageInvites"
+                                    msg_dict["return_msg"] = "Successfully invited new user(s)!"
 
                                 else:
                                     # create new invitation
@@ -193,6 +200,8 @@ def community(request, community_tag):
                                         sender=request.user,
                                     )
                                     new_invitation.save()
+                                    msg_dict["open_tab"] = "manageInvites"
+                                    msg_dict["return_msg"] = "Successfully invited new user(s)!"
 
                 if 'inviteUserSubmit' in request.POST:
                     USForm = UserSearchForm(request.POST)
@@ -244,6 +253,8 @@ def community(request, community_tag):
                             is_moderator=False,
                         )
                         new_membership.save()
+                        msg_dict["open_tab"] = "manageApplications"
+                        msg_dict["return_msg"] = "Added {0} to {1}!".format(user, community)
 
                 if 'revokeInvite' in request.POST:
                     # fetch user's instance
@@ -256,6 +267,9 @@ def community(request, community_tag):
                         )
                         if invite:
                             invite.delete()
+
+                        msg_dict["open_tab"] = "manageInvites"
+                        msg_dict["return_msg"] = "Revoked {0}'s invitation to {1}!".format(user, community)
 
                 if 'invitedPermissionSubmit' in request.POST:
                     UPForm = UserPermissionForm(request.POST)
@@ -273,6 +287,8 @@ def community(request, community_tag):
                             )
                             invite.save()
 
+                            msg_dict["open_tab"] = "manageInvites"
+                            msg_dict["return_msg"] = "Updated {0}'s on-join permissions!".format(user)
 
                 ''' User permissions and membership
                 '''
@@ -293,6 +309,9 @@ def community(request, community_tag):
                                 permissions=UPForm.cleaned_data['permissions'],
                             )
                             membership.save()
+
+                            msg_dict["open_tab"] = "manageUsers"
+                            msg_dict["return_msg"] = "Updated {0}'s permissions!".format(user)
 
                 if 'communityJoin' in request.POST:
                     # check if community is private or not
@@ -348,6 +367,8 @@ def community(request, community_tag):
                             description=request.POST['description'],
                         )
                         community.save()
+                        msg_dict["open_tab"] = "aboutCommunity"
+                        msg_dict["return_msg"] = "Updated {0}'s community description!".format(community_tag)
 
                 if 'changePrivacySubmit' in request.POST:
                     CPForm = CommunityPrivacyForm(request.POST)
@@ -358,6 +379,8 @@ def community(request, community_tag):
                                 is_private=True,
                             )
                             community.save()
+                            msg_dict["open_tab"] = "aboutCommunity"
+                            msg_dict["return_msg"] = "Set {0} to public!".format(community_tag)
                         elif request.POST['privacy'] == 'False':
                             # set applications to accepted
                             all_applications = all_community_applications(
@@ -382,7 +405,8 @@ def community(request, community_tag):
                                 is_private=False
                             )
                             community.save()
-
+                            msg_dict["open_tab"] = "aboutCommunity"
+                            msg_dict["return_msg"] = "Set {0} to private!".format(community_tag)
 
                 ''' Badges
                 '''
@@ -400,6 +424,8 @@ def community(request, community_tag):
                                 creator=request.user,
                             )
                             new_badgeclass.save()
+                            msg_dict["open_tab"] = "viewBadges"
+                            msg_dict["return_msg"] = "Added badge ({0})!".format(new_badgeclass.name)
                     else:
                         return JsonResponse(BCForm.errors)
 
@@ -422,6 +448,8 @@ def community(request, community_tag):
                                 badge_class.image.delete()
                                 badge_class.image = BCForm.cleaned_data['image']
                                 badge_class.save()
+                                msg_dict["open_tab"] = "viewBadges"
+                                msg_dict["return_msg"] = "Updated badge ({0})!".format(badge_class.name)
 
 
                 if 'assignBadgesSubmit' in request.POST and 'form-TOTAL_FORMS' in request.POST:
@@ -461,6 +489,10 @@ def community(request, community_tag):
                                     )
                                     new_badgeinstance.save()
                             form_counter += 1
+                            
+                        msg_dict["open_tab"] = "manageMembers"
+                        if form_counter >= 1:
+                            msg_dict["return_msg"] = "Updated {0}'s badges!".format(membership.user)
 
                 if 'oneBadgeSubmit' in request.POST:
                     oba_formset = OBAFormset(request.POST)
@@ -498,6 +530,9 @@ def community(request, community_tag):
                                         )
                                         new_badgeinstance.save()
                                 form_counter += 1
+                            if form_counter >= 1:
+                                msg_dict["open_tab"] = "viewBadges"
+                                msg_dict["return_msg"] = "Successfully awarded badge(s)!"
 
                 if 'setBadgeAvailableSubmit' in request.POST:
                     # fetch badge class
@@ -509,6 +544,8 @@ def community(request, community_tag):
                         # set badge to unavailable
                         badge_class.is_available = True
                         badge_class.save()
+                        msg_dict["open_tab"] = "viewBadges"
+                        msg_dict["return_msg"] = "'{0}' is now publicly available!".format(badge_class)
 
                 if 'discontinueBadgeSubmit' in request.POST:
                     # fetch badge class
@@ -519,8 +556,24 @@ def community(request, community_tag):
                     if badge_class and badge_class in all_badge_classes(community=community):
                         # remove old image from folder
                         badge_class.image.delete()
+
+                        msg_dict["open_tab"] = "viewBadges"
+                        msg_dict["return_msg"] = "Deleted badge ({0})!".format(badge_class)
+
                         # destroy the badge
                         badge_class.delete()
+
+        # Send messages if needed:
+        msg_string = ""
+
+        for i in msg_dict.keys():
+            if msg_dict[i]:
+                msg_string += "{0}={1};".format(i, msg_dict[i])
+
+        if msg_string != "":
+            # Remove the last semicolon:
+            msg_string = msg_string[:-1]
+            messages.add_message(request, messages.INFO, msg_string)
 
         # in ALL the above cases, return to same page
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/home/'))

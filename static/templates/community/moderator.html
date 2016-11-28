@@ -34,12 +34,11 @@
         <li class="">
           <a data-toggle="tab" href="#aboutCommunity" style="padding: 5px 7.5px;">Community Settings</a>
         </li>
-
     </ul>
 {% endblock %}
 
 {% block badges %}
-    <div id="viewBadges" class="tab-pane fade in active">
+    <div id="viewBadges" class="tab-pane fade in">
 
         <!-- Modal HTML -->
         <div id="addBadge" class="modal fade">
@@ -221,7 +220,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                                    <button type="submit" value="{{ badge.name }}" class="btn btn-primary" name="discontinueBadgeSubmit">Discontinue badge</button>
+                                    <button type="submit" value="{{ badge.name }}" class="btn btn-primary" name="discontinueBadgeSubmit">Discontinue Badge</button>
                                 </div>
                             </form>
                         </div>
