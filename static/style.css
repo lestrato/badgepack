@@ -131,7 +131,6 @@ hr {
     color: #eaedef;
 }
 
-
 @media (min-width: 768px) {
     #communitySearch {
     margin-top: 10px;
@@ -151,6 +150,10 @@ hr {
         -webkit-transition: visibility 0s ease, background .3s ease, opacity .3s ease;
         -moz-transition: visibility 0s ease, background .3s ease, opacity .3s ease;
         transition: visibility 0s ease, background .3s ease, opacity .3s ease;
+    }
+
+    .description {
+        display: none;
     }
 }
 
@@ -439,7 +442,7 @@ hr {
     top: 25px;
 }
 
-.badge-list .hidden-earned-badge, .badge-list .hidden-in-progress {
+.badge-list .hidden-earned-badge, .badge-list .hidden-in-progress, .badge-list .hidden-search {
     display: none;
 }
 
@@ -492,4 +495,68 @@ hr {
     float: left;
     margin: 0;
     padding: 0;
+}
+
+.badge-list-view {
+    display: block;
+    height: 40px;
+    overflow: none;
+    width: 98%;
+    margin: auto;
+
+    border-radius: 5px;
+    -webkit-box-shadow: 0px 0px 10px 2px rgba(0,0,0,0.2);
+    -moz-box-shadow: 0px 0px 10px 2px rgba(0,0,0,0.2);
+    box-shadow: 0px 0px 10px 2px rgba(0,0,0,0.2);
+    background-color: #ffffff;
+
+    border-spacing: 10px;
+    border-collapse: separate;
+    overflow: hidden;
+
+    vertical-align: middle;
+
+    margin-bottom: 15px;
+}
+
+.badge-list-view > .img-container {
+    display: inline-block;
+    width: 40px;
+    padding: 5px;
+}
+
+.img-container > img {
+    width: 100%;
+    height: 100%;
+}
+
+.badge-list-view > .title {
+    width: 225px;
+    position: relative;
+    top: 3px;
+    display: inline-block;
+    font-size: 20px;
+    font-weight: 500;
+    margin-left: 10px;
+}
+
+.badge-list-view > .description {
+    margin-left: 10px;
+    position: relative;
+    top: 2px;
+    display: none;
+}
+
+@media all and (min-width: 768px) {
+    .badge-list-view > .description {
+        display: inline-block;
+    }
+
+    .badge-list-view > .title {
+        border-right: 1px solid #dddddd;
+    }
+}
+
+.input-group .form-control {
+    width: 375px;
 }

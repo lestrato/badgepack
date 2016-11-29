@@ -92,10 +92,10 @@
     <div class="row">
         <div class="col-xs-8 col-md-4">
             <div class="input-group">
-                <input type="text" class="form-control input-sm" placeholder="Search badges">
-                <span class="input-group-btn">
-                    <button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-search"></span></button>
-                </span>
+                <input onkeyup="filterBadges()" id="badge-search-bar" type="text" class="form-control input-sm" placeholder="Search badges">
+                <!-- <span class="input-group-btn">
+                    <button onclick="filterBadges()" type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-search"></span></button>
+                </span> -->
             </div>
         </div>
         <div class="col-xs-12 col-sm-6 col-md-4" style="margin-top: 10px;">
@@ -112,6 +112,31 @@
       {% endfor %}
     {% endfor %} -->
 
+<!-- 
+    <div class="badge-list-view">
+        <div class="img-container">
+            <img src="http://127.0.0.1:8000/media/uploads/badges/badge_0007_Layer-2.png">
+        </div>
+        <div class="title">
+            Checkmark! Badge :DD
+        </div>
+        <div class="description">
+            Stayed up all night to debug that darned assignment. So many unclosed parentheses...
+        </div>
+    </div>
+    <div class="badge-list-view">
+        <div class="img-container">
+            <img src="http://127.0.0.1:8000/media/uploads/badges/badge_0007_Layer-2.png">
+        </div>
+        <div class="title">
+            Concept Badge
+        </div>
+        <div class="description">
+            "Conceptualization Badge" was too long of a title.
+        </div>
+    </div>
+
+ -->
     {% if earner_communities %}
 
         {% for community in earner_communities %}
@@ -188,7 +213,25 @@ $(document).ready(function() {
             }
         }
     })
+
+
 })
+
+function filterBadges() {
+    // Do a case-insensitive search:
+    var searchTerm = $('#badge-search-bar').val().toLowerCase();
+    var badges = $('.badge-container');
+
+    for (var i = 0; i < badges.length; i++) {
+        var badgeName = (badges[i].childNodes[3].childNodes[0].childNodes[3].innerHTML).toLowerCase();
+
+        if (badgeName.indexOf(searchTerm) == -1) {
+            $(badges[i]).parent().addClass('hidden-search');
+        } else {
+            $(badges[i]).parent().removeClass('hidden-search');
+        }
+    }
+}
 </script>
 
 {% endblock %}
