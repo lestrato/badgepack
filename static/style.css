@@ -557,6 +557,10 @@ hr {
     }
 }
 
-.input-group .form-control {
+.badge-search {
+    position: relative;
+    z-index: 2;
+    float: left;
     width: 375px;
+    margin-bottom: 0;
 }
