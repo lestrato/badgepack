@@ -13,6 +13,3 @@ class CommunitySearchForm(forms.Form):
             }
         ),
     )
-
-    def clean(self):
-        return self.cleaned_data

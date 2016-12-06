@@ -25,8 +25,12 @@ def u_instance(username):
        username = None
     return username
 
-def u_all_invitations(user):
-    all_invites = Invitation.objects.filter(
+def u_pending_invitations(user):
+    invitations = Invitation.objects.filter(
         recipient=user,
+    ).exclude(
+        community__in = Community.objects.filter(
+            members=user
+        ).values_list('id', flat=True)
     )
-    return all_invites
+    return invitations

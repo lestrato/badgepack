@@ -6,6 +6,7 @@ class UserPermissionForm(forms.Form):
     CHOICES= (
     ('earner', 'earner'),
     ('moderator', 'moderator'),
+    ('owner', 'owner'),
     )
     permissions = forms.CharField(
         widget=forms.Select(
@@ -16,10 +17,6 @@ class UserPermissionForm(forms.Form):
             }
         )
     )
-
-    def clean_permissions(self):
-        permissions = self.cleaned_data.get("permissions")
-        return permissions
 
 class UserSearchForm(forms.Form):
     username = forms.CharField(
@@ -79,10 +76,6 @@ class CommunityPrivacyForm(forms.Form):
         )
     )
 
-    def clean_privacy(self):
-        privacy = self.cleaned_data.get("privacy")
-        return privacy
-
 class CommunityDescriptionForm(forms.Form):
     description = forms.CharField(
         widget=forms.Textarea(
@@ -94,7 +87,3 @@ class CommunityDescriptionForm(forms.Form):
                 }
         )
     )
-
-    def clean_description(self):
-        description = self.cleaned_data.get("description")
-        return description
