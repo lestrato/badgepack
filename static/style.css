@@ -1,8 +1,3 @@
-/*
-    I heard you like CSS, so we put some CSS to override Bootstrap CSS.
-    Bootstrap CSS can be found here: /static/bootstrap/css/bootstrap.css
-*/
-
 body {
     background-color: #F4F6F8;
 }
@@ -17,6 +12,7 @@ hr {
     background: #cdcdcd;
 }
 
+/* Tooltip for action icons (e.g. Accept Invitation, Set Permissions) */
 .icon-desc {
     border-radius: 3px;
     margin: auto;
@@ -43,34 +39,12 @@ hr {
     transition: visibility 0s ease, background .3s ease, opacity .3s ease;
 }
 
+/* Container for action icons and their tooltips */
 .icon-container {
     display: inline-block;
 }
 
-.navbar-search-icon {
-    background-color: #000;
-    color: #fff;
-    border-color: #aaaaaa;
-
-    -webkit-transition: background 0.25s ease;   /* bg-color fade */
-    -moz-transition: background 0.25s ease;
-    -ms-transition: background 0.25s ease;
-    -o-transition: background 0.25s ease;
-    transition: background 0.25s ease;
-}
-
-.navbar-search-icon:hover {
-    background-color: #70828A;
-    color: #fff;
-    border-color: #aaaaaa;
-
-    -webkit-transition: background 0.25s ease;   /* bg-color fade */
-    -moz-transition: background 0.25s ease;
-    -ms-transition: background 0.25s ease;
-    -o-transition: background 0.25s ease;
-    transition: background 0.25s ease;
-}
-
+/* Default styling for the navbar */
 .navbar-default .navbar-brand {
     font-family: 'Helvetica Neue', sans-serif;
     text-decoration: none;
@@ -86,26 +60,13 @@ hr {
     color: #eaedef;
 }
 
+/* Logo (image) */
 .navbar-brand > img {
     display: inline;
     position: relative;
     top: -6px;
     margin-right: 1px;
     width: 40px;
-}
-
-#communitySearch {
-    margin-top: 15px;
-    margin-right: 15px;
-}
-
-#communitySearch > input {
-    display: inherit;
-    width: 200px;
-    background-color: #000;
-    color: #eaedef;
-    border-color: #546A78;
-    font-size: 14px;
 }
 
 .navbar-default {
@@ -131,6 +92,48 @@ hr {
     color: #eaedef;
 }
 
+/* Search bar icon */
+.navbar-search-icon {
+    background-color: #000;
+    color: #fff;
+    border-color: #aaaaaa;
+
+    -webkit-transition: background 0.25s ease;   /* bg-color fade */
+    -moz-transition: background 0.25s ease;
+    -ms-transition: background 0.25s ease;
+    -o-transition: background 0.25s ease;
+    transition: background 0.25s ease;
+}
+
+.navbar-search-icon:hover {
+    background-color: #70828A;
+    color: #fff;
+    border-color: #aaaaaa;
+
+    -webkit-transition: background 0.25s ease;   /* bg-color fade */
+    -moz-transition: background 0.25s ease;
+    -ms-transition: background 0.25s ease;
+    -o-transition: background 0.25s ease;
+    transition: background 0.25s ease;
+}
+
+/* Search bar container */
+#communitySearch {
+    margin-top: 15px;
+    margin-right: 15px;
+}
+
+/* Search bar input */
+#communitySearch > input {
+    display: inherit;
+    width: 200px;
+    background-color: #000;
+    color: #eaedef;
+    border-color: #546A78;
+    font-size: 14px;
+}
+
+/* Accounting for mobile display */
 @media (min-width: 768px) {
     #communitySearch {
     margin-top: 10px;
@@ -183,13 +186,14 @@ hr {
     color: #001C2E;
 }
 
-/* Display badges like a 3-column table. */
+/* Display badges like a 3-column table */
 .badge-list > li {
     display: inline-table;
     margin: 5px 2px 5px 2px;
     vertical-align: top;
 }
 
+/* Container to hold the contents of a badge */
 .badge-container {
     -webkit-box-shadow: 0px 0px 10px 2px rgba(0,0,0,0.2);
     -moz-box-shadow: 0px 0px 10px 2px rgba(0,0,0,0.2);
@@ -202,6 +206,7 @@ hr {
     overflow: hidden;
 }
 
+/* Container for the badge image */
 .badge-image-container {
     vertical-align: top;
 }
@@ -253,12 +258,14 @@ hr {
     float: right;
 }
 
+/* Styling for "inactive" badges */
 .inactive-badge {
     -webkit-box-shadow: inset 0px 0px 10px 2px rgba(0,0,0,0.2);
     -moz-box-shadow: inset 0px 0px 10px 2px rgba(0,0,0,0.2);
     box-shadow: inset 0px 0px 10px 2px rgba(0,0,0,0.2);
 }
 
+/* Set inactive badges to grayscale */
 .inactive-badge, .inactive-badge * {
     background-color: #d0d0d0;
     border-color: #ABABAB;
@@ -266,7 +273,7 @@ hr {
     filter: grayscale(1);
 }
 
-/* Badge hover */
+/* Overlay for moderators when hovered over a badge */
 .badge-overlay {
     opacity: 0;
     z-index: 1;
@@ -307,7 +314,6 @@ hr {
 
 .badge-overlay-content > ul > li {
     display: inline-table;
-/*    margin: auto auto auto 10px;*/
     text-align: center;
     overflow: hidden;
 
@@ -442,10 +448,12 @@ hr {
     top: 25px;
 }
 
+/* Style for hidden/filtered-out badges */
 .badge-list .hidden-earned-badge, .badge-list .hidden-in-progress, .badge-list .hidden-search {
     display: none;
 }
 
+/* "Manage Users" tables */
 .dataTable > thead > tr > th, .dataTable > tbody > tr > td {
     border-right: 1px solid #dddddd;
 }
@@ -454,6 +462,7 @@ hr {
     border-right: none;
 }
 
+/* Container for feedback messages */
 .message-container {
     z-index: 1;
     float: right;
@@ -472,6 +481,7 @@ hr {
     transition: visibility 0s ease, opacity .5s ease;
 }
 
+/* Feedback messages (the messages that pop up after you do an action) */
 #message {
     border-radius: 5px;
     position: relative;
@@ -497,6 +507,7 @@ hr {
     padding: 0;
 }
 
+/* Style for "list view" badges */
 .badge-list-view {
     display: block;
     height: 40px;
@@ -557,6 +568,7 @@ hr {
     }
 }
 
+/* "Search badges" input form */
 .badge-search {
     position: relative;
     z-index: 2;

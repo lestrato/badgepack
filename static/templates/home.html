@@ -155,9 +155,9 @@
                         {% for badge in community|classes %}
                             <li>
                               {% if user in badge.instances.all %}
-                                  {% include "badge/badge.html" with available=True image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None'%}
+                                  {% include "badge/homepage_badge.html" with available=True image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None'%}
                               {% else %}
-                                  {% include "badge/badge.html" with available=False image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None'%}
+                                  {% include "badge/homepage_badge.html" with available=False image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None'%}
                               {% endif %}
                             </li>
                         {% endfor %}

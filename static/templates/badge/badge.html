@@ -1,6 +1,5 @@
 {% load staticfiles %}
 
-<!-- TODO: If the badge is inactive, add the "inactive-badge" class to this table. -->
 <table class="badge-container {% if not available %}inactive-badge{% endif %}">
     <!-- Enable the badge overlay only if the user is a moderator of the community -->
     {% if is_moderator %}
@@ -75,7 +74,7 @@
     </tr>
 </table>
 
-<script type="text/javascript">
+<!-- <script type="text/javascript">
 function toggleBadgeVisibility(e) {
     var modes = ["VISIBLE", "INVISIBLE"];
     var icon = e.children[0];
@@ -101,3 +100,4 @@ function toggleBadgeVisibility(e) {
     }
 }
 </script>
+-->

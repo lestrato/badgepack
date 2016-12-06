@@ -1,0 +1,19 @@
+<table class="badge-container {% if not available %}inactive-badge{% endif %}">
+    <tr>
+        <td rowspan="2" class="badge-image-container">
+            <div class="badge-image">
+                <img class="img-thumbnail" src="{{ badge.image.url }}" style="width: 100px; height: 100px;">
+            </div>
+        </td>
+        <td class="badge-name">{{ badge.name }}</td>
+    </tr>
+    <tr>
+        <td class="badge-description">{{ badge.description }}</td>
+    </tr>
+    <tr>
+        <td colspan="2" class="badge-footer">
+            <div class="badge-footer-left">{{ badge.created_on }}</div>
+            <div class="badge-footer-right">{{ 'None' }}</div>
+        </td>
+    </tr>
+</table>
