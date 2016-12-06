@@ -257,9 +257,9 @@ class CommunityView(AbstractBaseView):
                     CUForm = CSVUploadForm(request.POST, request.FILES)
                     if CUForm.is_valid():
                         print 'valid form'
-                        data = request.FILES['csv_file']
+                        data = CUForm.cleaned_data['csv_file']
                         csv_users = []
-                        for line in request.FILES['csv_file']:
+                        for line in CUForm.cleaned_data['csv_file']:
                             line = line.strip()
                             # check if user exists and get user instance
                             user = u_instance(
@@ -289,7 +289,7 @@ class CommunityView(AbstractBaseView):
                     USForm = UserSearchForm(request.POST)
                     if USForm.is_valid():
                         # get user instance
-                        user = u_instance(request.POST['username'])
+                        user = u_instance(USForm.cleaned_data['username'])
                         # form already checks if user exists, so no need to check again
                         # check if user is already in community
                         membership = u_membership(
@@ -310,7 +310,7 @@ class CommunityView(AbstractBaseView):
                             InviteExistsError = {'username': error_message}
                             return JsonResponse(InviteExistsError)
                         else:
-                            return HttpResponse(request.POST['username'])
+                            return HttpResponse(USForm.cleaned_data['username'])
                     else:
                         # print USForm.errors
                         return JsonResponse(USForm.errors)
@@ -377,33 +377,31 @@ class CommunityView(AbstractBaseView):
                             community=community,
                             user=user,
                         )
-                        if not membership:
-                            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/home/'))
-
-                        # refetch available community badge classes
-                        all_badges = all_available_badge_classes(
-                            community=community,
-                        )
-                        # TODO: there should be a better way to couple the form number and the
-                        #       badge class it represents
-                        form_counter = 0
-                        for badgeclass in all_badges:
-                            # check if badgeclass exists in community and the badge is made available and if the moderator is gifting the badge
-                            if badgeclass in all_badge_classes(community=community) and badgeclass.is_available and uba_formset[form_counter].cleaned_data.get('badge_assign') == 'gift':
-                                # check if badgeinstance exists for the user
-                                badgeinstance = u_badge_instance(
-                                    badgeclass=badgeclass,
-                                    earner=user,
-                                )
-                                if not badgeinstance:
-                                    # create new badge instance
-                                    new_badgeinstance = BadgeInstance(
-                                        badge_class=badgeclass,
-                                        earner=membership.user,
-                                        assigned_by=request.user,
+                        if membership:
+                            # refetch available community badge classes
+                            all_badges = all_available_badge_classes(
+                                community=community,
+                            )
+                            # TODO: there should be a better way to couple the form number and the
+                            #       badge class it represents
+                            form_counter = 0
+                            for badgeclass in all_badges:
+                                # check if badgeclass exists in community and the badge is made available and if the moderator is gifting the badge
+                                if badgeclass in all_badge_classes(community=community) and badgeclass.is_available and uba_formset[form_counter].cleaned_data['badge_assign'] == 'gift':
+                                    # check if badgeinstance exists for the user
+                                    badgeinstance = u_badge_instance(
+                                        badgeclass=badgeclass,
+                                        earner=user,
                                     )
-                                    new_badgeinstance.save()
-                            form_counter += 1
+                                    if not badgeinstance:
+                                        # create new badge instance
+                                        new_badgeinstance = BadgeInstance(
+                                            badge_class=badgeclass,
+                                            earner=membership.user,
+                                            assigned_by=request.user,
+                                        )
+                                        new_badgeinstance.save()
+                                form_counter += 1
 
                 if 'oneBadgeSubmit' in request.POST:
                     oba_formset = OBAFormset(request.POST)
@@ -414,7 +412,7 @@ class CommunityView(AbstractBaseView):
                         )
                         # fetch badge class
                         badge_class = a_badge_class(
-                            class_name=request.POST['oneBadgeSubmit'],
+                            class_name=escape(request.POST['oneBadgeSubmit']),
                         )
                         # check if badge class exists and is part of the community and is available
                         if badge_class and badge_class.is_available and badge_class in all_badge_classes(community=community):
@@ -424,22 +422,20 @@ class CommunityView(AbstractBaseView):
                             for member in all_memberships:
                                 if oba_formset[form_counter].cleaned_data.get('badge_assign'):
                                     # check if user is in the community
-                                    if not u_membership(community, member.user):
-                                        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/home/'))
-
-                                    # check if badgeinstance exists for the user
-                                    badgeinstance = u_badge_instance(
-                                        badgeclass=badge_class,
-                                        earner=member.user,
-                                    )
-                                    if not badgeinstance:
-                                        # create new badge instance
-                                        new_badgeinstance = BadgeInstance(
-                                            badge_class=badge_class,
+                                    if u_membership(community, member.user):
+                                        # check if badgeinstance exists for the user
+                                        badgeinstance = u_badge_instance(
+                                            badgeclass=badge_class,
                                             earner=member.user,
-                                            assigned_by=request.user,
                                         )
-                                        new_badgeinstance.save()
+                                        if not badgeinstance:
+                                            # create new badge instance
+                                            new_badgeinstance = BadgeInstance(
+                                                badge_class=badge_class,
+                                                earner=member.user,
+                                                assigned_by=request.user,
+                                            )
+                                            new_badgeinstance.save()
                                 form_counter += 1
 
                 if membership.user_status == 'owner':
@@ -463,7 +459,6 @@ class CommunityView(AbstractBaseView):
                                 community=community,
                                 user=user,
                             )
-
                             if membership:
                                 # change permission
                                 membership = membership.edit_permissions(
@@ -478,20 +473,20 @@ class CommunityView(AbstractBaseView):
                         if CDForm.is_valid():
                             # change the community description on backend
                             community = community.edit_description(
-                                description=request.POST['description'],
+                                description=CDForm.cleaned_data['description'],
                             )
                             community.save()
 
                     if 'changePrivacySubmit' in request.POST:
                         CPForm = CommunityPrivacyForm(request.POST)
                         if CPForm.is_valid():
-                            if request.POST['privacy'] == 'True':
+                            if CPForm.cleaned_data['privacy'] == 'True':
                                 # set privacy as true
                                 community = community.change_privacy(
                                     is_private=True,
                                 )
                                 community.save()
-                            elif request.POST['privacy'] == 'False':
+                            elif CPForm.cleaned_data['privacy'] == 'False':
                                 # set applications to accepted
                                 all_applications = all_community_applications(
                                     community=community,

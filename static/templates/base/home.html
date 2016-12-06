@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends "base/base.html" %}
 
 {% block title %}Home{% endblock %}
 {% block content %}
 
-{% include "nav.html" %}
+{% include "base/nav.html" %}
 
 {% load instances %}
 <style>
@@ -43,7 +43,7 @@
                             <h3 class="modal-title">Pending Invitations</h3>
                         </div>
                         <div class="modal-body">
-                            {% if pending_invitations %}
+                            {% if invitations %}
                             <table class="table table-striped table-compressed table-hover">
                                 <thead>
                                     <tr>
@@ -53,7 +53,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for invite in pending_invitations %}
+                                    {% for invite in invitations %}
                                         <tr>
                                             <td>
                                                 <a href="{% url 'community' invite.community.tag %}">{{ invite.community.name }}</a>

@@ -49,7 +49,7 @@ class AbstractBaseView(View):
 
 @method_decorator(login_required, name='dispatch')
 class SearchView(AbstractBaseView):
-    template_name = 'search.html'
+    template_name = 'base/search.html'
 
     def fetch(self, request):
         if 'community' in request.GET:

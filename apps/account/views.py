@@ -28,7 +28,7 @@ def login_page(request):
                     return HttpResponseRedirect('/home/')
         else:
             form = MyAuthenticationForm()
-        return render(request, 'login/login.html', {'form': form })
+        return render(request, 'account/login.html', {'form': form })
 
 def register(request):
     if request.user.is_authenticated():
@@ -46,14 +46,14 @@ def register(request):
         else:
             form = RegistrationForm()
 
-    return render(request, 'login/register.html', {'form': form})
+    return render(request, 'account/register.html', {'form': form})
 
 def register_success(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/home/')
     else:
         return render_to_response(
-        'login/success.html',
+        'account/success.html',
         )
 
 def logout_page(request):
@@ -62,16 +62,12 @@ def logout_page(request):
 
 @method_decorator(login_required, name='dispatch')
 class HomeView(AbstractBaseView):
-    template_name = 'home.html'
+    template_name = 'base/home.html'
 
     def fetch(self, request):
         # fetch user's community invitations
-        invitations = Invitation.objects.filter(
-            recipient=request.user,
-        )
-        user_communities = Community.objects.filter(
-            members=request.user,
-        )
+        invitations = u_pending_invitations(request.user)
+        user_communities = u_communities(request.user)
 
         self.template_items['invitations'] = invitations
         self.template_items['user_communities'] = user_communities
