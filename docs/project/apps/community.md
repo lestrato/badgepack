@@ -1,24 +1,37 @@
-# Community
+# Backend
+    work
+    ├── apps
+    │   ├── community
 
-Path: `/badgepack/community/`
+## admin.py
+* CommunityAdmin
+* MembershipAdmin
+* InvitationAdmin
+* ApplicationAdmin
 
-# Templates
-
+## fetches.py
 Name | Description
 --- | ---
-`community.html` | Base template for all community pages
-`earner.html` | Community page as-seen by regular (non-moderator) members
-`moderator.html` | Community page as-seen by community moderators
-`visitor.html` | Community page as-seen by non-members of the community
+`community_object(community_tag)` | **Returns**: community object with the tag `community_tag`
+`all_community_applications(community):` | **Returns**: all application objects for the community `community`
+`u_application(community, user)` | **Returns**: an application object for the user `user` and the community `community`, or None if it doesn't exist
+`all_community_memberships(community)` | **Returns**: all membership objects for the community `community`
+`u_membership(community, user)` | **Returns**: a membership object for the user `user` and the community `community`, or None if it doesn't exist
+`u_invitation(community, user)` | **Returns**: a invitation object for the user `user` and the community `community`, or None if it doesn't exist
+`all_community_invitations(community)` | **Returns**: all invitation objects for the community `community`
+`u_communities(members, user_status=None)` | **Returns**: all community objects with the member `members` and the membership user status `user_status`, or all communities if `user_status` is not specified
 
-# Admin
+## forms.py
+Name | Description
+--- | ---
+`UserPermissionForm` | **Fields**: permissions<br>**Functions**: none
+`UserSearchForm` | **Fields**: username<br>**Functions**: clean_username(self)
+`CSVUploadForm` | **Fields**: csv_file<br>**Functions**: clean_csv_file(self)
+`CommunityPrivacyForm` | **Fields**: privacy<br>**Functions**: none
+`CommunityDescriptionForm` | **Fields**: description<br>**Functions**: none
 
-# Forms
-
-# Models
-## Community
-
-### Model
+## models.py
+### Community
 
 Name | Field | Settings | Description
 --- | --- | --- | ---
@@ -31,111 +44,55 @@ Name | Field | Settings | Description
 `invitations` | `ManyToManyField` | `through='Invitation'`<br/>`related_name='community_invitations'`<br/>`through_fields=('community', 'recipient')` | Set of community invitations
 `applications` | `ManyToManyField` | `through='Application'`<br/>`related_name='community_applications'`<br/>`through_fields=('community', 'applicant')` | Set of community applications
 
-### Meta
-
-Field | Value
---- | ---
-`verbose_name` | `'community'`
-`verbose_name_plural` | `'communities'`
-`db_table` | `'community'`
-
-### Methods
-
-Method | Description
---- | ---
-`__str__(self)` | Returns the name of the community
-
-## Membership
-
-Intermediary table between communities and users.
-    
-### Model
+### Membership
 
 Name | Field | Settings | Description
 --- | --- | --- | ---
 `user` | `ForeignKey` | `settings.AUTH_USER_MODEL`<br/>`on_delete=models.CASCADE` | A user who is a member of the community
 `community` | `ForeignKey` | `Community`<br/>`on_delete=models.CASCADE` | The community that the user is a member of
 `joined_on` | `DateField` | `default=datetime.now` | Date and time the user joined the community
-`is_moderator` | `BooleanField` | `default=False` | Whether or not a user is a moderator of a community
+`user_status` | `ChoiceField` | `default=earner` | The community user-type : earner, moderator, or owner
 
-### Meta
-
-Field | Value
---- | ---
-`verbose_name` | `'membership'`
-`verbose_name_plural` | `'memberships'`
-`db_table` | `'membership'`
-
-### Methods
-
-Method | Description
---- | ---
-`__str__(self)` | Returns the user's username
-
-## AbstractRequest
-
-Community requests (invitations and applications).
-
-### Model
+### AbstractRequest
 
 Name | Field | Settings | Description
 --- | --- | --- | ---
 `community` | `ForeignKey` | `Community`<br/>`on_delete=models.CASCADE`<br/> | The community involved in the request
 `created_on` | `DateField` | `default=datetime.now` | The date and time that the request was made
 
-### Meta
-
-Field | Value
---- | ---
-`abstract` | `True`
-
-## Invitation
-
-### Model
+### Invitation
 
 Name | Field | Settings | Description
 --- | --- | --- | ---
 `recipient` | `ForeignKey` | `settings.AUTH_USER_MODEL`<br/>`on_delete=models.CASCADE`<br/>`related_name='invitation_recipient'` | The user who received the invitation
 `sender` | `ForeignKey` | `settings.AUTH_USER_MODEL`<br/>`on_delete=models.CASCADE`<br/>`related_name='invitation_sender'` | The moderator who sent the invitation
 
-
-### Meta
-
-Field | Value
---- | ---
-`verbose_name` | `invitation`
-`verbose_name_plural` | `invitations`
-`db_table` | `invitation`
-
-### Methods
-
-Method | Description
---- | ---
-`__str__(self)` | Returns the recipient's username
-
-## Application
-
-### Model
+### Application
 
 Name | Field | Settings | Description
 --- | --- | --- | ---
 `accepted_by` | `ForeignKey` | `settings.AUTH_USER_MODEL`<br/>`on_delete=models.CASCADE`<br/>`related_name='application_accepted_by'` | The moderator who accepted the application
 `applicant` | `ForeignKey` | `settings.AUTH_USER_MODEL`<br/>`on_delete=models.CASCADE`<br/>`related_name='application_applicant'` | The user who submitted the application
 
+## tests.py
+There doesn't seem to be anything here.
 
-### Meta
+## views.py
+There doesn't seem to be anything here.
 
-Field | Value
+---
+# Frontend
+
+    work
+    ├── static
+    │   ├── templates
+    │   |   ├── community
+
+## templates
+Name | Description
 --- | ---
-`verbose_name` | `application`
-`verbose_name_plural` | `applications`
-`db_table` | `application`
-
-### Methods
-
-Method | Description
---- | ---
-`__str__(self)` | Returns the applicant's username
-
-## Views
-
+`community.html` | Base template for all community pages
+`components/about_tab.html` | About tab component for the community page
+`components/badge_tab.html` | Badges tab component for the community page
+`components/members_tab.html` | Members tab component for the community page
+`components/nav_pills.html` | The nav-pills component for navigating through the three tabs
