@@ -1,4 +1,3 @@
 *.sql*
 **/settings.py
 *.pyc
-media/uploads/badges/*
