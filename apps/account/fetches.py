@@ -25,19 +25,29 @@ def u_instance(username):
        username = None
     return username
 
-def u_all_invitations(user):
-    all_invites = Invitation.objects.filter(
-        recipient=user,
-    )
-    return all_invites
-
 def u_pending_invitations(user):
-    pending_invites = Invitation.objects.filter(
-        recipient=user
+    invitations = Invitation.objects.filter(
+        recipient=user,
     ).exclude(
         community__in = Community.objects.filter(
             members=user
         ).values_list('id', flat=True)
     )
+    return invitations
 
-    return pending_invites
+# def u_all_invitations(user):
+#     all_invites = Invitation.objects.filter(
+#         recipient=user,
+#     )
+#     return all_invites
+
+# def u_pending_invitations(user):
+#     pending_invites = Invitation.objects.filter(
+#         recipient=user
+#     ).exclude(
+#         community__in = Community.objects.filter(
+#             members=user
+#         ).values_list('id', flat=True)
+#     )
+
+#     return pending_invites

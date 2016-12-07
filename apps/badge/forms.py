@@ -47,9 +47,6 @@ class BadgeCreationForm(forms.Form):
         ),
     )
 
-    def clean(self):
-        return self.cleaned_data
-
 
 class UserBadgeAssignForm(forms.Form):
     CHOICES= (
@@ -64,10 +61,6 @@ class UserBadgeAssignForm(forms.Form):
             }
         )
     )
-
-    def clean_badge_assign(self):
-        badge_assign = self.cleaned_data.get("badge_assign")
-        return badge_assign
 
 class OneBadgeAssignForm(forms.Form):
     badge_assign = forms.BooleanField(
@@ -90,7 +83,3 @@ class BadgeSetAvailabilityForm(forms.Form):
             }
         )
     )
-
-    def clean_badge_assign(self):
-        badge_assign = self.cleaned_data.get("availability")
-        return badge_assign

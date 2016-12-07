@@ -1,10 +1,97 @@
-{% extends "base.html" %}
+{% extends "base/base.html" %}
 
 {% block title %}{{ community.tag }}{% endblock %}
 {% block content %}
 
-{% include "nav.html" %}
+{% include "base/nav.html" %}
 
-{% include extendTemplate %}
+<script>
+$('document').ready(function() {
+    var rawMsg = "{% if messages %}{% for message in messages %}{{ message }}{% endfor %}{% else %}None{% endif %}";
+    var definedOpenTab = false;
 
+    if (rawMsg != "None") {
+        var decodeMe = document.createElement('textarea');
+        decodeMe.innerHTML = rawMsg;
+        var decoded = decodeMe.value;
+
+        // Parse the message:
+        var elemList = decoded.split(";");
+
+        for (var i in elemList) {
+            var elems = elemList[i].split("=");
+
+            switch (elems[0]) {
+                case "open_tab":
+                    if (elems[1] == "viewBadges") {
+                        console.log('elems[1] is viewBadges');
+                        break;
+                    }
+
+                    // Re-open a tab:
+                    definedOpenTab = true;
+
+                    if (elems[1] == "manageInvites" || elems[1] == "manageApplications") {
+                        $($('a[href="\#manageMembers"]')[0]).removeClass('active');
+
+                        // Make "Manage Users" active first:
+                        $($('a[href="\#manageUsers"]')[0]).trigger('click');
+                    }
+
+                    if (elems[1] == "manageMembers") {
+                        $($('a[href="\#manageUsers"]')[0]).trigger('click');
+                    }
+
+                    $($('a[href="\#' + elems[1] + '"]')[0]).trigger('click');
+                    break;
+                case "return_msg":
+                    console.log(elems[1]);
+
+                    // Display a message:
+                    $('#message').html(elems[1]);
+                    $('.message-container').css('visibility', 'visible');
+                    $('.message-container').css('opacity', '1');
+
+                    // Hide the message after a few seconds:
+                    setTimeout(function() {
+                        $('.message-container').css('opacity', 0);
+                        setTimeout(function() {
+                            $('.message-container').css('visibility', 'hidden');
+                        }, 500);
+                    }, 5000);
+
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+});
+</script>
+
+<div class="message-container">
+    <div id="message"></div>
+</div>
+
+<div class="container" style="padding-top: 70px;">
+    <div class="row">
+        <div class="col-xs-6 col-sm-8">
+            <h1 style="margin-bottom: 0px;">{{ community.name }}
+            </h1>
+        </div>
+        <div class="col-xs-6 col-sm-4">
+            {% include "community/components/nav_pills.html" %}
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container">
+        <div class="tab-content">
+            {% include "community/components/badge_tab.html" %}
+            {% include "community/components/members_tab.html" %}
+            {% include "community/components/about_tab.html" %}
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -1,7 +1,3 @@
-# Installation and Setup
-
-*Version: 0.1*
-
 ## How to get started on your local development environment.
 #### Prerequisites:
 
@@ -14,7 +10,7 @@
 
 * `mkdir badgepack && cd badgepack`
 * `virtualenv env`
-* `source env/bin/activate` *Activate the environment (each time you start a session working with the code)*
+* `source env/scripts/activate` *Activate the environment (each time you start a session working with the code)*
 
 *Obtain source code and clone into code directory*
 
@@ -25,18 +21,38 @@
 ```
 badgepack
 ├── work
-│   ├── community
-│   ├── login
-│   ├── work
+│   ├── apps
+│   │   ├── account
+│   │   ├── badge
+│   │   ├── base
+│   │   ├── community
+│   ├── docs
+│   │   ├── guides
+│   │   ├── project
+│   │   ├── status
+|   ├── media       
+|   │   ├── uploads     
+|   │   │   ├── badges     
+│   ├── static
+│   │   ├── bootstrap       
+│   │   │   ├── css
+│   │   │   ├── fonts
+│   │   │   ├── js
+│   │   ├── images
+│   │   ├── templates
+│   │   │   ├── account
+│   │   │   ├── badge
+│   │   │   ├── base
+│   │   │   ├── community
+|   │   │   │   ├── components
+│   ├── work
 ├── env
 ```
 
 ### Install requirements
-From within `badgepack/work` directory:
+*from within badgepack/work directory*
 
-* `pip install Django==1.10.2`
-* `pip install mysql-python`
-* `pip install django-widget-tweaks`
+* `pip install -r requirements.txt`
 
 ### Customize local settings to your environment
 * `cp work/settings.py.example work/settings.py`
@@ -44,8 +60,7 @@ From within `badgepack/work` directory:
 
 ### Migrate databases, build front-end components
 * `./manage.py migrate`
-* `./manage.py createsuperuser` or `winpty python manage.py createsuperuser`
-    * Follow the prompts to create your first admin user account
+* `./manage.py createsuperuser` or `winpty python manage.py createsuperuser` *follow prompts to create your first admin user account*
 
 ### Run a server locally for development
 * `./manage.py runserver`
@@ -63,6 +78,6 @@ From within `badgepack/work` directory:
 ### Setting users as admins
 * Navigate to http://localhost:3000/admin/auth/user/
 * Select user to promote to admin
-* Tick the 'Staff Status' checkbox under 'Permissions'
+* Tick checkbox "Staff status" under 'Permissions'
 * Add to group 'Admin'
 * Save

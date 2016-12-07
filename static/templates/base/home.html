@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends "base/base.html" %}
 
 {% block title %}Home{% endblock %}
 {% block content %}
 
-{% include "nav.html" %}
+{% include "base/nav.html" %}
 
 {% load instances %}
 <style>
@@ -30,7 +30,7 @@
             <h1>My Badges<small style="margin-left: 10px; font-size: 45%;">0 earned</small></h1>
         </div>
         <div class="col-sm-4 bottom-align-text">
-            <button class="btn btn-primary" style="margin-bottom: 10px;" data-toggle="modal" href="#communityInvites">Community Invites {% if pending_invitations %}<b>({{ pending_invitations|length }})</b>{% else %}(0){% endif %}</button>
+            <button class="btn btn-primary" style="margin-bottom: 10px;" data-toggle="modal" href="#communityInvites">Community Invites ({{ invitations.count }})</button>
 
             <div id="communityInvites" class="modal fade">
                 <div class="modal-dialog">
@@ -40,7 +40,7 @@
                             <h3 class="modal-title">Pending Invitations</h3>
                         </div>
                         <div class="modal-body">
-                            {% if pending_invitations %}
+                            {% if invitations %}
                             <table class="table table-striped table-compressed table-hover">
                                 <thead>
                                     <tr>
@@ -51,7 +51,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for invite in pending_invitations %}
+                                    {% for invite in invitations %}
                                         <tr>
                                             <td>
                                                 <a href="{% url 'community' invite.community.tag %}">{{ invite.community.name }}</a>
@@ -93,9 +93,6 @@
         <div class="col-xs-8 col-md-4">
             <div class="input-group">
                 <input onkeyup="filterBadges()" id="badge-search-bar" type="text" class="badge-search" placeholder="Search badges">
-                <!-- <span class="input-group-btn">
-                    <button onclick="filterBadges()" type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-search"></span></button>
-                </span> -->
             </div>
         </div>
         <div class="col-xs-12 col-sm-6 col-md-4" style="margin-top: 10px;">
@@ -105,12 +102,6 @@
     </div>
     <hr>
 
-    <!-- {% for community in earner_communities %}
-      {% for badge in community.badgeclass_set.all %}
-        {{ badge }}
-
-      {% endfor %}
-    {% endfor %} -->
 
 <!-- 
     <div class="badge-list-view">
@@ -137,9 +128,9 @@
     </div>
 
  -->
-    {% if earner_communities %}
+    {% if user_communities %}
 
-        {% for community in earner_communities %}
+        {% for community in user_communities %}
         {% with community|classes as community_classes %}
             <h2><a href="{% url 'community' community.tag %}">{{ community.tag }}</a>
                 <small style="margin-left: 10px; font-size: 45%;">
@@ -171,7 +162,7 @@
         {% endfor %}
     {% else %}
         <div class="container">
-            <h2><small>You are not in any communities yet.</small></h2>
+            <h4>You are not in any communities yet.</h4>
         </div>
 
     {% endif %}
@@ -223,7 +214,7 @@ function filterBadges() {
     var badges = $('.badge-container');
 
     for (var i = 0; i < badges.length; i++) {
-        var badgeName = (badges[i].childNodes[3].childNodes[0].childNodes[3].innerHTML).toLowerCase();
+        var badgeName = (badges[i].childNodes[1].childNodes[0].childNodes[3].innerHTML).toLowerCase();
 
         if (badgeName.indexOf(searchTerm) == -1) {
             $(badges[i]).parent().addClass('hidden-search');

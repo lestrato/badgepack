@@ -1,6 +1,6 @@
 # Badgepack Server
 
-*Version: 0.3*
+*Version: 0.4*
 
 ## How to get started on your local development environment.
 #### Prerequisites:
@@ -25,18 +25,38 @@
 ```
 badgepack
 ├── work
-│   ├── community
-│   ├── login
-│   ├── work
+│   ├── apps
+│   │   ├── account
+│   │   ├── badge
+│   │   ├── base
+│   │   ├── community
+│   ├── docs
+│   │   ├── guides
+│   │   ├── project
+│   │   ├── status
+|   ├── media       
+|   │   ├── uploads     
+|   │   │   ├── badges     
+│   ├── static
+│   │   ├── bootstrap       
+│   │   │   ├── css
+│   │   │   ├── fonts
+│   │   │   ├── js
+│   │   ├── images
+│   │   ├── templates
+│   │   │   ├── account
+│   │   │   ├── badge
+│   │   │   ├── base
+│   │   │   ├── community
+|   │   │   │   ├── components
+│   ├── work
 ├── env
 ```
 
 ### Install requirements
 *from within badgepack/work directory*
-* `pip install Django==1.10.2`
-* `pip install mysql-python`
-* `pip install Pillow`
-* `pip install django-randomslugfield`
+
+* `pip install -r requirements.txt`
 
 ### Customize local settings to your environment
 * cp work/settings.py.example work/settings.py
@@ -56,7 +76,7 @@ badgepack
 * Login with superuser
 * Navigate to http://localhost:8000/admin/auth/group/add/
 * Set 'Name' as Admin
-* Add priviledges to Admin (recommended are add, change, delete for community and membership)
+* Add privileges to Admin (recommended are add, change, delete for community and membership)
 * Save
 
 ### Setting users as admins

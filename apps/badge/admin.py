@@ -3,14 +3,14 @@ from badge.models import BadgeClass, BadgeInstance
 
 class BadgeClassAdmin(admin.ModelAdmin):
     readonly_fields = () #'created', 'name',
-    list_display = ('name', 'description', 'slug', 'image', 'community', 'creator',
+    list_display = ('name', 'description', 'slug', 'image', 'community', 'earnable_by', 'creator',
         'created_on', 'is_available', 'is_discontinued',)
     list_filter = ('is_available', 'is_discontinued',)
-    search_fields = ('name', 'description', 'community', 'creator',)
+    search_fields = ('name', 'description', 'community', 'creator', 'earnable_by',)
     fieldsets = (
         ('Metadata', {'fields': ('creator', 'created_on',)}),#', classes': ('collapse',)
         ('Properties', {'fields': ('name', 'description', 'community', 'image',)}),
-        ('Access', {'fields': ('is_available', 'is_discontinued',)}),
+        ('Access', {'fields': ('earnable_by', 'is_available', 'is_discontinued',)}),
     )
     pass
 

@@ -1,0 +1,467 @@
+{% load index %}
+
+{% if user_status == 'owner' or user_status == 'moderator' %}
+    <div id="manageUsers" class="tab-pane fade in">
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#manageMembers">Members</a></li>
+            <li><a data-toggle="tab" href="#manageInvites">Invites</a></li>
+            <li><a data-toggle="tab" href="#manageApplications">Applications</a></li>
+        </ul>
+        <div class="tab-content">
+
+            <div id="manageMembers" class="tab-pane fade in active">
+                <div class="table-responsive">
+                    <table id="membersTable" class="table table-condensed table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>User Type</th>
+                                <th>Joined On</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for member in all_members %}
+                                <tr>
+                                    <td><a href="#assignBadge{{ member.user }}" data-toggle="modal">{{ member.user }}</a></td>
+                                    <td>{{ member.user.email }}</td>
+                                    <td><a href="#changeSettings{{ member.user }}" data-toggle="modal">
+                                        {% if member.user_status == 'owner' %}
+                                            owner
+                                        {% elif member.user_status == 'moderator' %}
+                                            moderator
+                                        {% elif member.user_status == 'earner' %}
+                                            earner
+                                        {% endif %}
+                                    </a>
+                                    </td>
+                                    <td>{{ member.joined_on }}</td>
+                                    <td>
+                                        {% if member.user_status == 'earner' and user_status == 'moderator' or user_status == 'owner' %}
+                                            <div class="icon-container">
+                                                <button class="btn btn-xs btn-default" href="#assignBadge{{ member.user }}" data-toggle="modal">
+                                                    <span class="glyphicon glyphicon-briefcase"></span>
+                                                </button>
+                                                <div class="icon-desc">
+                                                    Assign Badges
+                                                </div>
+                                            </div>
+                                            <div id="assignBadge{{ member.user }}" class="modal fade">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                        <h3 class="modal-title">Change {{ member.user }}'s badges</h3>
+                                                    </div>
+                                                    <form method="post">{% csrf_token %}
+                                                        <div class="modal-body">
+                                                          {% if all_avail_badges.count > 0 %}
+                                                          <div class="table-responsive">
+                                                              <table class="table table-condensed table-striped table-hover">
+                                                                  <thead>
+                                                                      <tr>
+                                                                      <th>Badge image</th>
+                                                                      <th>Badge name</th>
+                                                                      <th>Status</th>
+                                                                      <th>Actions</th>
+                                                                      </tr>
+                                                                  </thead>
+                                                                  <tbody>
+                                                                      {{ UBAFormset.management_form }}
+                                                                      {% for badge in all_avail_badges %}
+                                                                          <tr>
+                                                                          <td style="vertical-align:middle;"><img class="img-thumbnail" src="{{ badge.image.url }}" style="width:40px; height:40px;"> </img></td>
+                                                                          <td style="vertical-align:middle;">{{ badge.name }}</td>
+                                                                          {% if member.user in badge.instances.all %}
+                                                                              <td style="vertical-align:middle;">
+                                                                                  Earned
+                                                                              </td>
+                                                                              <td></td>
+                                                                          {% else %}
+                                                                              <td style="vertical-align:middle;">Not earned</td>
+                                                                              <td style="vertical-align:middle;">
+                                                                                  {% with forloop.counter0 as currentIndex%}
+                                                                                      {% with UBAFormset|index:currentIndex as currentForm %}
+                                                                                          {{ currentForm.badge_assign }}
+                                                                                      {% endwith %}
+                                                                                  {% endwith %}
+                                                                              </td>
+                                                                          {% endif %}
+                                                                          </tr>
+                                                                      {% endfor %}
+                                                                  </tbody>
+                                                              </table>
+                                                          </div>
+                                                          {% else %}
+                                                          <h4>There are no available badges in this community...</h4>
+                                                          {% endif %}
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                                            <button name="assignBadgesSubmit" value="{{ member.user }}" type="submit" class="btn btn-primary">Confirm</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        {% if user_status == 'owner' %}
+                                            <div class="icon-container">
+                                                <button class="btn btn-xs btn-default" href="#changeSettings{{ member.user }}" data-toggle="modal">
+                                                    <span class="glyphicon glyphicon-cog"></span>
+                                                </button>
+                                                <div class="icon-desc">Set Permissions</div>
+                                            </div>
+                                            <form action="" method="post">{% csrf_token %}
+                                                <div id="changeSettings{{ member.user }}" class="modal fade">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                                    <h3 class="modal-title">Change {{ member.user }}'s settings</h3>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <h4>Permissions</h4>
+
+                                                                    {{ UPForm.permissions }}
+                                                                    {% if member.user.username == user.username %}
+                                                                        <hr>
+                                                                        <div class="alert alert-warning">
+                                                                            <strong>Warning!</strong><br/>Setting your own permissions away from 'owner' will revoke
+                                                                            your owner privileges.
+                                                                        </div>
+                                                                    {% endif %}
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                                                    <input type="hidden" value="{{ member.user }}" name="member">
+                                                                    <input type="submit" class="btn btn-primary" name="permissionSubmit" value="Save"></input>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                </div>
+                                            </form>
+
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="manageInvites" class="tab-pane fade in">
+                <div class="table-responsive">
+                    <table id="invitesTable" class="table table-condensed table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Recipient</th>
+                                <th>Email</th>
+                                <th>On-Join Permissions</th>
+                                <th>Created On</th>
+                                <th>Sender</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for invite in all_invitations %}
+                                <tr>
+                                    <td>{{ invite.recipient }}</td>
+                                    <td>{{ invite.recipient.email }}</td>
+                                    <td>
+                                        {% if invite.to_be_moderator %}
+                                            moderator
+                                        {% else %}
+                                            earner
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ invite.created_on }}</td>
+                                    <td>{{ invite.sender }}</td>
+                                    {% if invite.recipient in invite.community.members.all %}
+                                        <td>joined</td>
+                                        <td></td>
+                                    {% else %}
+                                        <td>pending</td>
+                                        <td>
+                                            <div class="row-fluid">
+                                                <!-- We omit changing privileges for join-time until we know if moderators can do this  -->
+                                                <!-- <div class="col-xs-1" style="padding-left: 0px;">
+                                                    <div class="icon-container">
+                                                        <button class="btn btn-xs btn-default" href="#changeSettings{{ invite.recipient }}" data-toggle="modal">
+                                                            <span class="glyphicon glyphicon-cog"></span>
+                                                        </button>
+                                                        <div class="icon-desc">Set Permissions</div>
+                                                    </div>
+                                                    <form action="" method="post">{% csrf_token %}
+                                                        <div id="changeSettings{{ invite.recipient }}" class="modal fade">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                                        <h3 class="modal-title">Set {{ invite.recipient }}'s settings for join-time</h3>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <h4>Permissions</h4>
+
+                                                                        {{ UPForm.permissions }}
+
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                                                        <input type="hidden" value="{{ invite.recipient }}" name="invited">
+                                                                        <input type="submit" class="btn btn-primary" name="invitedPermissionSubmit" value="Save"></input>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </form>
+                                                </div> -->
+                                                <div class="col-xs-1" style="padding-right: 0px;">
+                                                    <form action="" method="post">{% csrf_token %}
+                                                        <div class="icon-container">
+                                                             <button type="submit" class="btn btn-xs btn-default" value="{{ invite.recipient }}" name="revokeInvite">
+                                                                 <span class="glyphicon glyphicon-trash"></span>
+                                                             </button>
+                                                             <div class="icon-desc">Cancel Invitation</div>
+                                                         </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <button href="#userInvite" class="btn btn-default center-block" data-toggle="modal"> Invite a user </button>
+                <div id="userInvite" class="modal fade">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h3 class="modal-title">Invite users</h3>
+                            </div>
+                            <div class="modal-body">
+                                <div id="error_div"></div>
+                                <form method="POST" id="addUser">{% csrf_token %}
+                                    <h4>Add a user by search</h4>
+                                    <div class="input-group">
+                                        {{ USForm.username }}
+                                        <!-- <input id="user-name" type="text" class="form-control" placeholder="Add user&hellip;"> -->
+                                        <span class="input-group-btn">
+                                            <input type="hidden" name='inviteUserSubmit'></input>
+                                            <button type="submit" class="btn btn-default btn-sm">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </form>
+                                <h2 class="text-center" style="text-decoration: underline;">or</h2>
+                                <h4>Add users by .csv*</h4>
+
+                                <form id="uploadCSV" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                    <!-- <button type="submit" class="btn btn-default">Upload .csv </button> -->
+                                    <input type="hidden" name="uploadCSVSubmit"></input>
+                                    {{ CUForm.csv_file }}
+                                </form>
+                                <p>* utorIDs must be in the first column</p>
+                            </div>
+                            <form action="" method="POST">{% csrf_token %}
+                                <div class="container-fluid">
+                                  <div id="userInvites" style="display: none;">
+                                    <hr>
+                                    <table class="table table-condensed table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>User</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                    <button type="submit" name="inviteSubmit" class="btn btn-primary">Invite users</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="manageApplications" class="tab-pane fade in">
+                <div class="table-responsive">
+                    <table id="applicationsTable" class="table table-condensed table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Applicant</th>
+                                <th>Email</th>
+                                <th>Created On</th>
+                                <th>Accepted By</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for application in applications %}
+                                <tr>
+                                    <td>{{ application.applicant }}</td>
+                                    <td>{{ application.applicant.email }}</td>
+                                    <td>{{ application.created_on }}</td>
+                                    <td>{{ application.accepted_by }}</td>
+                                    <td>
+                                        {% if not application.accepted_by %}
+                                            <form action="" method="post">{% csrf_token %}
+                                                <div class="icon-container">
+                                                    <button type="submit" class="btn btn-xs btn-default" value="{{ application.applicant }}" name="acceptApplication">
+                                                        <span class="glyphicon glyphicon-ok"></span>
+                                                    </button>
+                                                    <div class="icon-desc">Accept Application</div>
+                                                </div>
+                                            </form>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endif %}
+
+{% if user_status == 'owner' or user_status == 'moderator' %}
+    <style>
+      /* For the JQuery plugin 'datatables', local */
+      .table-responsive .row {
+        margin-top: 10px !important;
+      }
+    </style>
+    <!-- Invite user script, csv upload script and AJAX -->
+    <script language="JavaScript">
+        $( document ).ready(function() {
+            var usersAdded = [];
+            // This wont work in a form with two submit buttons !!!
+            $('#addUser').submit(function() { // catch the form's submit event
+                $.ajax({ // create an AJAX call...
+                    data: $(this).serialize(), // get the form data
+                    type: $(this).attr('method'), // GET or POST
+                    url: $(this).attr('action'), // the file to call
+
+                    success: function(response) { // on success..
+                        if (response.constructor == {}.constructor) {
+                           // some error message TODO: maybe there's a more delicate way to do this
+                            $.each( response, function( key, value ) {
+                              $('#error_div').html('<div class="alert alert-danger">'+value+'</div>');
+                            });
+                        } else {
+                            // valid input
+                            if (usersAdded.indexOf(response) > -1) { // if user already added this user
+                              $('#error_div').html('<div class="alert alert-danger">You already added this user.</div>');
+                            } else { // if didn't add user yet
+                              // clear error message
+                              $('#error_div').html('');
+                              // add to table
+                              $('#userInvites tbody').append("<tr><td id='user'>" +
+                              "<input type='hidden' value='"+ response +"' name='addedUser'>" + response +
+                              "<button id='removeUser' class='btn btn-default btn-xs pull-right'>" +
+                              "<span class='glyphicon glyphicon-remove'></span>" +
+                              "</button>" +
+                              "</td></tr>");
+                              if (usersAdded.length == 0) {
+                                $('#userInvites').toggle();
+                              }
+                              usersAdded.push(response);
+                            }
+                        }
+                    }
+                });
+                return false;
+            });
+
+            $("#csvUpload").change(function(){
+            // $('#uploadCSV').submit(function() { // catch the form's submit event
+                var data = new FormData($('#uploadCSV').get(0));
+
+                $.ajax({
+                    url: $('#uploadCSV').attr('action'),
+                    type: $('#uploadCSV').attr('method'),
+                    data: data,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) { // on success..
+                        if (response.constructor == {}.constructor) {
+                            // some error message TODO: maybe there's a more delicate way to do this
+                            $.each( response, function( key, value ) {
+                                $('#error_div').html('<div class="alert alert-danger">'+value+'</div>');
+                            });
+                        } else {
+                            // valid input
+                            data = JSON.parse(response);
+                            $(data.usernames).each(function (key, username) {
+                              // valid input
+                              if (usersAdded.indexOf(username) > -1) { // if user already added this user
+                                  // do nothing
+                              } else { // if didn't add user yet
+                                    // clear error message
+                                    $('#error_div').html('');
+                                    // add to table
+                                    $('#userInvites tbody').append("<tr><td id='user'>" +
+                                    "<input type='hidden' value='"+ username +"' name='addedUser'>" + username +
+                                    "<button id='removeUser' class='btn btn-default btn-xs pull-right'>" +
+                                    "<span class='glyphicon glyphicon-remove'></span>" +
+                                    "</button>" +
+                                    "</td></tr>");
+                                    if (usersAdded.length == 0) {
+                                      $('#userInvites').toggle();
+                                    }
+                                    usersAdded.push(username);
+                              }
+                            });
+
+
+                        }
+                    }
+                });
+                return false;
+            });
+
+            // Remove user from list of invited users
+            $("tbody").on("click","#removeUser", function() {
+                console.log($(this).text());
+                userIndex = usersAdded.indexOf($(this).closest('td').text());
+                if (userIndex > -1) {
+                  usersAdded.splice(userIndex, 1);
+                }
+                $(this).closest('tr').remove();
+                if (usersAdded.length == 0) {
+                  $('#userInvites').toggle();
+                }
+            });
+        });
+    </script>
+    <!-- 'Datatable' scripts and styling (local) -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs/dt-1.10.12/datatables.min.css"/>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.12/datatables.min.js"></script>
+    <script language="JavaScript">
+        $(document).ready(function() {
+            // Instantiating 'datatable' objects for orderby/searching
+            $('#membersTable').DataTable();
+            $('#invitesTable').DataTable();
+            $('#applicationsTable').DataTable({
+              "order": [[4, "desc"]]
+            });
+        });
+    </script>
+{% endif %}

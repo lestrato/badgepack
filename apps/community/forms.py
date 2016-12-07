@@ -4,21 +4,19 @@ from django.utils.translation import ugettext_lazy as _
 
 class UserPermissionForm(forms.Form):
     CHOICES= (
-    (False, 'earner'),
-    (True, 'moderator'),
+    ('earner', 'earner'),
+    ('moderator', 'moderator'),
+    ('owner', 'owner'),
     )
     permissions = forms.CharField(
         widget=forms.Select(
             choices=CHOICES,
             attrs={
-                "class":"form-control",
+                "class":"form-control input-sm",
+                'required':'True',
             }
         )
     )
-
-    def clean_permissions(self):
-        permissions = self.cleaned_data.get("permissions")
-        return permissions
 
 class UserSearchForm(forms.Form):
     username = forms.CharField(
@@ -28,7 +26,7 @@ class UserSearchForm(forms.Form):
                 'id':"user-name",
                 'placeholder':"Add user...",
                 'autocomplete':"off",
-                "class":"form-control",
+                "class":"form-control input-sm",
             }
         )
     )
@@ -39,6 +37,28 @@ class UserSearchForm(forms.Form):
             return self.cleaned_data['username']
         except User.DoesNotExist:
             raise forms.ValidationError(_("The username does not exist. Please try another one."))
+
+class CSVUploadForm(forms.Form):
+    csv_file = forms.FileField(
+        widget=forms.FileInput(
+            attrs={
+                "required":True,
+                "type":"file",
+                "id":"csvUpload",
+            }
+        )
+    )
+
+    def clean_csv_file(self):
+        csv_file = self.cleaned_data['csv_file']
+        file_name = csv_file.name
+        if file_name.endswith('.csv'):
+            if csv_file._size > 5242880:
+                raise forms.ValidationError(_('Please keep filesize under 5mb. Current filesize %s') % (filesizeformat(csv_file._size)))
+        else:
+            raise forms.ValidationError(_('File type is not supported'))
+
+        return csv_file
 
 class CommunityPrivacyForm(forms.Form):
     CHOICES= (
@@ -56,10 +76,6 @@ class CommunityPrivacyForm(forms.Form):
         )
     )
 
-    def clean_privacy(self):
-        privacy = self.cleaned_data.get("privacy")
-        return privacy
-
 class CommunityDescriptionForm(forms.Form):
     description = forms.CharField(
         widget=forms.Textarea(
@@ -71,7 +87,3 @@ class CommunityDescriptionForm(forms.Form):
                 }
         )
     )
-
-    def clean_description(self):
-        description = self.cleaned_data.get("description")
-        return description

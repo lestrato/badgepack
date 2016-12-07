@@ -1,0 +1,290 @@
+{% load index %}
+{% load staticfiles %}
+{% if user_status != 'visitor' %}
+    <div id="viewBadges" class="tab-pane fade in active">
+        {% if user_status == 'owner' %}
+            <!-- Modal HTML -->
+            <div id="addBadge" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h3 class="modal-title">Create a New Badge</h3>
+                        </div>
+                        <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                            <div class="modal-body">
+                                <div id="checkBadgeNameError"></div>
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <h4>Badge Name</h4>
+                                        {{ BCForm.name }}
+                                        <h4>Badge Description</h4>
+                                        {{ BCForm.description }}
+                                    </div>
+                                    <div class="col-sm-4">
+                                      <h4>Badge image</h4>
+                                      <div style="height: 150px; width: 150px; position: relative">
+                                          {{ BCForm.image }}
+                                          <img src="{% static "images/uploadimage.png" %}" class="img-thumbnail badgeImage"
+                                          style="width:150px;height:150px;cursor:pointer;position:absolute;"
+                                          onclick="$(this).siblings('input').trigger('click')"></img>
+                                      </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary" name="addBadgeSubmit">Add Badge</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Display badge list -->
+            <ul class="badge-list">
+                <li>
+                  <!-- Button to bring up modal window -->
+                    <div href="#addBadge" role="button" data-toggle="modal" class="new-badge-container">
+                        <div class="new-badge-outer">
+                            <div class="new-badge-title">
+                                Create a new badge
+                            </div>
+                            <div class="new-badge-plus">
+                                +
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {% for badge in all_badge_classes %}
+
+                    <div id="editBadge{{ badge.slug }}" class="modal fade">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h3 class="modal-title">Edit the "{{ badge.name }}" badge</h3>
+                                </div>
+                                <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-sm-8">
+                                                <h4>Edit name</h4>
+                                                {{ BCForm.name }}
+                                                <h4>Edit description</h4>
+                                                {{ BCForm.description }}
+                                            </div>
+                                            <div class="col-sm-4">
+                                              <h4>Change image</h4>
+                                              <div style="height: 150px; width: 150px; position: relative">
+                                                  {{ BCForm.image }}
+                                                  <img src="{{ badge.image.url }}" class="img-thumbnail badgeImage"
+                                                  style="width:150px;height:150px;cursor:pointer;position:absolute;"
+                                                  onclick="$(this).siblings('input').trigger('click')"></img>
+                                              </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                        <button type="submit" value="{{ badge.name }}" class="btn btn-primary" name="editBadgeSubmit">Edit Badge</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="availabilityBadge{{ badge.slug }}" class="modal fade">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h3 class="modal-title">Change the availability of "{{ badge.name }}"</h3>
+                                </div>
+                                <form method="POST">{% csrf_token %}
+                                    <div class="modal-body">
+                                        <div class="alert alert-warning" role="alert">
+                                            Are you sure you want to make this badge available? Once available, you will not
+                                            be able to change this badge's availability or edit this badge.
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                        <button type="submit" value="{{ badge.name }}" class="btn btn-primary" name="setBadgeAvailableSubmit">Set available</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="assignBadge{{ badge.slug }}" class="modal fade">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h3 class="modal-title">Gift the "{{ badge.name }}" badge</h3>
+                                </div>
+                                <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                    <div class="modal-body">
+                                        {% if all_members.count > 0 %}
+                                        <div class="table-responsive">
+                                            <table class="table table-condensed table-striped table-hover">
+                                                <thead>
+                                                    <tr>
+                                                    <th>Username</th>
+                                                    <th>Gift</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {{ OBAFormset.management_form }}
+                                                    {% for member in all_members %}
+                                                        {% if member.user not in badge.instances.all %}
+                                                            <tr>
+                                                            <td>{{member.user}}</td>
+                                                            <td>
+                                                              {% with forloop.counter0 as currentIndex%}
+                                                                  {% with OBAFormset|index:currentIndex as currentForm %}
+                                                                      {{ currentForm.badge_assign }}
+                                                                  {% endwith %}
+                                                              {% endwith %}
+                                                            </tr>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        {% else %}
+                                        <h4>There are no available badges in this community...</h4>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                        <button type="submit" value="{{ badge.name }}" class="btn btn-primary" name="oneBadgeSubmit">Gift Badge</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="discontinueBadge{{ badge.slug }}" class="modal fade">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h3 class="modal-title">Discontinue the "{{ badge.name }} badge"</h3>
+                                </div>
+                                <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                    <div class="modal-body">
+                                        <div class="alert alert-danger" role="alert">
+                                            Are you sure you want to discontinue this badge? This will destroy all badge instances
+                                            for this badge and cannot be undone.
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                        <button type="submit" value="{{ badge.name }}" class="btn btn-primary" name="discontinueBadgeSubmit">Discontinue badge</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <li>{% include "badge/badge.html" with available=badge.is_available %}</li>
+                {% endfor %}
+            </ul>
+        {% elif user_status == 'moderator' %}
+            <!-- Display badge list -->
+            <ul class="badge-list">
+                {% for badge in all_badge_classes %}
+                    <div id="assignBadge{{ badge.slug }}" class="modal fade">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h3 class="modal-title">Gift the "{{ badge.name }}" badge</h3>
+                                </div>
+                                <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+                                    <div class="modal-body">
+                                        {% if all_members.count > 0 %}
+                                        <div class="table-responsive">
+                                            <table class="table table-condensed table-striped table-hover">
+                                                <thead>
+                                                    <tr>
+                                                    <th>Username</th>
+                                                    <th>Gift</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {{ OBAFormset.management_form }}
+                                                    {% for member in all_members %}
+                                                        {% if member.user not in badge.instances.all %}
+                                                            <tr>
+                                                            <td>{{member.user}}</td>
+                                                            <td>
+                                                              {% with forloop.counter0 as currentIndex%}
+                                                                  {% with OBAFormset|index:currentIndex as currentForm %}
+                                                                      {{ currentForm.badge_assign }}
+                                                                  {% endwith %}
+                                                              {% endwith %}
+                                                            </tr>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        {% else %}
+                                        <h4>There are no available badges in this community...</h4>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                        <button type="submit" value="{{ badge.name }}" class="btn btn-primary" name="oneBadgeSubmit">Gift Badge</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <li>{% include "badge/badge.html" with available=badge.is_available %}</li>
+                {% endfor %}
+            </ul>
+        {% elif user_status == 'earner' %}
+            {% if all_avail_badges.count > 0 %}
+                <ul class="badge-list">
+                {% for badge in all_avail_badges %}
+                    <li>
+                      {% if user in badge.instances.all %}
+                          {% include "badge/badge.html" with available=True %}
+                      {% else %}
+                          {% include "badge/badge.html" with available=False %}
+                      {% endif %}
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <h4>This community has no available badges...</h4>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    {% if user_status == 'owner' %}
+        <!-- Script for rendering image for badge upload -->
+        <script language="JavaScript">
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        $(input).siblings('img').attr('src', e.target.result);
+                    }
+
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            $(".badgeImageUpload").change(function(){
+                readURL(this);
+            });
+        </script>
+    {% endif %}
+{% endif %}

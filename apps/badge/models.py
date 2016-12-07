@@ -19,6 +19,7 @@ class BadgeClass(models.Model):
         unique=True
     )
     community = models.ForeignKey(Community, on_delete=models.CASCADE)
+
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -27,6 +28,18 @@ class BadgeClass(models.Model):
     created_on = models.DateField(default=datetime.now)
     is_available = models.BooleanField(default=False)
     is_discontinued = models.BooleanField(default=False)
+
+    EARNABLE_BY_CHOICES = (
+        ('earner', 'earner'),
+        ('moderator', 'moderator'),
+    )
+
+    earnable_by = models.CharField(
+        max_length=10,
+        choices=EARNABLE_BY_CHOICES,
+        default='earner',
+    )
+
     instances = models.ManyToManyField(settings.AUTH_USER_MODEL, through='BadgeInstance',
         related_name='badgeclass_instances', through_fields=('badge_class', 'earner'))
 
