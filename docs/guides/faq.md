@@ -1,11 +1,11 @@
 ## What is the difference between a "public" and "private" community?
 **Public** communities can be joined by any user, so long as they have a link to the community page.
 
-![](images/public_community.png)
+![](../images/public_community.png)
 
 **Private** communities require users to send in an application to join the community. Community moderators must then approve the request before the user can join.
 
-![](images/private_community.png)
+![](../images/private_community.png)
 
 ## How do I add a new community?
 At the moment, new communities can only be created through the admin panel (`/admin`). Here are the steps to do so:
