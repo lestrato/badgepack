@@ -64,6 +64,106 @@ class CommunityView(AbstractBaseView):
         all_avail_badges = all_available_badge_classes(
             community=community,
         )
+        # list of all earners in the community
+        earner_list = all_earners(
+            community=community,
+        )
+        # number of earners in the community
+        earner_count = float(len(earner_list))
+        # all available community badge instances:
+        badge_instance_counts = community_badge_instance_counts(
+            community=community,
+        )
+        
+        # initialize the list of most- and least-earned badges
+        for x in badge_instance_counts:
+            x[1] = int((float(x[1]) / earner_count) * 100)
+
+        # most- and least-earned badges:
+        if len(badge_instance_counts) >= 5:
+            most_earned_badges = badge_instance_counts[:5]
+            least_earned_badges = badge_instance_counts[-5:]
+        else:
+            most_earned_badges = badge_instance_counts[:]
+            least_earned_badges = badge_instance_counts[:]
+
+        least_earned_badges.reverse()
+
+        # Grab leaderboard info:
+        tmp = {}
+
+        # For each earner, get the number of badges earned by that user:
+        for earner in earner_list:
+            u_badges = u_badge_count(
+                earner=earner.user, 
+                community=community
+            )
+            if u_badges in tmp:
+                # NTS: append the user's anon. ID instead
+                tmp[u_badges].append(earner.user)
+            else:
+                # NTS: append the user's anon. ID instead
+                tmp[u_badges] = [earner.user]
+
+        counts = tmp.keys()
+        counts.sort(reverse=True)
+
+        curr_rank = 1
+        full_leaderboard = []
+
+        for x in counts:
+            full_leaderboard.append([curr_rank, x, tmp[x]])
+            curr_rank += len(tmp[x])
+
+        if membership:
+            if membership.user_status == 'earner':
+                # Find user's placement in the leaderboard:
+                for x in range(0, len(full_leaderboard)):
+                    if request.user in full_leaderboard[x][2]:
+                        # Keep track of user's placement:
+                        user_rank = x + 1
+                        break
+
+                if len(full_leaderboard) < 5:
+                    leaderboard = full_leaderboard
+                else:
+                    start_range = x - 2
+                    end_range = x + 3
+
+                    while start_range < 0:
+                        start_range += 1
+                        end_range += 1
+
+                    while end_range > len(full_leaderboard):
+                        end_range -= 1
+                        start_range -= 1
+
+                    leaderboard = full_leaderboard[start_range:end_range]
+
+            elif membership.user_status != 'visitor':
+                # Return the full board:
+                leaderboard = full_leaderboard
+                user_rank = None
+
+            # Replace user lists:
+            for entry in leaderboard:
+                num_users = len(entry[2])
+
+                if request.user in entry[2]:
+                    entry[2] = "You"
+                else:
+                    entry[2] = str(entry[2][0])
+
+                # Group multiple users in one rank together:
+                if num_users > 1:
+                    entry[2] += " and {0} other".format(num_users - 1)
+
+                if num_users > 2:
+                    entry[2] += "s"
+
+        else:
+            leaderboard = []
+            user_rank = None
 
         # use proper template extension based on current permissions
         if not membership:
@@ -110,6 +210,14 @@ class CommunityView(AbstractBaseView):
         self.template_items['is_invited'] = invitation
         self.template_items['all_badge_classes'] = all_badges
         self.template_items['all_avail_badges'] = all_avail_badges
+
+        self.template_items['badge_counts'] = badge_instance_counts
+        self.template_items['most_earned_badges'] = most_earned_badges
+        self.template_items['least_earned_badges'] = least_earned_badges
+
+        self.template_items['leaderboard'] = leaderboard
+        self.template_items['leaderboard_rank'] = user_rank
+
         self.template_items['BCForm'] = BCForm
         self.template_items['UPForm'] = UPForm
         self.template_items['USForm'] = USForm

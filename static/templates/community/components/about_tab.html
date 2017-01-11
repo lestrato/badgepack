@@ -54,6 +54,112 @@
             {{ community.created_on }}
         </div>
     </div>
+
+    <!-- Badge Statistics -->
+    {% if badge_counts|length > 0 %}
+    <hr>
+    <div class="row">
+        <div class="col-sm-6">
+            <h3 style="margin-top: 0px;">
+                Most-Earned Badges
+            </h3>
+            <div class="stats-table">
+                {% for entry in most_earned_badges %}
+                <div class="stats-row">
+                    <div class="stats-cell-left">
+                        <img src="{{ entry.0.image.url }}"></img>
+                        {{ entry.0.name }}
+                    </div>
+                    <div class="stats-cell-right">
+                        <p>{{ entry.1 }}%</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <hr class="visible-xs">
+        <div class="col-sm-6">
+            <h3 style="margin-top: 0px;">
+                Least-Earned Badges
+            </h3>
+            <div class="stats-table">
+                {% for entry in least_earned_badges %}
+                <div class="stats-row least-earned">
+                    <div class="stats-cell-left">
+                        <img src="{{ entry.0.image.url }}"></img>
+                        {{ entry.0.name }}
+                    </div>
+                    <div class="stats-cell-right">
+                        <p>{{ entry.1 }}%</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="clearfix visible-xs"></div>
+
+    <button type="button" class="btn btn-info stats-btn" data-toggle="collapse" data-target="#demo">Display all</button>
+
+    <div id="demo" class="collapse">
+        <div class="row">
+            <div class="col-sm-6">
+                <h3 style="margin-top: 0px;">
+                    Full Badge Statistics
+                </h3>
+                <div class="stats-table">
+                    {% for entry in badge_counts %}
+                    <div class="stats-row least-earned">
+                        <div class="stats-cell-left">
+                            <img src="{{ entry.0.image.url }}"></img>
+                            {{ entry.0.name }}
+                        </div>
+                        <div class="stats-cell-right">
+                            <p>{{ entry.1 }}%</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Leaderboard -->
+    {% if leaderboard %}
+    <hr>
+    <div class="row">
+        <div class="col-sm-8">
+            <h3 style="margin-top: 0px;">
+                Leaderboard
+            </h3>
+            <div class="table-responsive">
+                <table class="table table-condensed table-striped table-hover" style="text-align:center;">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center;">Rank</th>
+                            <th style="text-align:center;">Users</th>
+                            <th style="text-align:center;">Badges Earned</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in leaderboard %}
+                        {% if leaderboard_rank and entry.0 == leaderboard_rank %}
+                        <tr class="user-row">
+                        {% else %}
+                        <tr>
+                        {% endif %}
+                            <td>{{ entry.0 }}</td>
+                            <td>{{ entry.2 }}</td>
+                            <td>{{ entry.1 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 {% if user_status == 'owner' %}

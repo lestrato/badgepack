@@ -36,6 +36,14 @@ def all_community_memberships(community):
     )
     return all_memberships
 
+def all_earners(community):
+    all_earners = Membership.objects.filter(
+      community=community,
+      user_status="earner"
+    )
+
+    return all_earners
+    
 def u_membership(community, user):
     # user's membership return first object or none
     try:

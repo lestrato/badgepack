@@ -576,3 +576,117 @@ hr {
     width: 375px;
     margin-bottom: 0;
 }
+
+.tab-content {
+    width: 98%;
+}
+
+
+/* Badge Statistics */
+.stats-table, .leaderboard-table {
+    margin: auto;
+    width: 100%;
+    overflow: hidden;
+}
+
+.stats-row, .stats-row * img, .leaderboard-row {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.stats-row, .leaderboard-row {
+    width: 99%;
+    font-size: 14px;
+    margin-bottom: 5px;
+    
+    vertical-align: middle;
+    background-color: rgba(0, 28, 46, 0.1);
+}
+
+.stats-row * {
+    height: 52px;
+    vertical-align: middle;
+    overflow: hidden;
+}
+
+.leaderboard-row * {
+    height: 35px;
+    vertical-align: middle;
+    overflow: hidden;
+    line-height: 35px;
+}
+
+.stats-row * img {
+    width: 50px;
+    margin-right: 5px;
+}
+
+.stats-cell-left, .stats-cell-right, .leaderboard-row * {
+    display: inline-block;
+}
+
+.stats-cell-right {
+    background-color: rgba(0, 28, 46, 0.2);
+
+    position: absolute;
+    right: 19.5px;
+    text-align: center;
+    width: 75px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.stats-cell-left {
+    font-size: 16px;
+}
+
+.stats-cell-right > p {
+    font-size: 20px;
+    margin-top: 12px;
+}
+
+.stats-btn {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.leaderboard-row {
+    font-size: 16px;
+    
+}
+
+.leaderboard-cell-left {
+    width: 100px;
+    background-color: rgba(0, 28, 46, 0.2);
+    text-align: center;
+    margin-right: 5px;
+    border-radius: 10px;
+    font-size: 20px;
+    
+}
+
+.leaderboard-cell-right {
+    background-color: rgba(0, 28, 46, 0.2);
+
+    position: absolute;
+    right: 23px;
+    text-align: center;
+    width: 130px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;   
+    font-size: 20px;
+    
+}
+
+.leaderboard-row * p {
+    line-height: 35px;
+}
+
+.user-row {
+    background-color: rgba(0, 255, 213, 0.3);
+    font-weight: 800;
+}
+
+.user-row > .leaderboard-cell-left, .user-row > .leaderboard-cell-right {
+    background-color: rgba(0, 140, 101, 0.29);
+}
