@@ -152,7 +152,12 @@ class ProfileView(AbstractBaseView):
         # Determine whether or not requester can see the user's private ID:
         is_authorized_to_view_id = (check_user_authorization(request) or is_own_profile)
 
-        IDForm = PublicIdForm()
+        # User's badges:
+        earned_badges = u_all_badges(profile.user)
+        print(earned_badges)
+
+        # Forms:
+        IDForm = PublicIdForm()         # edit public ID
 
         self.template_items['profile'] = profile
         self.template_items['public_id'] = public_id
@@ -160,11 +165,12 @@ class ProfileView(AbstractBaseView):
         self.template_items['is_own_profile'] = is_own_profile
         self.template_items['is_authorized_to_view_id'] = is_authorized_to_view_id
         self.template_items['IDForm'] = IDForm
+        self.template_items['earned_badges'] = earned_badges
 
     def post(self, request, **kwargs):
         print request.POST
 
-        profile = u_profile(user=request.user)
+        profile = u_profile_by_user(user=request.user)
 
         if 'submitPublicId' in request.POST:
             IDForm = PublicIdForm(request.POST)

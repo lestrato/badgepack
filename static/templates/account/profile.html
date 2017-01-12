@@ -29,8 +29,6 @@
             {% if is_own_profile %}
             Private ID: {{ private_id }}
             {% endif %}
-            
-
         </div>
     </div>
 
@@ -38,7 +36,18 @@
 
     <div class="container">
         <div class="tab-content">
-            {% lorem 20 p %}
+            {% if earned_badges %}
+                <!-- Display badge list -->
+                <ul class="badge-list">
+                {% for badge in earned_badges %}
+                <li>
+                    {% include "badge/profile_badge.html" with available=True %}
+                </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+            <h4>This user has not earned any badges yet.</h4>
+            {% endif %}
         </div>
     </div>
 </div>

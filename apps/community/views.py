@@ -77,7 +77,10 @@ class CommunityView(AbstractBaseView):
         
         # initialize the list of most- and least-earned badges
         for x in badge_instance_counts:
-            x[1] = int((float(x[1]) / earner_count) * 100)
+            if (earner_count > 0):
+                x[1] = int((float(x[1]) / earner_count) * 100)
+            else:
+                x[1] = 0
 
         # most- and least-earned badges:
         if len(badge_instance_counts) >= 5:
