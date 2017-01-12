@@ -18,6 +18,7 @@ class AbstractBaseView(View):
     def get(self, request, **kwargs):
         # fetch potential community tag
         self.community_tag = kwargs.get('community_tag', None)
+        self.url_profile_id = kwargs.get('profile_id', None)
 
         # navbar information
         owner_communities = u_communities(

@@ -112,3 +112,15 @@ class RegistrationForm(forms.Form):
             if self.cleaned_data['password1'] != self.cleaned_data['password2']:
                 raise forms.ValidationError(_("The two password fields did not match."))
         return self.cleaned_data
+
+class PublicIdForm(forms.Form):
+    public_id = forms.CharField(
+        max_length=30,
+        widget=forms.TextInput(
+            attrs={
+                "id":"publicIdEditor",
+                "style":"display: none; font-size: 36px; line-height: 36px; height: 45px; width: 300px;",
+                "class":"form-control",
+            }
+        )
+    )

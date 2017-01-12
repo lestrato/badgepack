@@ -129,16 +129,20 @@
     {% if leaderboard %}
     <hr>
     <div class="row">
-        <div class="col-sm-8">
+        <div class="col-sm-6">
             <h3 style="margin-top: 0px;">
                 Leaderboard
             </h3>
+        </div>
+    </div>
+    <div class="row">
+        <div style="width: 90%; margin: auto;">
             <div class="table-responsive">
                 <table class="table table-condensed table-striped table-hover" style="text-align:center;">
                     <thead>
                         <tr>
                             <th style="text-align:center;">Rank</th>
-                            <th style="text-align:center;">Users</th>
+                            <th>Users</th>
                             <th style="text-align:center;">Badges Earned</th>
                         </tr>
                     </thead>
@@ -150,7 +154,7 @@
                         <tr>
                         {% endif %}
                             <td>{{ entry.0 }}</td>
-                            <td>{{ entry.2 }}</td>
+                            <td style="text-align: left;">{{ entry.2|safe }}</td>
                             <td>{{ entry.1 }}</td>
                         </tr>
                         {% endfor %}

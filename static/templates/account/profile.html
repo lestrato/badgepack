@@ -1,0 +1,62 @@
+{% extends "base/base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+
+<div class="container" style="padding-top: 70px;">
+    <div class="row">
+        <div class="col-xs-6 col-sm-8">
+            <h1>
+                <div id="originalId" style="display: inline-block;">
+                    {{ public_id }}
+                </div>
+
+                {% if is_own_profile %}
+                <form method='POST' style="display: inline-block;">{% csrf_token %}
+                    {{ IDForm.public_id }}
+                    <button type="submit" name="submitPublicId" id="savePublicId" class="btn btn-sm btn-success" style="display: none;">
+                        Save
+                    </button>
+                </form>
+
+                <small>
+                    <a href="#" id="editPublicId">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                </small>
+                {% endif %}
+            </h1>
+
+            {% if is_own_profile %}
+            Private ID: {{ private_id }}
+            {% endif %}
+            
+
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container">
+        <div class="tab-content">
+            {% lorem 20 p %}
+        </div>
+    </div>
+</div>
+
+<script language="JavaScript">
+    $( document ).ready(function() {
+        var publicId = '{% filter escapejs %}{{ public_id|safe }}{% endfilter %}';
+        $("#publicIdEditor").val(publicId);
+
+        // Toggle the editor
+        $("#editPublicId").click(function() {
+          // toggle save button
+          $("#savePublicId").toggle();
+          $("#originalId").toggle();
+          $("#publicIdEditor").toggle();
+        });
+    });
+</script>
+
+{% include "base/nav.html" %}
+{% endblock %}

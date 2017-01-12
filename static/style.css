@@ -690,3 +690,7 @@ hr {
 .user-row > .leaderboard-cell-left, .user-row > .leaderboard-cell-right {
     background-color: rgba(0, 140, 101, 0.29);
 }
+
+#publicIdEditor {
+    display: inline-block;
+}

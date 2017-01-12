@@ -121,7 +121,7 @@ class CommunityView(AbstractBaseView):
                 for x in range(0, len(full_leaderboard)):
                     if request.user in full_leaderboard[x][2]:
                         # Keep track of user's placement:
-                        user_rank = x + 1
+                        user_rank = full_leaderboard[x][0]
                         break
 
                 if len(full_leaderboard) < 5:
@@ -150,9 +150,11 @@ class CommunityView(AbstractBaseView):
                 num_users = len(entry[2])
 
                 if request.user in entry[2]:
-                    entry[2] = "You"
+                    profile = u_profile_by_user(request.user)
+                    entry[2] = '<a href="/profile/{0}">You ({1})</a>'.format(profile.profile_id, profile.public_id)
                 else:
-                    entry[2] = str(entry[2][0])
+                    profile = u_profile_by_user(entry[2][0])
+                    entry[2] = '<a href="/profile/{0}">{1}</a>'.format(profile.profile_id, profile.public_id)
 
                 # Group multiple users in one rank together:
                 if num_users > 1:
@@ -164,6 +166,7 @@ class CommunityView(AbstractBaseView):
         else:
             leaderboard = []
             user_rank = None
+
 
         # use proper template extension based on current permissions
         if not membership:

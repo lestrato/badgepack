@@ -33,6 +33,8 @@ urlpatterns = [
     url(r'^home/$', HomeView.as_view()),
     url(r'^community/(?P<community_tag>[a-z||A-Z||0-9]+)$', CommunityView.as_view(), name='community'),
     url(r'^search/$', SearchView.as_view()),
+    url(r'^profile/(?P<profile_id>[a-z||A-Z||0-9||\-]+)$', ProfileView.as_view()),
+    url(r'^profile/$', profile_page)
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

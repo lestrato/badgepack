@@ -122,6 +122,60 @@ class HomeView(AbstractBaseView):
 
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/home/'))
 
+def profile_page(request):
+    profile = u_profile_by_user(user=request.user)
+
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/profile/{0}'.format(profile.profile_id))
+    else:
+        return render_to_response(
+        'account/login.html',
+        )
+
+
+def check_user_authorization(request):
+    return False
+
+@method_decorator(login_required, name='dispatch')
+class ProfileView(AbstractBaseView):
+    template_name = 'account/profile.html'
+
+    def fetch(self, request):
+        print(self.url_profile_id)
+        # Grab the profile:
+        profile = u_profile(profile_id=self.url_profile_id)
+        public_id = profile.public_id
+
+        # Whether or not requester owns the profile:
+        is_own_profile = (profile.user == request.user)
+        
+        # Determine whether or not requester can see the user's private ID:
+        is_authorized_to_view_id = (check_user_authorization(request) or is_own_profile)
+
+        IDForm = PublicIdForm()
+
+        self.template_items['profile'] = profile
+        self.template_items['public_id'] = public_id
+        self.template_items['private_id'] = profile.user.username
+        self.template_items['is_own_profile'] = is_own_profile
+        self.template_items['is_authorized_to_view_id'] = is_authorized_to_view_id
+        self.template_items['IDForm'] = IDForm
+
+    def post(self, request, **kwargs):
+        print request.POST
+
+        profile = u_profile(user=request.user)
+
+        if 'submitPublicId' in request.POST:
+            IDForm = PublicIdForm(request.POST)
+            if IDForm.is_valid():
+                profile = profile.edit_public_id(
+                    public_id=IDForm.cleaned_data['public_id'],
+                )
+                profile.save()
+
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/home/'))
+
 # @login_required
 # def home(request):
 #     invitations = u_all_invitations(request.user)
