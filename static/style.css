@@ -650,6 +650,7 @@ hr {
     margin-bottom: 10px;
 }
 
+/* Leaderboards (deprecated) */
 .leaderboard-row {
     font-size: 16px;
     
@@ -691,6 +692,9 @@ hr {
     background-color: rgba(0, 140, 101, 0.29);
 }
 
+/* Profiles/Collections */
 #publicIdEditor {
     display: inline-block;
 }
+
+/* nts: hide badges from owners/moderators in the "My Badges window" */

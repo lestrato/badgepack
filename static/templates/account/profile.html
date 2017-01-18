@@ -26,7 +26,7 @@
                 {% endif %}
             </h1>
 
-            {% if is_own_profile %}
+            {% if is_authorized_to_view_id %}
             Private ID: {{ private_id }}
             {% endif %}
         </div>
@@ -41,18 +41,27 @@
                 <ul class="badge-list">
                 {% for badge in earned_badges %}
                 <li>
-                    {% include "badge/profile_badge.html" with available=True %}
+                    {% include "badge/profile_badge.html" %}
                 </li>
                 {% endfor %}
                 </ul>
             {% else %}
-            <h4>This user has not earned any badges yet.</h4>
+            {% if is_own_profile %}
+            <h4>You don't have any badges to make public yet!</h4>
+            {% else %}
+            <h4>This user has not made any badges public.</h4>
+            {% endif %}
             {% endif %}
         </div>
     </div>
 </div>
 
 <script language="JavaScript">
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
     $( document ).ready(function() {
         var publicId = '{% filter escapejs %}{{ public_id|safe }}{% endfilter %}';
         $("#publicIdEditor").val(publicId);
@@ -64,6 +73,44 @@
           $("#originalId").toggle();
           $("#publicIdEditor").toggle();
         });
+
+        {% if is_own_profile %}
+        // Modify all badges so that they're clickable objects.
+        // On click: set badge as active/inactive, and propagate the change in the backend
+        var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $('.badge-container').css('cursor', 'pointer');
+
+        $('.badge-container').click(function() {
+            let badgeObj = this;
+            let badgeName = this.childNodes[1].childNodes[0].childNodes[3].innerHTML;
+            $.ajax({
+                url: document.location.href,
+                type: 'POST',
+                data: {
+                    toggleBadgeVisibility: badgeName
+                },
+                dataType: 'text',
+                success: function(res) {
+                    if (res == "invisible") {
+                        $(badgeObj).addClass("inactive-badge");
+                    }
+                    if (res == "visible") {
+                        $(badgeObj).removeClass("inactive-badge");
+                    }
+
+                    console.log(badgeObj.classList);
+                }
+            });
+        })
+        {% endif %}
     });
 </script>
 

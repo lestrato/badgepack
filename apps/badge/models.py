@@ -70,6 +70,8 @@ class BadgeInstance(models.Model):
         null=True,
     )
 
+    visible_in_profile = models.BooleanField(default=False)
+
     class Meta:
         verbose_name = 'instance'
         verbose_name_plural = 'instances'

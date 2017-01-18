@@ -50,6 +50,7 @@ def get_random_name():
         "Mango", "Melon", "Cantaloupe", "Honeydew", "Watermelon",
         "Mulberry", "Olive", "Orange", "Clementine", "Tangerine",
         "Papaya", "Peach", "Pear", "Persimmon", "Plum", "Pineapple",
-        "Pomegranate", "Raspberry", "Strawberry"
+        "Pomegranate", "Raspberry", "Strawberry", "Tomato", "Feijoa",
+        "Chirimoya"
     ]
     return "Anonymous {0}".format(random.choice(default_names))

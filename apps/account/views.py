@@ -15,6 +15,8 @@ from community.views import *
 from badge.models import BadgeClass, BadgeInstance
 from base.forms import *
 
+import re
+
 def login_page(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/home/')
@@ -134,6 +136,22 @@ def profile_page(request):
 
 
 def check_user_authorization(request):
+    if 'HTTP_REFERER' in request.META:
+        prev_url = request.META['HTTP_REFERER']
+
+        # Check if the user accessed the profile via a community page:
+        if "/community/" in prev_url:
+            c_tag = (prev_url.split("/community/"))[1]
+            ref_community = community_object(c_tag)
+            
+            if ref_community:
+                ref_membership = u_membership(ref_community, request.user)
+                
+                # Check if user is an owner or moderator of the referred community:
+                if ref_membership and ref_membership.user_status != "earner":
+                    return True
+
+    # User is not authorized to view the user's private ID:
     return False
 
 @method_decorator(login_required, name='dispatch')
@@ -141,7 +159,6 @@ class ProfileView(AbstractBaseView):
     template_name = 'account/profile.html'
 
     def fetch(self, request):
-        print(self.url_profile_id)
         # Grab the profile:
         profile = u_profile(profile_id=self.url_profile_id)
         public_id = profile.public_id
@@ -150,11 +167,13 @@ class ProfileView(AbstractBaseView):
         is_own_profile = (profile.user == request.user)
         
         # Determine whether or not requester can see the user's private ID:
-        is_authorized_to_view_id = (check_user_authorization(request) or is_own_profile)
+        is_authorized_to_view_id = is_own_profile or check_user_authorization(request)
 
         # User's badges:
-        earned_badges = u_all_badges(profile.user)
-        print(earned_badges)
+        if is_own_profile:
+            earned_badges = u_all_badges(profile.user)
+        else:
+            earned_badges = u_all_visible_badges(profile.user)
 
         # Forms:
         IDForm = PublicIdForm()         # edit public ID
@@ -171,6 +190,8 @@ class ProfileView(AbstractBaseView):
         print request.POST
 
         profile = u_profile_by_user(user=request.user)
+        is_own_profile = (profile.user == request.user)
+        is_authorized_to_view_id = is_own_profile or check_user_authorization(request)
 
         if 'submitPublicId' in request.POST:
             IDForm = PublicIdForm(request.POST)
@@ -180,67 +201,29 @@ class ProfileView(AbstractBaseView):
                 )
                 profile.save()
 
+        if 'toggleBadgeVisibility' in request.POST:
+            if not is_own_profile:
+                return HttpResponse("")
+
+            badge_name = request.POST["toggleBadgeVisibility"]
+
+            # Get the badge:
+            target_badgeclass = a_badge_class(badge_name)
+            if not target_badgeclass:
+                return HttpResponse("")
+
+            target_badgeinstance = u_badge_instance(target_badgeclass, profile.user)
+            if not target_badgeinstance:
+                return HttpResponse("")
+            
+            # Toggle visibility:
+            if target_badgeinstance.visible_in_profile:
+                target_badgeinstance.visible_in_profile = False
+                target_badgeinstance.save()
+                return HttpResponse("invisible")
+            else:
+                target_badgeinstance.visible_in_profile = True
+                target_badgeinstance.save()
+                return HttpResponse("visible")
+
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/home/'))
-
-# @login_required
-# def home(request):
-#     invitations = u_all_invitations(request.user)
-#     mod_communities, earner_communities = get_navbar_information(
-#         request=request,
-#     )
-#     searchform = CommunitySearchForm()
-#     pending_invites = u_pending_invitations(request.user)
-
-#     if request.method == 'POST':
-#         if "acceptPendingInviteBtn" in request.POST:
-#             # Get community based off tag:
-#             community = community_object(request.POST['acceptPendingInviteBtn'])
-
-#             # Check if user is a member of the community already:
-#             membership = u_membership(
-#                 community=community,
-#                 user=request.user,
-#             )
-
-#             if not membership:
-#                 # Make sure user received an invitation:
-#                 invitation = u_invitation(
-#                                 community=community,
-#                                 user=request.user,
-#                             )
-#                 if invitation:
-#                     # create new membership
-#                     new_membership = Membership(
-#                         user=request.user,
-#                         community=community,
-#                         is_moderator=invitation.to_be_moderator,
-#                     )
-#                     new_membership.save()
-
-#                 # check if user already submitted an application to this community
-#                 application = u_application(
-#                     community=community,
-#                     user=request.user,
-#                 )
-#                 if application:
-#                     # and check if the application hasn't been accepted yet
-#                     if not application.accepted_by:
-#                         # cancel application
-#                         application.delete()
-#                 # if neither, create new application
-#                 else:
-#                     new_application = Application(
-#                         applicant=request.user,
-#                         community=community,
-#                     )
-#                     new_application.save()
-
-#     return render(request, 'home.html', {
-#         'mod_communities': mod_communities,
-#         'earner_communities': earner_communities,
-#         'searchform': searchform,
-
-#         'user': request.user,
-#         'invitations': invitations,
-#         'pending_invitations': pending_invites,
-#     })

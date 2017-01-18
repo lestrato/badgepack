@@ -18,12 +18,12 @@ admin.site.register(BadgeClass, BadgeClassAdmin)
 
 class BadgeInstanceAdmin(admin.ModelAdmin):
     readonly_fields = () #'created', 'name',
-    list_display = ('earner', 'badge_class', 'recieved_on', 'assigned_by',)
+    list_display = ('earner', 'badge_class', 'recieved_on', 'assigned_by', 'visible_in_profile')
     list_filter = ()
-    search_fields = ('earner', 'badge_class', 'assigned_by')
+    search_fields = ('earner', 'badge_class', 'assigned_by', 'visible_in_profile')
     fieldsets = (
         ('Metadata', {'fields': ('recieved_on',)}),#', classes': ('collapse',)
-        ('Properties', {'fields': ('earner', 'badge_class', 'assigned_by',)}),
+        ('Properties', {'fields': ('earner', 'badge_class', 'assigned_by', 'visible_in_profile',)}),
     )
     pass
 

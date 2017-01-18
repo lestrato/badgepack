@@ -77,3 +77,14 @@ def u_all_badges(earner):
     except BadgeInstance.DoesNotExist:
         return None
     return all_badges
+
+def u_all_visible_badges(earner):
+    try:
+        all_visible_badges = BadgeInstance.objects.filter(
+            earner=earner,
+            badge_class__is_available=True,
+            visible_in_profile=True
+        )
+    except BadgeInstance.DoesNotExist:
+        return None
+    return all_visible_badges
