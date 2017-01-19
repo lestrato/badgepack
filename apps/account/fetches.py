@@ -2,6 +2,9 @@ from community.models import Community, Invitation
 from account.models import Profile
 from base.forms import *
 
+from community.fetches import *
+from badge.fetches import *
+
 from django.contrib.auth.models import User
 
 def get_navbar_information(request):
@@ -56,6 +59,31 @@ def u_profile_by_user(user):
         return None
     return u_profile
 
+# Return list of badge classes earnable by users in format:
+# [[community1, [badge1, badge2, ...]], [community2, [...]], ...]
+def u_earnable_instances_by_community(user):
+    retval = []
+
+    user_communities = u_communities(user)
+    for x in user_communities:
+        earnable_badges = []
+
+        # Get user's status:
+        mem = u_membership(x, user)
+        community_role = mem.user_status
+
+        # Get all badge classes from that community:
+        avail_badgeclasses = all_available_badge_classes(x)
+
+        # Go over each badge class:
+        for b in avail_badgeclasses:
+            if b.earnable_by == community_role:
+                earnable_badges.append(b)
+
+        # Add this community and its badges to retval:
+        retval.append([x, earnable_badges])
+
+    return retval
 
 # def u_all_invitations(user):
 #     all_invites = Invitation.objects.filter(

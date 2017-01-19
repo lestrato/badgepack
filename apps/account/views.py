@@ -72,8 +72,11 @@ class HomeView(AbstractBaseView):
         invitations = u_pending_invitations(request.user)
         user_communities = u_communities(request.user)
 
+        badges_by_community = u_earnable_instances_by_community(request.user)
+
         self.template_items['invitations'] = invitations
         self.template_items['user_communities'] = user_communities
+        self.template_items['badges_by_community'] = badges_by_community
 
     def post(self, request, **kwargs):
         print request.POST

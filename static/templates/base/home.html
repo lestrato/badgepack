@@ -128,45 +128,45 @@
     </div>
 
  -->
-    {% if user_communities %}
-
-        {% for community in user_communities %}
-        {% with community|classes as community_classes %}
-            <h2><a href="{% url 'community' community.tag %}">{{ community.tag }}</a>
-                <small style="margin-left: 10px; font-size: 45%;">
-                  {% with community|instances:user as my_instances %}
-                  {{ my_instances.count }}/{{ community_classes.count }} earned
-                  {% endwith %}
-                </small>
-            </h2>
-            <div class="container">
-                <!-- Display badge list -->
-                {% if community_classes.count > 0 %}
-                    <ul class="badge-list">
-                        {% for badge in community|classes %}
-                            <li>
-                              {% if user in badge.instances.all %}
-                                  {% include "badge/homepage_badge.html" with available=True image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None'%}
-                              {% else %}
-                                  {% include "badge/homepage_badge.html" with available=False image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None'%}
-                              {% endif %}
-                            </li>
-                        {% endfor %}
-                    </ul>
+    {% if badges_by_community %}
+        {% for item in badges_by_community %}
+        {% if item.1|length > 0 %}
+        <h2>
+            <a href="{% url 'community' item.0.tag %}">{{ item.0.tag }}</a>
+            <small style="margin-left: 10px; font-size: 45%;">
+                {% with item.0|instances:user as my_instances %}
+                {{ my_instances.count }}/{{ item.1|length }} earned
+                {% endwith %}
+            </small>
+        </h2>
+        <div class="container">
+            <ul class="badge-list">
+                {% for badge in item.1 %}
+                <li>
+                {% if user in badge.instances.all %}
+                    {% include "badge/homepage_badge.html" with available=True image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None'%}
                 {% else %}
-                    <h4>This community has no available badges...</h4>
+                    {% include "badge/homepage_badge.html" with available=False image=badge.image.url name=badge.name desc=badge.description f_left=badge.created_on f_right='None'%}
                 {% endif %}
-            </div>
-            <hr>
-        {% endwith %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% else %}
+        <!-- User is in the community, but there are no badges for the user to earn from this community -->
+        <h2>
+            <a href="{% url 'community' item.0.tag %}">{{ item.0.tag }}</a>
+        </h2>
+        <div class="container">
+            <h4>There are no badges available for you to earn from this community.</h4>
+        </div>
+        {% endif %}
         {% endfor %}
     {% else %}
-        <div class="container">
-            <h4>You are not in any communities yet.</h4>
-        </div>
-
+    <div class="container">
+        <h4>You are not in any communities yet.</h4>
+    </div>
     {% endif %}
-
 </div>
 
 <script>
@@ -204,8 +204,6 @@ $(document).ready(function() {
             }
         }
     })
-
-
 })
 
 function filterBadges() {
