@@ -132,7 +132,7 @@
                                                 <thead>
                                                     <tr>
                                                     <th>Username</th>
-                                                    <th>Gift</th>
+                                                    <th><input type="checkbox" onClick="toggleCheckboxes(this)" /> Gift</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -286,5 +286,15 @@
                 readURL(this);
             });
         </script>
+    {% endif %}
+    {% if user_status != 'earner' %}
+    <script language="JavaScript">
+        function toggleCheckboxes(source) {
+            checkboxes = $('.assign-checkbox');
+            for (var i in checkboxes) {
+                checkboxes[i].checked = source.checked;
+            }
+        }
+    </script>
     {% endif %}
 {% endif %}

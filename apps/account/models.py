@@ -12,7 +12,7 @@ import uuid
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     public_id = models.CharField(max_length=30)
-    profile_id = models.CharField(max_length=32, blank=True, unique=True, default=uuid.uuid4)
+    profile_id = models.CharField(max_length=256, blank=True, unique=True, default=uuid.uuid4)
 
     def edit_public_id(self, public_id):
         self.public_id=public_id

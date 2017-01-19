@@ -66,6 +66,7 @@ class OneBadgeAssignForm(forms.Form):
     badge_assign = forms.BooleanField(
         widget=forms.CheckboxInput(
             attrs={
+                "class": "assign-checkbox",
             }
         )
     )
