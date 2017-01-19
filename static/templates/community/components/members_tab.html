@@ -24,7 +24,7 @@
                         <tbody>
                             {% for member in all_members %}
                                 <tr>
-                                    <td><a href="#assignBadge{{ member.user }}" data-toggle="modal">{{ member.user }}</a></td>
+                                    <td><a href="/profile/{{ member.user.profile.profile_id }}">{{ member.user }}</a></td>
                                     <td>{{ member.user.email }}</td>
                                     <td><a href="#changeSettings{{ member.user }}" data-toggle="modal">
                                         {% if member.user_status == 'owner' %}
