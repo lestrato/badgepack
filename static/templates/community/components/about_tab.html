@@ -154,7 +154,7 @@
                         <tr>
                         {% endif %}
                             <td>{{ entry.0 }}</td>
-                            <td style="text-align: left;">{{ entry.2|safe }}</td>
+                            <td style="text-align: left; width: 600px;" id="leaderboard-rank-{{ entry.0 }}"><span id="grouped-row-{{ entry.0 }}">{{ entry.2|safe }}</span><span style="display: none;" id="expanded-row-{{ entry.0 }}">{{ entry.3|safe }}</span></td>
                             <td>{{ entry.1 }}</td>
                         </tr>
                         {% endfor %}
@@ -193,7 +193,16 @@
               // toggle description editor
               $("#privacyEditor").toggle();
             });
-
         });
     </script>
 {% endif %}
+
+<script language="JavaScript">
+function expandNames(row) {
+    var collapsed = document.getElementById("grouped-row-" + row);
+    var expanded = document.getElementById("expanded-row-" + row);
+
+    collapsed.style.display = "none";
+    expanded.style.display = "inline";
+}
+</script>

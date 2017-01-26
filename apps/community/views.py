@@ -148,23 +148,40 @@ class CommunityView(AbstractBaseView):
                 leaderboard = full_leaderboard
                 user_rank = None
 
-            # Replace user lists:
-            for entry in leaderboard:
-                num_users = len(entry[2])
 
-                if request.user in entry[2]:
-                    profile = u_profile_by_user(request.user)
-                    entry[2] = '<a href="/profile/{0}">You ({1})</a>'.format(profile.profile_id, profile.public_id)
-                else:
-                    profile = u_profile_by_user(entry[2][0])
-                    entry[2] = '<a href="/profile/{0}">{1}</a>'.format(profile.profile_id, profile.public_id)
+            for i in range(0, len(leaderboard)):
+                user_list = leaderboard[i][2]
+                
+                collapsed = ""
+                expanded = ""
 
-                # Group multiple users in one rank together:
-                if num_users > 1:
-                    entry[2] += " and {0} other".format(num_users - 1)
+                for u in user_list:
+                    profile = u_profile_by_user(u)
 
-                if num_users > 2:
-                    entry[2] += "s"
+                    if u == request.user:
+                        # Current user will always take precedence in the list:
+                        collapsed = '<a href="/profile/{0}">You ({1})</a>'.format(profile.profile_id, profile.public_id)
+                        expanded = '<a href="/profile/{0}">You ({1})</a>, '.format(profile.profile_id, profile.public_id) + expanded
+                    else:
+                        expanded += '<a href="/profile/{0}">{1}</a>, '.format(profile.profile_id, profile.public_id)
+
+                        if len(collapsed) == 0:
+                            collapsed = '<a href="/profile/{0}">{1}</a>'.format(profile.profile_id, profile.public_id)
+
+                if len(user_list) > 1:
+                    collapsed += '<span onclick="expandNames({0})"> and {1} other'.format(leaderboard[i][0], len(user_list) - 1)
+
+                    if len(user_list) > 2:
+                        collapsed += "s"
+
+                    collapsed += '</span>'
+
+                # Remove trailing ", ":
+                if len(expanded) > 0:
+                    expanded = expanded[:-2]
+
+                leaderboard[i][2] = collapsed
+                leaderboard[i].append(expanded)
 
         else:
             leaderboard = []
