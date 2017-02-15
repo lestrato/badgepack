@@ -23,6 +23,14 @@ from base.views import *
 from django.conf.urls.static import static
 from django.conf import settings
 
+from rest_framework import routers
+from api import views as api_views
+from rest_framework.authtoken import views as authtoken_views
+
+# router = routers.DefaultRouter()
+# router.register(r'api/users', api_views.UserViewSet)
+# router.register(r'api/communities', api_views.CommunityViewSet)
+
 urlpatterns = [
     url(r'^$', login_page),
     url(r'^logout/$', logout_page),
@@ -34,7 +42,21 @@ urlpatterns = [
     url(r'^community/(?P<community_tag>[a-z||A-Z||0-9]+)$', CommunityView.as_view(), name='community'),
     url(r'^search/$', SearchView.as_view()),
     url(r'^profile/(?P<profile_id>[a-z||A-Z||0-9||\-]+)$', ProfileView.as_view()),
-    url(r'^profile/$', profile_page)
+    url(r'^profile/$', profile_page),
+]
+
+# API:
+urlpatterns += [
+    url(r'^', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/communities/(?P<community_tag>[a-z||A-Z||0-9]+)$', api_views.APICommunityView.as_view()),
+    url(r'^api/communities/(?P<community_tag>[a-z||A-Z||0-9]+)/users$', api_views.APICommunityUsersView.as_view()),
+    url(r'^api/communities/(?P<community_tag>[a-z||A-Z||0-9]+)/badges/(?P<user_id>[a-z||A-Z||0-9]+)$', 
+        api_views.APISingleUserBadgeView.as_view()),
+    url(r'^api/communities/(?P<community_tag>[a-z||A-Z||0-9]+)/badges$', api_views.APICommunityBadgesView.as_view()),
+    url(r'^api/communities/(?P<community_tag>[a-z||A-Z||0-9]+)/leaderboard$', api_views.APILeaderboardView.as_view()),
+    url(r'^api/replace-token/', api_views.APIReplaceTokenView.as_view()),
+    url(r'^api/auth-token/', authtoken_views.obtain_auth_token),
+    url(r'^api/$', api_views.api_root),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

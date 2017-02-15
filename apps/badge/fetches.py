@@ -67,6 +67,16 @@ def u_badge_count(earner, community):
 
     return num_badges
 
+# Get the badge instances belonging to a user in a community:
+def u_community_badge_instances(earner, community):
+    owned_badges = BadgeInstance.objects.filter(
+        earner=earner,
+        badge_class__community=community,
+        badge_class__is_available=True,
+    )
+
+    return owned_badges
+
 # Get all the badges owned by a user:
 def u_all_badges(earner):
     try:

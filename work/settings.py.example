@@ -42,7 +42,10 @@ INSTALLED_APPS = [
     'community',
     'badge',
     'base',
+    'api',
     'randomslugfield',
+    'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -144,3 +147,13 @@ LOGIN_URL = '/'
 
 # Authentication redirection
 LOGIN_REDIRECT_URL = '/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',    
+        'rest_framework.authentication.TokenAuthentication'
+    ]
+}

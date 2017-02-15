@@ -29,10 +29,8 @@ class Profile(models.Model):
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        # Grab a new name:
-        default_id = get_random_name()
-
         # Create a profile:
+        default_id = get_random_name()
         Profile.objects.create(user=instance, public_id=default_id)
 
 @receiver(post_save, sender=User)
