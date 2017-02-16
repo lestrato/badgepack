@@ -1,5 +1,17 @@
 # API
 
+# Quick Reference
+
+* [Get user authorization token](#obtaining-your-authorization-token)
+* [Reset authorization token](#replacing-your-authorization-token)
+* [Get community info](#get-apicommunitiescommunity_tag62)
+* [Get community user list](#get-apicommunitiescommunity_tag62users)
+* [Batch invite users to a community](#post-apicommunitiescommunity_tag62users)
+* [Get community badge list](#get-apicommunitiescommunity_tag62badges)
+* [Batch gift badges in a community](#post-apicommunitiescommunity_tag62badges)
+* [Get single user's badge list within a community](#get-apicommunitiescommunity_tag62badgesusername62)
+* [Get community leaderboard info](#get-apicommunitiescommunity_tag62leaderboard)
+
 # Authorization Token
 Requests to the following URLs require you to pass in an authorization token in the header, like so:
 ```
